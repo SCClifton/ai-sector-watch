@@ -46,3 +46,22 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 03 — Supabase schema and `storage/supabase_db.py` (psycopg, retries, idempotent upserts).
 
+## 2026-04-27 — Commit 03: Supabase schema and storage layer
+
+**Shipped:**
+- `src/ai_sector_watch/storage/supabase_schema.sql`: idempotent schema (DO blocks, IF NOT EXISTS) for `companies`, `funding_events`, `news_items`, `ingest_events`, with enums `discovery_status`, `company_stage`, `news_kind`. Unique indexes on `(name_normalised, country)` for companies and `url_hash` for news items. GIN indexes on `sector_tags` and `company_ids`. `updated_at` trigger on companies.
+- `src/ai_sector_watch/storage/supabase_db.py`: psycopg 3 client. `get_conn()` retries 6 times with exponential backoff (0.5s -> 8s); `dict_row` row factory. Functions: `apply_schema`, `compute_payload_hash`, `hash_url`, `normalise_name`, `upsert_company`, `set_company_status`, `get_company_by_name`, `list_companies`, `upsert_funding_event`, `upsert_news_item`, `insert_ingest_event`. All upserts are idempotent and never downgrade `verified` companies back to `pending`.
+- `scripts/verify_setup.py`: smoke check for Python version, all required env vars, digest dir, Supabase connect, and table presence. Supports `--apply-schema` to apply the schema.
+
+**Tested:**
+- `pytest -q`: 33 pass, 1 skipped (the live-DB round-trip auto-skips without `SUPABASE_DB_URL`).
+- `ruff check .`: clean.
+- `python scripts/verify_setup.py` runs end-to-end without secrets and reports the expected mix of PASS/WARN/FAIL.
+
+**Known limitations:**
+- Live integration test for upsert/round-trip still skipped pending Sam's new Supabase project + populated `.env.local`.
+- No funding-event or news-item live tests yet; they'll land alongside the pipeline in commit 12.
+
+**Next:** Commit 04 — `data/seed/companies.yaml` (~50 ANZ AI co's) + `scripts/seed_companies.py`.
+
+
