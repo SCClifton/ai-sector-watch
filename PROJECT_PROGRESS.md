@@ -261,6 +261,25 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 15 — Azure deploy artefacts (Dockerfile, startup, deployment docs).
 
+## 2026-04-27 — Commit 15: Azure deploy artefacts
+
+**Shipped:**
+- `Dockerfile`: Python 3.12-slim base, tini as PID 1, installs only the dashboard extras (no dev/test), starts streamlit headless on `${PORT:-8000}` so it picks up Azure App Service's `WEBSITES_PORT`.
+- `.dockerignore`: keeps the image small and excludes `tests/`, `.venv/`, `data/local/`, docs, and PRD scratch files.
+- `docs/deployment.md`: full Azure runbook. Resource group + App Service plan + Web App for Containers (B1 in `australiaeast`), `WEBSITES_PORT=8000`, app settings copied from 1Password, OIDC federated credential setup so `deploy.yml` can authenticate without a stored secret, custom-domain + Azure-managed TLS instructions, smoke checks, teardown.
+
+**Tested:**
+- `pytest -q`: 91 pass, 2 skipped.
+- `ruff check .`: clean.
+- Docker build not exercised (would need Sam's docker daemon or a CI run).
+
+**Known limitations / pending Sam:**
+- Azure resources have not yet been provisioned. Following the runbook is gated by Sam.
+- DNS record creation (CNAME `aimap` -> Azure host) is gated by Sam.
+
+**Next:** Commit 16 — README polish, success-criteria checklist, final pass.
+
+
 
 
 
