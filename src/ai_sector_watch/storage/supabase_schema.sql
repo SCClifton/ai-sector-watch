@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS companies (
     founded_year    INTEGER,
     summary         TEXT,
     evidence_urls   TEXT[] NOT NULL DEFAULT '{}',
+    enriched_at     TIMESTAMPTZ,
     discovery_status discovery_status NOT NULL DEFAULT 'auto_discovered_pending_review',
     discovery_source TEXT,                -- e.g. 'seed', 'startup_daily_au'
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -61,6 +62,9 @@ CREATE TABLE IF NOT EXISTS companies (
 
 ALTER TABLE companies
     ADD COLUMN IF NOT EXISTS evidence_urls TEXT[] NOT NULL DEFAULT '{}';
+
+ALTER TABLE companies
+    ADD COLUMN IF NOT EXISTS enriched_at TIMESTAMPTZ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS companies_name_country_unique
     ON companies (name_normalised, COALESCE(country, ''));

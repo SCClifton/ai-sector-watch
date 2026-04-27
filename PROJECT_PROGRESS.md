@@ -2,6 +2,25 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #40: Backfill Firecrawl enrichment
+
+**Shipped (codex/40-backfill-firecrawl-enrichment-for-existi):**
+- Added `companies.enriched_at` via an idempotent schema ALTER.
+- Added storage helpers to list verified companies in recency order and stamp enrichment updates.
+- Added `scripts/backfill_enrichment.py` with dry-run mode, safe merge semantics, recent-skip idempotency, credit budget progress logs, and JSON summary output.
+- Added operator docs for the backfill command and review gates.
+
+**Tested:**
+- `.venv/bin/pytest -q`: pass, 2 skipped live integration tests.
+- `.venv/bin/ruff check .`: clean.
+- `.venv/bin/black --check .`: clean.
+- Seed check: live Supabase was missing seed data, so `scripts/seed_companies.py` was run idempotently and inserted 51 rows, updated 1 row. The dashboard reader now returns 52 verified companies.
+- Dry-run smoke: `op run --account my.1password.com --env-file=.env.local -- .venv/bin/python scripts/backfill_enrichment.py --limit 3 --dry-run` selected Everlab, Kismet, and Lyrebird Health and estimated 24 Firecrawl credits.
+- Live smoke: `op run --account my.1password.com --env-file=.env.local -- .venv/bin/python scripts/backfill_enrichment.py --limit 3` processed 3 companies, updated 3 rows, used 24 Firecrawl credits, made 3 LLM calls, and returned no errors.
+
+**Known limitations:**
+- None known for the operator-run v0 backfill.
+
 ## 2026-04-27 - Issue #39: Multi-source Firecrawl enrichment
 
 **Shipped (codex/39-extend-firecrawl-enrichment-with-about-t):**

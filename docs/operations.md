@@ -39,6 +39,40 @@ Watch a run:
 gh run watch
 ```
 
+## Backfilling enrichment
+
+Use this when existing verified companies need to be refreshed through the
+current Firecrawl multi-source enrichment path. The script reads verified
+companies from Supabase, processes the newest founded years first, skips rows
+with `enriched_at` inside the recent window, and preserves human-curated fields
+unless `--force-overwrite` is passed.
+
+Start with a dry run capped at 5 companies:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 5 --dry-run
+```
+
+Then run a small live batch:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 5
+```
+
+Defaults:
+- `--max-age-years 10`: includes companies founded in the last 10 years plus
+  unknown founded years.
+- `--skip-if-newer-than-days 30`: rerunning the same batch inside 30 days is a
+  no-op for company rows.
+- `--limit` is unlimited by default, but use `--limit 5` first to inspect cost
+  and output before a larger run.
+
+Safety gates:
+- Do not use `--force-overwrite` for more than 10 companies without Sam's review.
+- Do not backfill more than 100 companies in one live run without Sam's review.
+- The JSON summary at the end reports processed rows, updated rows, recent
+  skips, Firecrawl credits used, LLM calls, timestamps, and errors.
+
 ## Cost guardrails
 
 - The pipeline hard-caps Anthropic spend per run via `ANTHROPIC_BUDGET_USD_PER_RUN` (default $2). When the cap is hit mid-run, the orchestrator records a `partial` ingest event and writes a digest of what it managed to do.
