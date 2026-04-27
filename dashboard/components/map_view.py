@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 import folium
 from folium.plugins import MarkerCluster
 
@@ -15,6 +17,13 @@ from ai_sector_watch.storage.data_source import Company
 # Melbourne, and Auckland all sit on screen at default zoom.
 _DEFAULT_CENTER = (-32.0, 151.5)
 _DEFAULT_ZOOM = 4
+_STAGE_LABELS = {
+    "pre_seed": "Pre-seed",
+    "seed": "Seed",
+    "series_a": "Series A",
+    "series_b_plus": "Series B+",
+    "mature": "Mature",
+}
 
 
 def build_map(companies: list[Company]) -> folium.Map:
@@ -66,6 +75,10 @@ def _popup_html(c: Company) -> str:
     if c.founded_year:
         parts.append(f"<div><em>Founded:</em> {c.founded_year}</div>")
 
+    funding_line = _latest_funding_line(c)
+    if funding_line:
+        parts.append(f'<div style="margin-top:4px;"><em>Latest funding:</em> {funding_line}</div>')
+
     if sector_labels:
         chips = " ".join(
             f'<span style="background:#eef;border-radius:6px;padding:1px 6px;'
@@ -79,6 +92,35 @@ def _popup_html(c: Company) -> str:
 
     parts.append("</div>")
     return "".join(parts)
+
+
+def _latest_funding_line(c: Company) -> str | None:
+    event = c.latest_funding_event
+    if event is None:
+        return None
+    bits: list[str] = []
+    if event.stage:
+        bits.append(_STAGE_LABELS.get(event.stage, event.stage.replace("_", " ").title()))
+    if event.announced_on:
+        bits.append(event.announced_on.isoformat())
+    amount = _format_amount_usd(event.amount_usd)
+    if amount:
+        bits.append(amount)
+    return ", ".join(bits) if bits else None
+
+
+def _format_amount_usd(amount: Decimal | None) -> str | None:
+    if amount is None:
+        return None
+    if amount >= Decimal("1000000"):
+        millions = amount / Decimal("1000000")
+        value = f"{millions:.1f}".rstrip("0").rstrip(".")
+        return f"US${value}M"
+    if amount >= Decimal("1000"):
+        thousands = amount / Decimal("1000")
+        value = f"{thousands:.1f}".rstrip("0").rstrip(".")
+        return f"US${value}K"
+    return f"US${amount:,.0f}"
 
 
 def split_geocoded(companies: list[Company]) -> tuple[list[Company], list[Company]]:

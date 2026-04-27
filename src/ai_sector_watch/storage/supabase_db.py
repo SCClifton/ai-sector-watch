@@ -259,6 +259,44 @@ def upsert_funding_event(
     with conn.cursor() as cur:
         cur.execute(
             """
+            SELECT id FROM funding_events
+            WHERE company_id = %s
+              AND announced_on IS NOT DISTINCT FROM %s
+              AND stage IS NOT DISTINCT FROM %s
+            LIMIT 1
+            """,
+            (company_id, announced_on, stage),
+        )
+        existing = cur.fetchone()
+        if existing:
+            cur.execute(
+                """
+                UPDATE funding_events
+                SET
+                    amount_usd    = COALESCE(%s, amount_usd),
+                    currency_raw  = COALESCE(%s, currency_raw),
+                    lead_investor = COALESCE(%s, lead_investor),
+                    investors     = CASE
+                        WHEN %s::text[] = '{}'::text[] THEN investors
+                        ELSE %s::text[]
+                    END,
+                    source_url    = COALESCE(%s, source_url)
+                WHERE id = %s
+                """,
+                (
+                    amount_usd,
+                    currency_raw,
+                    lead_investor,
+                    investors,
+                    investors,
+                    source_url,
+                    existing["id"],
+                ),
+            )
+            return str(existing["id"])
+
+        cur.execute(
+            """
             INSERT INTO funding_events (
                 company_id, announced_on, stage, amount_usd, currency_raw,
                 lead_investor, investors, source_url

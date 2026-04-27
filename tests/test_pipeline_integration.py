@@ -28,6 +28,7 @@ from ai_sector_watch.extraction.schema import (
     CompanyMention,
     CompanyMentionList,
     CompanyValidation,
+    FundingExtraction,
     NewsClassification,
 )
 from ai_sector_watch.pipeline.weekly import run_weekly_pipeline
@@ -81,6 +82,15 @@ def _stub_client(tmp_path: Path) -> ClaudeClient:
             summary="A new Sydney foundation-model lab.",
         ),
         "NewsClassification": NewsClassification(kind="funding", is_relevant=True),
+        "FundingExtraction": FundingExtraction(
+            has_funding_event=True,
+            announced_on=date(2026, 4, 21),
+            stage="seed",
+            amount_usd=5_000_000,
+            currency_raw="USD 5M",
+            lead_investor="Blackbird",
+            investors=["Blackbird"],
+        ),
     }
 
     def fake_dispatch(self, *, system, prompt, schema_cls, max_tokens):
@@ -233,8 +243,24 @@ def test_pipeline_live_full_round_trip(tmp_path) -> None:
     assert result.candidates_added >= 1
     assert result.items_new >= 1
     assert result.digest_path is not None
-    # Cleanup.
     with supabase_db.connection() as conn, conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT fe.stage, fe.announced_on, fe.amount_usd, fe.lead_investor, fe.source_url
+            FROM funding_events fe
+            JOIN companies c ON c.id = fe.company_id
+            WHERE c.name_normalised = %s
+              AND fe.source_url = %s
+            """,
+            ("newmarqo", items[0].url),
+        )
+        funding_row = cur.fetchone()
+        assert funding_row is not None
+        assert funding_row["stage"] == "seed"
+        assert funding_row["announced_on"] == date(2026, 4, 21)
+        assert funding_row["amount_usd"] == 5_000_000
+        assert funding_row["lead_investor"] == "Blackbird"
+        # Cleanup.
         cur.execute("DELETE FROM news_items WHERE source_url = %s", (items[0].url,))
         cur.execute("DELETE FROM companies WHERE name_normalised = %s", ("newmarqo",))
         conn.commit()

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Protocol
@@ -27,6 +27,20 @@ from ai_sector_watch.discovery.geocoder import geocode_city
 from ai_sector_watch.storage import supabase_db
 
 SEED_PATH = REPO_ROOT / "data" / "seed" / "companies.yaml"
+
+
+@dataclass(frozen=True)
+class FundingEvent:
+    """Latest funding event attached to a company."""
+
+    id: str
+    announced_on: date | None
+    stage: str | None
+    amount_usd: Decimal | None
+    currency_raw: str | None
+    lead_investor: str | None
+    investors: list[str]
+    source_url: str | None
 
 
 @dataclass(frozen=True)
@@ -44,6 +58,7 @@ class Company:
     summary: str | None
     discovery_status: str
     discovery_source: str | None
+    latest_funding_event: FundingEvent | None = None
 
 
 @dataclass(frozen=True)
@@ -139,8 +154,34 @@ class SupabaseSource:
     backend = "supabase"
 
     def list_companies(self, *, statuses: tuple[str, ...] = ("verified",)) -> list[Company]:
-        with supabase_db.connection() as conn:
-            rows = supabase_db.list_companies(conn, statuses=statuses)
+        with supabase_db.connection() as conn, conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    c.*,
+                    fe.id AS latest_funding_id,
+                    fe.announced_on AS latest_funding_announced_on,
+                    fe.stage AS latest_funding_stage,
+                    fe.amount_usd AS latest_funding_amount_usd,
+                    fe.currency_raw AS latest_funding_currency_raw,
+                    fe.lead_investor AS latest_funding_lead_investor,
+                    fe.investors AS latest_funding_investors,
+                    fe.source_url AS latest_funding_source_url
+                FROM companies c
+                LEFT JOIN LATERAL (
+                    SELECT id, announced_on, stage, amount_usd, currency_raw,
+                           lead_investor, investors, source_url, created_at
+                    FROM funding_events
+                    WHERE company_id = c.id
+                    ORDER BY announced_on DESC NULLS LAST, created_at DESC
+                    LIMIT 1
+                ) fe ON TRUE
+                WHERE c.discovery_status = ANY(%s)
+                ORDER BY c.name
+                """,
+                (list(statuses),),
+            )
+            rows = cur.fetchall()
         return [_company_from_row(r) for r in rows]
 
     def recent_news(self, *, limit: int = 50) -> list[NewsItem]:
@@ -193,6 +234,18 @@ class SupabaseSource:
 
 
 def _company_from_row(r: dict) -> Company:
+    latest_funding_event = None
+    if r.get("latest_funding_id"):
+        latest_funding_event = FundingEvent(
+            id=str(r["latest_funding_id"]),
+            announced_on=r.get("latest_funding_announced_on"),
+            stage=r.get("latest_funding_stage"),
+            amount_usd=r.get("latest_funding_amount_usd"),
+            currency_raw=r.get("latest_funding_currency_raw"),
+            lead_investor=r.get("latest_funding_lead_investor"),
+            investors=list(r.get("latest_funding_investors") or []),
+            source_url=r.get("latest_funding_source_url"),
+        )
     return Company(
         id=str(r["id"]),
         name=r["name"],
@@ -207,6 +260,7 @@ def _company_from_row(r: dict) -> Company:
         summary=r.get("summary"),
         discovery_status=r["discovery_status"],
         discovery_source=r.get("discovery_source"),
+        latest_funding_event=latest_funding_event,
     )
 
 

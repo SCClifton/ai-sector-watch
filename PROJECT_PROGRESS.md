@@ -350,6 +350,20 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 - `ANTHROPIC_API_KEY` and `ADMIN_PASSWORD` are still unset locally, so `verify_setup.py` reports WARN for those checks.
 - Local `black --check .` currently reports pre-existing formatting changes across 19 Python files unrelated to issue #1.
 
+## 2026-04-27 - Issue 18: Funding-event extraction wired
+
+**Shipped:**
+- `src/ai_sector_watch/pipeline/weekly.py`: funding-kind news now runs the existing `FundingExtraction` prompt after company linking, skips extraction when no company is linked, and persists confirmed events through `upsert_funding_event()`.
+- `src/ai_sector_watch/storage/supabase_db.py`: funding-event upsert now handles nullable `announced_on` and `stage` idempotently before falling through to the existing conflict path.
+- `src/ai_sector_watch/storage/data_source.py` and `dashboard/components/map_view.py`: company reads include the latest funding event, and map popups show stage, date, and amount when present.
+
+**Tested:**
+- `op run --account my.1password.com --env-file=.env.local -- .venv/bin/pytest -q`: pass.
+- `.venv/bin/ruff check .`: pass.
+- `.venv/bin/black --check .`: pass.
+
+**Known limitations:**
+- The orchestrator extracts one funding event for the first linked company on a funding-kind article. That matches the current prompt shape and budget estimate.
 
 
 
