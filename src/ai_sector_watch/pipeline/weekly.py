@@ -37,6 +37,7 @@ from ai_sector_watch.sources import (
     arxiv_source,
     huggingface_papers,
     rss,
+    sitemap,
 )
 from ai_sector_watch.sources.base import RawItem, SourceBase
 from ai_sector_watch.storage import supabase_db
@@ -51,6 +52,7 @@ def default_sources() -> list[SourceBase]:
     return [
         rss.startup_daily_au(),
         rss.smartcompany_startups(),
+        sitemap.capital_brief(),
         rss.airtree_open_source_vc(),
         rss.blackbird_blog(),
         rss.crunchbase_ai(),

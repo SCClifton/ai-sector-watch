@@ -2,6 +2,24 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #17: Capital Brief source
+
+**Shipped (codex/17-wire-capital-brief-rss-source-into-the-p):**
+- Confirmed Capital Brief does not expose a native RSS or Atom feed at common feed paths.
+- Added `GoogleNewsSitemapSource` for publishers that expose Google News sitemap XML.
+- Registered `capital_brief` in the weekly pipeline using `https://www.capitalbrief.com/sitemap/news.xml`, the XML endpoint advertised in Capital Brief's `robots.txt`.
+- Updated `docs/sources.md` to mark Capital Brief as a News sitemap source.
+- Added a fixture-driven Capital Brief sitemap parser test.
+
+**Tested:**
+- `pytest tests/test_rss_sources.py -q`: 10 pass.
+- `pytest -q`: pass, 2 skipped live DB tests.
+- `ruff check .`: clean.
+- `black --check .`: clean.
+
+**Known limitations:**
+- This is not a native Capital Brief RSS feed. It uses Capital Brief's advertised Google News sitemap because no RSS or Atom endpoint could be confirmed.
+
 ## 2026-04-27 - Issue #16: Digest LLM spend metrics
 
 **Shipped (codex/16-surface-running-llm-spend-on-the-digest):**
@@ -331,7 +349,6 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 **Known limitations:**
 - `ANTHROPIC_API_KEY` and `ADMIN_PASSWORD` are still unset locally, so `verify_setup.py` reports WARN for those checks.
 - Local `black --check .` currently reports pre-existing formatting changes across 19 Python files unrelated to issue #1.
-
 
 
 

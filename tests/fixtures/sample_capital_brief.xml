@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <url>
+    <loc>https://www.capitalbrief.com/article/australian-quantum-startups-seize-on-nvidias-ising-ai-model-in-race-to-viability-8e57db66-4008-41ce-b179-d6547cde1b39/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Capital Brief</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-22T05:00:00.000Z</news:publication_date>
+      <news:title>Australian quantum startups seize on Nvidia's Ising AI model</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.capitalbrief.com/briefing/commonwealth-bank-builds-new-ai-agent-to-combat-fraud-6d7f5f1d-2d75-4db1-a5e3-916661b26172/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Capital Brief</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-04-24T03:25:00.000Z</news:publication_date>
+      <news:title>Commonwealth Bank builds new AI agent to combat fraud</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://www.capitalbrief.com/article/malformed-entry-without-news-title/</loc>
+  </url>
+</urlset>
