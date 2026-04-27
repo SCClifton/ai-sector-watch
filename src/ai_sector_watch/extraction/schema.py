@@ -112,7 +112,7 @@ class CompanyFacts(BaseModel):
     )
     founders: list[str] = Field(
         default_factory=list,
-        description="Founder names if listed on About / Team / LinkedIn-style pages.",
+        description="Founder names if listed on About, Team, or Leadership pages.",
     )
     city: str | None = Field(None, description="HQ city if stated.")
     country: str | None = Field(None, description="HQ country code (AU, NZ, US, ...) if stated.")
@@ -135,6 +135,10 @@ class CompanyFacts(BaseModel):
         ge=0.0,
         le=1.0,
         description="0 when scrape failed or empty; rises as more fields come back populated.",
+    )
+    evidence_urls: list[str] = Field(
+        default_factory=list,
+        description="Source URLs used to verify the extracted facts.",
     )
 
     @classmethod

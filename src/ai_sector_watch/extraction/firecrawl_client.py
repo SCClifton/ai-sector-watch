@@ -1,22 +1,12 @@
-"""Budget-capped, cached Firecrawl client.
+"""Budget-capped, cached Firecrawl enrichment client.
 
-Mirrors the `ClaudeClient` pattern in `claude_client.py`:
+The pipeline-facing path pulls markdown from the company homepage, selected
+company pages, and recent search results, then asks our Claude client to emit
+the existing `CompanyFacts` schema. Firecrawl JSON mode is intentionally kept
+out of the pipeline path to avoid paying extract credits on every page.
 
-- Lazy auth (`FIRECRAWL_API_KEY`) so importing the module never hits the
-  network or fails when the env var is unset (e.g. in CI).
-- Per-run credit cap via `FIRECRAWL_BUDGET_CREDITS_PER_RUN` (default 200).
-  A scrape with JSON-mode extract costs ~5 credits; the cap raises
-  `FirecrawlBudgetExceeded` when the next call would push past the cap.
-- Disk cache under `data/local/firecrawl_cache/{hash}.json`. The cache
-  key is the URL plus the JSON-Schema hash so a schema change forces a
-  re-scrape.
-- Tests should monkey-patch `FirecrawlClient._dispatch()` to avoid
-  hitting the live SDK.
-
-The public entry point for the pipeline is `firecrawl_enrich(client, website)`
-which returns a `CompanyFacts`. It tolerates missing websites and scrape
-failures by returning a low-confidence empty `CompanyFacts`, so the
-caller never has to special-case None.
+The older `scrape_facts()` method remains for compatibility with existing
+tests and callers, but new enrichment should use `firecrawl_enrich()`.
 """
 
 from __future__ import annotations
@@ -29,31 +19,59 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse, urlunparse
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from ai_sector_watch.config import REPO_ROOT
+from ai_sector_watch.extraction.claude_client import BudgetExceeded, ClaudeClient
 from ai_sector_watch.extraction.schema import CompanyFacts
 
 LOGGER = logging.getLogger(__name__)
 CACHE_DIR = REPO_ROOT / "data" / "local" / "firecrawl_cache"
 
-# A scrape (1 credit) plus JSON-mode extract (4 credits) = 5 credits per call.
+# Legacy JSON-mode scrape: 1 scrape credit + 4 JSON extract credits.
 DEFAULT_CREDITS_PER_CALL = 5
+DEFAULT_CREDITS_PER_ENRICH = 8
 DEFAULT_BUDGET_CREDITS_PER_RUN = 200
 
+COMPANY_PAGE_KEYWORDS = (
+    "about",
+    "team",
+    "leadership",
+    "people",
+    "founders",
+    "company",
+)
+MAX_COMPANY_PAGES = 3
+MAX_EXTRA_COMPANY_PAGES_FOR_ENRICH = 2
+MAX_NEWS_RESULTS_FOR_ENRICH = 2
+SEARCH_RESULTS_LIMIT = 10
+SEARCH_TBS_LAST_YEAR = "qdr:y"
+MAX_MARKDOWN_CHARS_PER_SOURCE = 6_000
+
+BLOCKED_NEWS_DOMAINS = {
+    "linkedin.com",
+    "x.com",
+    "twitter.com",
+    "threads.net",
+    "bsky.app",
+    "reddit.com",
+}
+
 ENRICH_PROMPT = (
-    "Extract authoritative facts about this company from its own website. "
-    "Use only what the page explicitly states. Leave fields null when the "
-    "page does not say. Do not use em dashes in the description; prefer a "
-    "colon, comma, or ' - '."
+    "Extract authoritative facts about this company from the supplied source excerpts. "
+    "Use only what the excerpts explicitly state. Leave fields null or empty when the "
+    "sources do not say. Do not use em dashes in the description; prefer a colon, comma, "
+    "or ' - '. Include evidence_urls containing only URLs from the supplied excerpts that "
+    "support the extracted facts."
 )
 
 _EM_DASH_PATTERN = re.compile(r"\s*[—–]\s*")
 
 
 class FirecrawlBudgetExceeded(RuntimeError):
-    """Raised when a scrape would push the run total past the credit cap."""
+    """Raised when a Firecrawl operation would push the run past the credit cap."""
 
 
 @dataclass
@@ -75,6 +93,15 @@ class FirecrawlResult:
     cached: bool
 
 
+@dataclass(frozen=True)
+class MarkdownDocument:
+    """Markdown scraped from one source URL."""
+
+    url: str
+    markdown: str
+    title: str | None = None
+
+
 def _hash(*parts: str) -> str:
     h = hashlib.sha256()
     for p in parts:
@@ -88,6 +115,40 @@ def _sanitise(text: str | None) -> str | None:
     if text is None:
         return None
     return _EM_DASH_PATTERN.sub(" - ", text).strip() or None
+
+
+def _normalise_url(url: str) -> str:
+    """Return a stable absolute URL string for dedupe and cache keys."""
+    candidate = url.strip()
+    if not candidate:
+        return ""
+    if "://" not in candidate:
+        candidate = "https://" + candidate
+    parsed = urlparse(candidate)
+    netloc = parsed.netloc.lower()
+    path = parsed.path.rstrip("/") or ""
+    return urlunparse((parsed.scheme.lower() or "https", netloc, path, "", "", ""))
+
+
+def _domain(url: str) -> str:
+    netloc = urlparse(_normalise_url(url)).netloc.lower()
+    return netloc[4:] if netloc.startswith("www.") else netloc
+
+
+def _same_domain(left: str, right: str) -> bool:
+    return _domain(left) == _domain(right)
+
+
+def _is_blocked_news_url(url: str) -> bool:
+    domain = _domain(url)
+    return any(
+        domain == blocked or domain.endswith("." + blocked) for blocked in BLOCKED_NEWS_DOMAINS
+    )
+
+
+def _candidate_page_matches(url: str, title: str | None) -> bool:
+    haystack = " ".join([url, title or ""]).lower()
+    return any(keyword in haystack for keyword in COMPANY_PAGE_KEYWORDS)
 
 
 class FirecrawlClient:
@@ -114,7 +175,7 @@ class FirecrawlClient:
         self.cache_dir = cache_dir or CACHE_DIR
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.stats = FirecrawlStats()
-        self._client = None  # lazy
+        self._client = None
 
     @property
     def firecrawl(self):
@@ -133,16 +194,42 @@ class FirecrawlClient:
 
     # -- public ----------------------------------------------------------
 
+    def find_company_pages(self, website: str) -> list[str]:
+        """Use Firecrawl /map to find relevant company-domain pages."""
+        root_url = _normalise_url(website)
+        self._ensure_budget(1)
+        try:
+            pages = self._find_company_pages_unmetered(root_url)
+        except Exception as exc:  # noqa: BLE001
+            self.stats.calls += 1
+            self.stats.failures.append(f"{root_url}: map: {type(exc).__name__}: {exc}")
+            LOGGER.warning("firecrawl map failed for %s: %s", root_url, exc)
+            return []
+        self._record_firecrawl_spend(credits=1)
+        return pages
+
+    def fetch_company_news(self, name: str, limit: int = 3) -> list[dict[str, str]]:
+        """Search recent web results for company leadership/funding coverage and scrape them."""
+        self._ensure_budget(2 + limit)
+        try:
+            docs = self._fetch_company_news_unmetered(name=name, limit=limit)
+        except Exception as exc:  # noqa: BLE001
+            self.stats.calls += 1
+            self.stats.failures.append(f"{name}: search: {type(exc).__name__}: {exc}")
+            LOGGER.warning("firecrawl search failed for %s: %s", name, exc)
+            return []
+        self._record_firecrawl_spend(credits=2 + len(docs))
+        return [doc.__dict__ for doc in docs]
+
     def scrape_facts(self, url: str) -> FirecrawlResult:
         """Scrape `url` and return JSON-mode-extracted CompanyFacts.
 
-        Raises FirecrawlBudgetExceeded when the next call would exceed
-        the per-run credit cap. On SDK failure, records the failure on
-        `stats.failures` and returns a low-confidence empty CompanyFacts
-        result so the caller can keep going.
+        This is the legacy path from issue #33. It is not used by the weekly
+        pipeline after issue #39, but keeping it avoids breaking callers while
+        the dashboard catches up to the new evidence model.
         """
         schema = CompanyFacts.model_json_schema()
-        cache_key = _hash(url, json.dumps(schema, sort_keys=True))
+        cache_key = _hash("scrape-facts-v1", url, json.dumps(schema, sort_keys=True))
 
         cached = self._read_cache(cache_key)
         if cached is not None:
@@ -158,15 +245,11 @@ class FirecrawlClient:
                     cached=True,
                 )
 
-        if self.stats.credits_used + self.credits_per_call > self.budget_credits:
-            raise FirecrawlBudgetExceeded(
-                f"would exceed {self.budget_credits}-credit cap "
-                f"(used {self.stats.credits_used}, next call costs {self.credits_per_call})"
-            )
+        self._ensure_budget(self.credits_per_call)
 
         try:
             facts_json = self._dispatch(url=url, schema=schema)
-        except Exception as exc:  # noqa: BLE001 - any SDK failure is a soft failure here
+        except Exception as exc:  # noqa: BLE001
             self.stats.calls += 1
             self.stats.failures.append(f"{url}: {type(exc).__name__}: {exc}")
             LOGGER.warning("firecrawl scrape failed for %s: %s", url, exc)
@@ -181,9 +264,7 @@ class FirecrawlClient:
             return FirecrawlResult(facts=CompanyFacts.empty(), credits_used=0, cached=False)
 
         facts = _post_process(facts)
-
-        self.stats.calls += 1
-        self.stats.credits_used += self.credits_per_call
+        self._record_firecrawl_spend(credits=self.credits_per_call)
 
         self._write_cache(
             cache_key,
@@ -195,7 +276,7 @@ class FirecrawlClient:
     # -- live dispatch (override-friendly for tests) ---------------------
 
     def _dispatch(self, *, url: str, schema: dict[str, Any]) -> dict[str, Any]:
-        """Make the actual SDK call. Returns the raw json dict the SDK gave back."""
+        """Make the legacy JSON-mode SDK call."""
         from firecrawl.v2.types import JsonFormat
 
         formats = [
@@ -207,14 +288,102 @@ class FirecrawlClient:
             raise RuntimeError("firecrawl returned no json payload")
         return document.json  # type: ignore[no-any-return]
 
+    def _dispatch_map(self, url: str):
+        """Call Firecrawl /map and return the SDK result."""
+        return self.firecrawl.map(
+            url,
+            include_subdomains=False,
+            ignore_query_parameters=True,
+            limit=40,
+        )
+
+    def _dispatch_search(self, query: str, *, limit: int, tbs: str):
+        """Call Firecrawl /search and return the SDK result."""
+        return self.firecrawl.search(query, limit=limit, tbs=tbs)
+
+    def _dispatch_scrape_markdown(self, url: str) -> MarkdownDocument:
+        """Scrape one URL in basic markdown mode."""
+        document = self.firecrawl.scrape(
+            url,
+            formats=["markdown"],
+            only_main_content=True,
+        )
+        markdown = getattr(document, "markdown", None)
+        if not markdown:
+            raise RuntimeError("firecrawl returned no markdown payload")
+        metadata = getattr(document, "metadata", None)
+        title = getattr(metadata, "title", None) if metadata is not None else None
+        return MarkdownDocument(url=url, title=title, markdown=str(markdown))
+
     # -- internals --------------------------------------------------------
 
-    def _coerce_facts(self, raw: dict[str, Any]) -> CompanyFacts:
-        """Best-effort coercion of the SDK json payload into CompanyFacts.
+    def _ensure_budget(self, estimated_credits: int) -> None:
+        if self.stats.credits_used + estimated_credits > self.budget_credits:
+            raise FirecrawlBudgetExceeded(
+                f"would exceed {self.budget_credits}-credit cap "
+                f"(used {self.stats.credits_used}, next call costs {estimated_credits})"
+            )
 
-        The model can return numeric strings or omit list fields entirely;
-        normalise here before letting Pydantic validate.
-        """
+    def _record_firecrawl_spend(self, *, credits: int) -> None:
+        self.stats.calls += 1
+        self.stats.credits_used += credits
+
+    def _find_company_pages_unmetered(self, root_url: str) -> list[str]:
+        result = self._dispatch_map(root_url)
+        links = getattr(result, "links", None) or []
+        pages: list[str] = []
+        seen: set[str] = set()
+        for link in links:
+            if isinstance(link, dict):
+                url = str(link.get("url") or "")
+                title = link.get("title")
+            else:
+                url = str(getattr(link, "url", "") or "")
+                title = getattr(link, "title", None)
+            normalised = _normalise_url(url)
+            if not normalised or normalised == root_url:
+                continue
+            if normalised in seen or not _same_domain(root_url, normalised):
+                continue
+            if not _candidate_page_matches(normalised, str(title) if title else None):
+                continue
+            pages.append(normalised)
+            seen.add(normalised)
+            if len(pages) >= MAX_COMPANY_PAGES:
+                break
+        return pages
+
+    def _fetch_company_news_unmetered(self, *, name: str, limit: int) -> list[MarkdownDocument]:
+        query = f'"{name}" founder OR CEO OR raised'
+        results = self._dispatch_search(
+            query,
+            limit=SEARCH_RESULTS_LIMIT,
+            tbs=SEARCH_TBS_LAST_YEAR,
+        )
+        docs: list[MarkdownDocument] = []
+        seen: set[str] = set()
+        for url in _search_result_urls(results):
+            normalised = _normalise_url(url)
+            if not normalised or normalised in seen or _is_blocked_news_url(normalised):
+                continue
+            seen.add(normalised)
+            doc = self._safe_scrape_markdown(normalised)
+            if doc is not None:
+                docs.append(doc)
+            if len(docs) >= limit:
+                break
+        return docs
+
+    def _safe_scrape_markdown(self, url: str) -> MarkdownDocument | None:
+        try:
+            return self._dispatch_scrape_markdown(url)
+        except Exception as exc:  # noqa: BLE001
+            self.stats.failures.append(f"{url}: scrape: {type(exc).__name__}: {exc}")
+            LOGGER.warning("firecrawl markdown scrape failed for %s: %s", url, exc)
+            return None
+
+    def _coerce_facts(self, raw: dict[str, Any]) -> CompanyFacts:
+        """Best-effort coercion of the SDK json payload into CompanyFacts."""
         cleaned: dict[str, Any] = dict(raw)
 
         founded = cleaned.get("founded_year")
@@ -224,7 +393,7 @@ class FirecrawlClient:
             except ValueError:
                 cleaned["founded_year"] = None
 
-        for list_field in ("founders", "sector_keywords"):
+        for list_field in ("founders", "sector_keywords", "evidence_urls"):
             value = cleaned.get(list_field)
             if value is None:
                 cleaned[list_field] = []
@@ -266,6 +435,17 @@ class FirecrawlClient:
             LOGGER.warning("firecrawl cache write failed for %s: %s", key[:8], exc)
 
 
+def _search_result_urls(results: Any) -> list[str]:
+    urls: list[str] = []
+    for bucket_name in ("news", "web"):
+        bucket = getattr(results, bucket_name, None) or []
+        for item in bucket:
+            url = getattr(item, "url", None)
+            if url:
+                urls.append(str(url))
+    return urls
+
+
 def _derive_confidence(raw: dict[str, Any]) -> float:
     """Fallback confidence: 1 if description plus another field present, else 0.5/0.0."""
     has_description = bool(raw.get("description"))
@@ -289,12 +469,7 @@ def _derive_confidence(raw: dict[str, Any]) -> float:
 
 
 def _post_process(facts: CompanyFacts) -> CompanyFacts:
-    """Sanitise user-facing strings and recompute confidence from populated fields.
-
-    The LLM tends to either echo the schema default (0.0) or hallucinate a
-    high value regardless of how much it actually filled in. Compute it
-    deterministically here so downstream `confidence > 0` checks behave.
-    """
+    """Sanitise user-facing strings and recompute confidence from populated fields."""
     cleaned_description = _sanitise(facts.description)
     cleaned_summary = _sanitise(facts.last_funding_summary)
     populated_other = sum(
@@ -322,23 +497,125 @@ def _post_process(facts: CompanyFacts) -> CompanyFacts:
             "description": cleaned_description,
             "last_funding_summary": cleaned_summary,
             "confidence": confidence,
+            "evidence_urls": _dedupe_urls(facts.evidence_urls),
         }
     )
 
 
-def firecrawl_enrich(client: FirecrawlClient, website: str | None) -> CompanyFacts:
-    """Pipeline-facing helper: enrich one company website into CompanyFacts.
+def _dedupe_urls(urls: list[str]) -> list[str]:
+    seen: set[str] = set()
+    out: list[str] = []
+    for url in urls:
+        normalised = _normalise_url(url)
+        if not normalised or normalised in seen:
+            continue
+        seen.add(normalised)
+        out.append(normalised)
+    return out
 
-    Returns CompanyFacts.empty() (confidence=0) when:
-    - website is None or blank,
-    - the SDK call raised any exception,
-    - the response did not validate against CompanyFacts.
 
-    Raises FirecrawlBudgetExceeded when the next call would push past
-    the credit cap; the caller (orchestrator) catches this and records
-    a partial run, same shape as BudgetExceeded in claude_client.
-    """
+def _build_enrichment_context(name: str, documents: list[MarkdownDocument]) -> str:
+    chunks = [f"Company: {name}", "Source excerpts:"]
+    for idx, doc in enumerate(documents, start=1):
+        markdown = doc.markdown[:MAX_MARKDOWN_CHARS_PER_SOURCE]
+        title = f"\nTitle: {doc.title}" if doc.title else ""
+        chunks.append(f"\n[{idx}] URL: {doc.url}{title}\nMarkdown:\n{markdown}")
+    return "\n".join(chunks)
+
+
+def _evidence_urls_from(facts: CompanyFacts, documents: list[MarkdownDocument]) -> list[str]:
+    available_ordered = _dedupe_urls(
+        [_normalise_url(doc.url) for doc in documents if doc.markdown.strip()]
+    )
+    available = set(available_ordered)
+    selected = [
+        _normalise_url(url) for url in facts.evidence_urls if _normalise_url(url) in available
+    ]
+    return _dedupe_urls(selected or available_ordered)
+
+
+def firecrawl_enrich(
+    client: FirecrawlClient,
+    llm_client: ClaudeClient,
+    website: str | None,
+    *,
+    name: str,
+) -> CompanyFacts:
+    """Enrich one company website and recent coverage into CompanyFacts."""
     if not website or not website.strip():
         return CompanyFacts.empty()
-    result = client.scrape_facts(website.strip())
-    return result.facts
+
+    root_url = _normalise_url(website)
+    schema_hash = json.dumps(CompanyFacts.model_json_schema(), sort_keys=True)
+    cache_key = _hash("enrich-v2", root_url, name, schema_hash)
+    cached = client._read_cache(cache_key)
+    if cached is not None:
+        try:
+            facts = CompanyFacts.model_validate(cached["facts"])
+        except ValidationError as exc:
+            LOGGER.warning(
+                "firecrawl enrich cache for %s failed validation: %s", cache_key[:8], exc
+            )
+        else:
+            client.stats.cache_hits += 1
+            return facts
+
+    client._ensure_budget(DEFAULT_CREDITS_PER_ENRICH)
+
+    homepage = client._safe_scrape_markdown(root_url)
+    try:
+        company_pages = client._find_company_pages_unmetered(root_url)[
+            :MAX_EXTRA_COMPANY_PAGES_FOR_ENRICH
+        ]
+    except Exception as exc:  # noqa: BLE001
+        client.stats.failures.append(f"{root_url}: map: {type(exc).__name__}: {exc}")
+        LOGGER.warning("firecrawl map failed for %s: %s", root_url, exc)
+        company_pages = []
+    documents: list[MarkdownDocument] = [homepage] if homepage is not None else []
+    for page_url in company_pages:
+        doc = client._safe_scrape_markdown(page_url)
+        if doc is not None:
+            documents.append(doc)
+
+    try:
+        documents.extend(
+            client._fetch_company_news_unmetered(name=name, limit=MAX_NEWS_RESULTS_FOR_ENRICH)
+        )
+    except Exception as exc:  # noqa: BLE001
+        client.stats.failures.append(f"{name}: search: {type(exc).__name__}: {exc}")
+        LOGGER.warning("firecrawl search failed for %s: %s", name, exc)
+    client._record_firecrawl_spend(credits=DEFAULT_CREDITS_PER_ENRICH)
+
+    if not documents:
+        return CompanyFacts.empty()
+
+    try:
+        response = llm_client.structured_call(
+            system=ENRICH_PROMPT,
+            prompt=_build_enrichment_context(name, documents),
+            schema_cls=CompanyFacts,
+            max_tokens=1024,
+        )
+    except BudgetExceeded:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        client.stats.failures.append(f"{root_url}: claude enrichment: {type(exc).__name__}: {exc}")
+        LOGGER.warning("claude enrichment failed for %s: %s", root_url, exc)
+        return CompanyFacts.empty()
+
+    parsed = response.parsed
+    if isinstance(parsed, CompanyFacts):
+        facts = parsed
+    elif isinstance(parsed, BaseModel):
+        facts = CompanyFacts.model_validate(parsed.model_dump())
+    else:
+        facts = CompanyFacts.model_validate(parsed)
+
+    facts = _post_process(facts)
+    facts = facts.model_copy(update={"evidence_urls": _evidence_urls_from(facts, documents)})
+    client._write_cache(
+        cache_key,
+        facts=facts.model_dump(mode="json"),
+        credits_used=DEFAULT_CREDITS_PER_ENRICH,
+    )
+    return facts

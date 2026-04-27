@@ -134,6 +134,7 @@ def upsert_company(
     stage: str | None = None,
     founded_year: int | None = None,
     summary: str | None = None,
+    evidence_urls: list[str] | None = None,
     discovery_status: str = "auto_discovered_pending_review",
     discovery_source: str | None = None,
 ) -> str:
@@ -143,15 +144,16 @@ def upsert_company(
     """
     name_normalised = normalise_name(name)
     sector_tags = sector_tags or []
+    evidence_urls = evidence_urls or []
     with conn.cursor() as cur:
         cur.execute(
             """
             INSERT INTO companies (
                 name, name_normalised, website, country, city, lat, lon,
-                sector_tags, stage, founded_year, summary,
+                sector_tags, stage, founded_year, summary, evidence_urls,
                 discovery_status, discovery_source
             ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
             ON CONFLICT (name_normalised, COALESCE(country, ''))
             DO UPDATE SET
@@ -166,6 +168,10 @@ def upsert_company(
                 stage            = COALESCE(EXCLUDED.stage, companies.stage),
                 founded_year     = COALESCE(EXCLUDED.founded_year, companies.founded_year),
                 summary          = COALESCE(EXCLUDED.summary, companies.summary),
+                evidence_urls    = CASE
+                    WHEN EXCLUDED.evidence_urls = '{}' THEN companies.evidence_urls
+                    ELSE EXCLUDED.evidence_urls
+                END,
                 -- Only allow status to be promoted/demoted by an explicit
                 -- caller; a re-seed shouldn't downgrade a verified row.
                 discovery_status = CASE
@@ -189,6 +195,7 @@ def upsert_company(
                 stage,
                 founded_year,
                 summary,
+                evidence_urls,
                 discovery_status,
                 discovery_source,
             ),

@@ -2,6 +2,22 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #39: Multi-source Firecrawl enrichment
+
+**Shipped (codex/39-extend-firecrawl-enrichment-with-about-t):**
+- Firecrawl enrichment now gathers homepage markdown, mapped company pages (`about`, `team`, `leadership`, `people`, `founders`, `company`), and recent search results for founder/CEO/funding context.
+- The pipeline path now uses basic Firecrawl markdown scrapes plus `ClaudeClient.structured_call` into `CompanyFacts`; Firecrawl JSON mode remains only for the legacy `scrape_facts()` compatibility path.
+- `CompanyFacts.evidence_urls` added and persisted to `companies.evidence_urls` via an idempotent `TEXT[]` column and `upsert_company`.
+- Firecrawl budget pre-flight now reserves 8 credits per enrichment, matching the target of map + homepage/company scrapes + search + news scrapes.
+
+**Tested:**
+- `PYTHONPATH=src .venv/bin/pytest -q`: 115 pass, 2 skipped.
+- `PYTHONPATH=src .venv/bin/ruff check .`: clean.
+- `PYTHONPATH=src .venv/bin/black --check .`: clean.
+
+**Known limitations:**
+- Existing company backfill remains out of scope for this issue.
+
 ## 2026-04-27 - Issue #30: Design system foundation
 
 **Shipped (claude-code/30-design-system-foundation-theme-typograph):**

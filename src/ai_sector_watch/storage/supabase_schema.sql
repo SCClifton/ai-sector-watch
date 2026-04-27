@@ -52,11 +52,15 @@ CREATE TABLE IF NOT EXISTS companies (
     stage           company_stage,
     founded_year    INTEGER,
     summary         TEXT,
+    evidence_urls   TEXT[] NOT NULL DEFAULT '{}',
     discovery_status discovery_status NOT NULL DEFAULT 'auto_discovered_pending_review',
     discovery_source TEXT,                -- e.g. 'seed', 'startup_daily_au'
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE companies
+    ADD COLUMN IF NOT EXISTS evidence_urls TEXT[] NOT NULL DEFAULT '{}';
 
 CREATE UNIQUE INDEX IF NOT EXISTS companies_name_country_unique
     ON companies (name_normalised, COALESCE(country, ''));
