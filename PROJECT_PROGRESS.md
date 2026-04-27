@@ -99,6 +99,25 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 06 — Map page (folium markers, sector colour, clustering, popup, jitter).
 
+## 2026-04-27 — Commit 06: Map page
+
+**Shipped:**
+- `dashboard/components/map_view.py`: `build_map(companies)` returns a folium Map centred on south-east Australia at zoom 4 with carto-positron tiles, MarkerCluster grouping, sector-coloured icons, and click-through popup HTML (name + link + city + stage + founded + sector chips + summary). `_popup_html` strips em dashes per PRD §16. `split_geocoded()` partitions companies that can vs cannot be plotted.
+- `dashboard/pages/1_Map.py`: Streamlit page with title, helper caption, dev-mode banner, three metric tiles (on map / tracked / awaiting geocoding), the folium map at 620px height, and an expander listing companies without coords.
+- Fix: added `REPO_ROOT` to `sys.path` in both `dashboard/streamlit_app.py` and `dashboard/pages/1_Map.py` so the `dashboard.components.*` imports resolve when Streamlit runs each page.
+
+**Tested:**
+- `pytest -q`: 52 pass, 1 skipped (added 7 map_view tests).
+- `ruff check .`: clean.
+- Browser smoke check via Claude in Chrome MCP: page renders with 52 markers clustered around Sydney (26+14), Melbourne, Brisbane (4), Perth, and NZ (6). Sidebar nav shows the Map page entry.
+
+**Known limitations:**
+- Marker colours derive from the first sector tag; map currently has no legend (deferred).
+- Popup HTML is built as a string; if a company name ever contained a stray `<` it would break the popup. Acceptable for v0 with curated seed data; will harden in v1.
+
+**Next:** Commit 07 — sidebar filters + companies table below the map.
+
+
 
 
 
