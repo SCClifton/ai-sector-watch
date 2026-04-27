@@ -44,6 +44,7 @@ Context (from the news item that mentioned it):
 If the name is ambiguous (multiple companies share it), set `is_valid` false.
 If the company exists but is not in any AI/ML space, set `is_ai_company` false.
 Set `canonical_name` only if the input is a misspelling or short form (e.g. "marqo.io" -> "Marqo").
+Set `website` to the company's homepage URL only if the article mentions it or you know it with high confidence. Use null if unknown. Do not guess.
 """
 
 CLASSIFY_COMPANY_SYSTEM = (

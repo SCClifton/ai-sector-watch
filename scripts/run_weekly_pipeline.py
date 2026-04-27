@@ -56,6 +56,9 @@ def main() -> int:
         "items_new": result.items_new,
         "candidates_added": result.candidates_added,
         "cost_usd": round(result.cost_usd, 4),
+        "firecrawl_credits_used": result.firecrawl_credits_used,
+        "firecrawl_calls": result.firecrawl_calls,
+        "firecrawl_cache_hits": result.firecrawl_cache_hits,
         "digest_path": result.digest_path,
         "errors": result.errors,
     }

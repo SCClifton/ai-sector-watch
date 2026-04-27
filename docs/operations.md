@@ -43,6 +43,9 @@ gh run watch
 
 - The pipeline hard-caps Anthropic spend per run via `ANTHROPIC_BUDGET_USD_PER_RUN` (default $2). When the cap is hit mid-run, the orchestrator records a `partial` ingest event and writes a digest of what it managed to do.
 - Successful LLM responses are cached on disk under `data/local/claude_cache/` keyed by `(model, system, prompt, schema_class)`. CI runs see a cold cache; local development reruns are free after the first call.
+- Firecrawl enrichment is hard-capped per run via `FIRECRAWL_BUDGET_CREDITS_PER_RUN` (default 200 credits, ~40 candidates at 5 credits each). When the cap is hit, enrichment short-circuits to an empty `CompanyFacts` and the rest of the run continues. The annual budget at realistic load (~8 candidates per week) sits around 2,000 credits out of the 20,000 available.
+- Successful Firecrawl responses are cached on disk under `data/local/firecrawl_cache/` keyed by `(url, json_schema_hash)`. The schema hash means a `CompanyFacts` schema change forces a re-scrape on the next run.
+- The pipeline JSON summary (`scripts/run_weekly_pipeline.py`) reports `firecrawl_credits_used`, `firecrawl_calls`, and `firecrawl_cache_hits` alongside Anthropic spend so spend is observable from cron logs.
 
 ## Rollback
 
