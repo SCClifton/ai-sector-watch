@@ -31,8 +31,10 @@ from ai_sector_watch.extraction.claude_client import (
 from ai_sector_watch.extraction.prompts import (
     EXTRACT_COMPANIES_SYSTEM,
     EXTRACT_COMPANIES_USER_TEMPLATE,
+    EXTRACT_FUNDING_SYSTEM,
+    EXTRACT_FUNDING_USER_TEMPLATE,
 )
-from ai_sector_watch.extraction.schema import CompanyMentionList
+from ai_sector_watch.extraction.schema import CompanyMentionList, FundingExtraction
 from ai_sector_watch.sources import (
     arxiv_source,
     huggingface_papers,
@@ -138,6 +140,7 @@ def run_weekly_pipeline(
         known_pairs = [
             (supabase_db.normalise_name(c["name"]), str(c["id"])) for c in existing_companies
         ]
+        company_names_by_id = {str(c["id"]): c["name"] for c in existing_companies}
 
         for item in raw_items:
             try:
@@ -191,10 +194,12 @@ def run_weekly_pipeline(
                     discovery_status="auto_discovered_pending_review",
                     discovery_source=item.source_slug,
                 )
+                company_name = validation.canonical_name or mention.name
                 new_company_ids.append(company_id)
                 result.new_companies.append(mention.name)
                 result.candidates_added += 1
                 known_pairs.append((normalised, company_id))
+                company_names_by_id[company_id] = company_name
 
             # 4. News-kind classification + upsert
             try:
@@ -209,14 +214,14 @@ def run_weekly_pipeline(
                 continue
 
             mention_names = [m.name for m in mentions.mentions]
-            linked_ids = list(
-                {
+            linked_ids = _dedupe_ids(
+                [
                     *cls_mod.link_news_to_companies(
                         mention_names=mention_names,
                         known_companies=known_pairs,
                     ),
                     *new_company_ids,
-                }
+                ]
             )
 
             news_id = supabase_db.upsert_news_item(
@@ -241,6 +246,27 @@ def run_weekly_pipeline(
                 }
             )
             result.items_new += 1
+            if news_class.kind == "funding" and linked_ids:
+                primary_company_id = linked_ids[0]
+                primary_company_name = company_names_by_id.get(primary_company_id)
+                if primary_company_name:
+                    try:
+                        funding = _extract_funding(client, item, primary_company_name)
+                    except BudgetExceeded as exc:
+                        result.errors.append(f"budget exceeded: {exc}")
+                        break
+                    if funding.has_funding_event:
+                        supabase_db.upsert_funding_event(
+                            conn,
+                            company_id=primary_company_id,
+                            announced_on=funding.announced_on,
+                            stage=_clean_funding_stage(funding.stage),
+                            amount_usd=funding.amount_usd,
+                            currency_raw=funding.currency_raw,
+                            lead_investor=funding.lead_investor,
+                            investors=funding.investors,
+                            source_url=item.url,
+                        )
 
         # 5. Audit row per run.
         supabase_db.insert_ingest_event(
@@ -282,6 +308,54 @@ def _extract_mentions(client: ClaudeClient, item: RawItem) -> CompanyMentionList
         max_tokens=512,
     )
     return response.parsed  # type: ignore[return-value]
+
+
+def _extract_funding(client: ClaudeClient, item: RawItem, company_name: str) -> FundingExtraction:
+    prompt = EXTRACT_FUNDING_USER_TEMPLATE.format(
+        name=company_name,
+        body="\n\n".join([item.title, item.summary or ""]),
+    )
+    response = client.structured_call(
+        system=EXTRACT_FUNDING_SYSTEM,
+        prompt=prompt,
+        schema_cls=FundingExtraction,
+        max_tokens=384,
+    )
+    return response.parsed  # type: ignore[return-value]
+
+
+def _dedupe_ids(ids: list[str]) -> list[str]:
+    seen: set[str] = set()
+    out: list[str] = []
+    for item_id in ids:
+        if item_id in seen:
+            continue
+        seen.add(item_id)
+        out.append(item_id)
+    return out
+
+
+def _clean_funding_stage(stage: str | None) -> str | None:
+    if not stage:
+        return None
+    normalised = stage.lower().replace("-", " ").replace("_", " ").strip()
+    normalised = " ".join(normalised.split())
+    stage_map = {
+        "pre seed": "pre_seed",
+        "preseed": "pre_seed",
+        "seed": "seed",
+        "series a": "series_a",
+        "series b": "series_b_plus",
+        "series b+": "series_b_plus",
+        "series b plus": "series_b_plus",
+        "series c": "series_b_plus",
+        "series d": "series_b_plus",
+        "series e": "series_b_plus",
+        "growth": "series_b_plus",
+        "late stage": "series_b_plus",
+        "mature": "mature",
+    }
+    return stage_map.get(normalised)
 
 
 def _write_empty_digest(today: date, result: PipelineResult) -> None:

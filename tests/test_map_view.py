@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from datetime import date
+from decimal import Decimal
 from types import TracebackType
 
 import folium
 import pytest
 
-from ai_sector_watch.storage.data_source import Company, YamlSource
+from ai_sector_watch.storage.data_source import Company, FundingEvent, YamlSource
 from dashboard.components import sector_legend
 from dashboard.components.map_view import (
     _popup_html,
@@ -62,6 +64,26 @@ def test_popup_html_includes_name_and_link_and_summary() -> None:
     assert "A test company." in html
     assert "Foundation models" in html  # human label, not the raw tag
     assert "—" not in html  # PRD section 16: no em dashes in user-facing copy
+
+
+def test_popup_html_includes_latest_funding_event() -> None:
+    html = _popup_html(
+        _make_company(
+            latest_funding_event=FundingEvent(
+                id="funding-1",
+                announced_on=date(2026, 4, 21),
+                stage="seed",
+                amount_usd=Decimal("5000000"),
+                currency_raw="USD 5M",
+                lead_investor="Blackbird",
+                investors=["Blackbird"],
+                source_url="https://example.com/funding",
+            )
+        )
+    )
+    assert "Latest funding:" in html
+    assert "Seed, 2026-04-21, US$5M" in html
+    assert "—" not in html
 
 
 def test_popup_html_handles_missing_optional_fields() -> None:
