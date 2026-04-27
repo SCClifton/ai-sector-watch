@@ -38,7 +38,7 @@ known for the candidate.
 
 | Provider | URL | Trigger | Cost | Notes |
 |---|---|---|---|---|
-| Firecrawl | https://www.firecrawl.dev/ | Per new ANZ candidate with a known website | ~5 credits per scrape (1 scrape + 4 JSON-mode extract) | Implementation: `src/ai_sector_watch/extraction/firecrawl_client.py`. JSON-mode extract uses the `CompanyFacts` schema. |
+| Firecrawl | https://www.firecrawl.dev/ | Per new ANZ candidate with a known website | ~8 credits per enrichment | Implementation: `src/ai_sector_watch/extraction/firecrawl_client.py`. Uses `/map` to find company pages, basic markdown scrapes for homepage/about/team pages, `/search` for recent coverage, then `ClaudeClient.structured_call` with the `CompanyFacts` schema. Firecrawl JSON mode is not used in the pipeline path. |
 
 Skipped when:
 
@@ -46,6 +46,7 @@ Skipped when:
 - No website is known (LLM validator did not return one).
 - The per-run credit cap (`FIRECRAWL_BUDGET_CREDITS_PER_RUN`, default 200) is reached.
 
-Successful responses are cached on disk under `data/local/firecrawl_cache/` so
-reruns do not re-spend credits. The cache key includes the JSON-Schema hash so
-a schema change forces a re-scrape.
+Successful enrichment responses are cached on disk under
+`data/local/firecrawl_cache/` so reruns do not re-spend credits. The cache key
+includes the `CompanyFacts` JSON-Schema hash so a schema change forces a fresh
+enrichment.

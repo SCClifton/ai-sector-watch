@@ -189,13 +189,21 @@ def run_weekly_pipeline(
                 # no website is known. A scrape failure is non-fatal: facts
                 # comes back with confidence=0 and we fall through.
                 try:
-                    facts = firecrawl_enrich(firecrawl_client, validation.website)
+                    facts = firecrawl_enrich(
+                        firecrawl_client,
+                        client,
+                        validation.website,
+                        name=validation.canonical_name or mention.name,
+                    )
                 except FirecrawlBudgetExceeded as exc:
                     result.errors.append(
                         f"firecrawl budget exceeded after "
                         f"{firecrawl_client.stats.credits_used} credits: {exc}"
                     )
                     facts = CompanyFacts.empty()
+                except BudgetExceeded as exc:
+                    result.errors.append(f"budget exceeded: {exc}")
+                    break
 
                 try:
                     classification = cls_mod.classify_company(
@@ -220,6 +228,7 @@ def run_weekly_pipeline(
                     stage=classification.stage,
                     founded_year=facts.founded_year,
                     summary=classification.summary,
+                    evidence_urls=facts.evidence_urls,
                     discovery_status="auto_discovered_pending_review",
                     discovery_source=item.source_slug,
                 )

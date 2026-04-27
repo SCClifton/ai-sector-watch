@@ -1,20 +1,23 @@
 """Tests for the Firecrawl enrichment client.
 
-All tests stub `FirecrawlClient._dispatch()` so the live SDK is never
-invoked. We mock the SDK shape rather than `httpx` because the SDK
-abstracts the HTTP layer for us; reaching into httpx would be fragile.
+Tests stub the Firecrawl dispatch wrappers so the live SDK is never invoked.
+We mock the SDK shape rather than `httpx` because the SDK abstracts the HTTP
+layer for us; reaching into httpx would be fragile.
 """
 
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
 from ai_sector_watch.extraction.firecrawl_client import (
     DEFAULT_CREDITS_PER_CALL,
+    DEFAULT_CREDITS_PER_ENRICH,
     FirecrawlBudgetExceeded,
     FirecrawlClient,
+    MarkdownDocument,
     _post_process,
     _sanitise,
     firecrawl_enrich,
@@ -36,6 +39,23 @@ SAMPLE_PAYLOAD: dict = {
     "last_funding_summary": "Series B led by Bessemer in 2024.",
     "confidence": 1.0,
 }
+
+
+class FakeClaudeClient:
+    def __init__(self, facts: CompanyFacts | None = None) -> None:
+        self.facts = facts or CompanyFacts(
+            description="Relevance AI is an agent platform for the enterprise.",
+            founders=["Daniel Vassilev", "Jacky Koh"],
+            city="Sydney",
+            country="AU",
+            sector_keywords=["agents"],
+            confidence=1.0,
+        )
+        self.prompts: list[str] = []
+
+    def structured_call(self, *, system, prompt, schema_cls, max_tokens):
+        self.prompts.append(prompt)
+        return SimpleNamespace(parsed=self.facts)
 
 
 def test_scrape_facts_returns_validated_company_facts(tmp_path, monkeypatch) -> None:
@@ -190,28 +210,150 @@ def test_missing_confidence_is_derived(tmp_path, monkeypatch) -> None:
 
 def test_firecrawl_enrich_handles_missing_website(tmp_path) -> None:
     client = _make_client(tmp_path)
-    facts = firecrawl_enrich(client, None)
+    llm = FakeClaudeClient()
+    facts = firecrawl_enrich(client, llm, None, name="Example")
     assert facts.confidence == 0.0
     assert client.stats.calls == 0
 
-    facts = firecrawl_enrich(client, "")
+    facts = firecrawl_enrich(client, llm, "", name="Example")
     assert facts.confidence == 0.0
-    facts = firecrawl_enrich(client, "   ")
+    facts = firecrawl_enrich(client, llm, "   ", name="Example")
     assert facts.confidence == 0.0
     assert client.stats.calls == 0
 
 
-def test_firecrawl_enrich_passes_through_to_scrape(tmp_path, monkeypatch) -> None:
+def test_firecrawl_enrich_combines_homepage_company_page_and_news(tmp_path, monkeypatch) -> None:
     client = _make_client(tmp_path)
+    llm = FakeClaudeClient(
+        CompanyFacts(
+            description="Relevance AI builds AI agents for enterprise teams.",
+            founders=["Daniel Vassilev", "Jacky Koh"],
+            city="Sydney",
+            country="AU",
+            sector_keywords=["agents"],
+            confidence=1.0,
+        )
+    )
 
-    def fake_dispatch(self, *, url, schema):
-        return dict(SAMPLE_PAYLOAD)
+    def fake_map(self, url):
+        return SimpleNamespace(
+            links=[
+                {"url": "https://example.com/about", "title": "About"},
+                {"url": "https://example.com/careers", "title": "Careers"},
+            ]
+        )
 
-    monkeypatch.setattr(FirecrawlClient, "_dispatch", fake_dispatch)
+    def fake_search(self, query, *, limit, tbs):
+        assert query == '"Relevance AI" founder OR CEO OR raised'
+        assert limit == 10
+        assert tbs == "qdr:y"
+        return SimpleNamespace(web=[SimpleNamespace(url="https://news.example/relevance-ai")])
 
-    facts = firecrawl_enrich(client, "  https://example.com  ")
+    def fake_scrape(self, url):
+        return MarkdownDocument(url=url, title="Source", markdown=f"Markdown for {url}")
+
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_map", fake_map)
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_search", fake_search)
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_scrape_markdown", fake_scrape)
+
+    facts = firecrawl_enrich(client, llm, "  https://example.com  ", name="Relevance AI")
     assert facts.confidence == 1.0
     assert client.stats.calls == 1
+    assert client.stats.credits_used == DEFAULT_CREDITS_PER_ENRICH
+    assert facts.evidence_urls == [
+        "https://example.com",
+        "https://example.com/about",
+        "https://news.example/relevance-ai",
+    ]
+    assert "https://example.com/about" in llm.prompts[0]
+    assert "https://news.example/relevance-ai" in llm.prompts[0]
+
+
+def test_find_company_pages_filters_keywords_domain_and_caps(tmp_path, monkeypatch) -> None:
+    client = _make_client(tmp_path)
+
+    def fake_map(self, url):
+        return SimpleNamespace(
+            links=[
+                {"url": "https://example.com/about", "title": "About us"},
+                {"url": "https://example.com/team", "title": "Team"},
+                {"url": "https://example.com/company", "title": "Company"},
+                {"url": "https://example.com/leadership", "title": "Leadership"},
+                {"url": "https://example.com/careers", "title": "Careers"},
+                {"url": "https://other.example/about", "title": "About"},
+            ]
+        )
+
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_map", fake_map)
+
+    assert client.find_company_pages("https://example.com") == [
+        "https://example.com/about",
+        "https://example.com/team",
+        "https://example.com/company",
+    ]
+    assert client.stats.credits_used == 1
+
+
+def test_fetch_company_news_searches_last_year_and_scrapes_top_results(
+    tmp_path, monkeypatch
+) -> None:
+    client = _make_client(tmp_path)
+    search_args: dict[str, object] = {}
+
+    def fake_search(self, query, *, limit, tbs):
+        search_args.update({"query": query, "limit": limit, "tbs": tbs})
+        return SimpleNamespace(
+            web=[
+                SimpleNamespace(url="https://www.linkedin.com/company/example"),
+                SimpleNamespace(url="https://news.example/one"),
+                SimpleNamespace(url="https://news.example/two"),
+                SimpleNamespace(url="https://news.example/three"),
+            ]
+        )
+
+    def fake_scrape(self, url):
+        return MarkdownDocument(url=url, title="News", markdown=f"News markdown for {url}")
+
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_search", fake_search)
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_scrape_markdown", fake_scrape)
+
+    docs = client.fetch_company_news("Example AI", limit=2)
+    assert search_args == {
+        "query": '"Example AI" founder OR CEO OR raised',
+        "limit": 10,
+        "tbs": "qdr:y",
+    }
+    assert [doc["url"] for doc in docs] == [
+        "https://news.example/one",
+        "https://news.example/two",
+    ]
+    assert client.stats.credits_used == 4
+
+
+def test_firecrawl_enrich_budget_preflight_blocks_26th_enrich(tmp_path, monkeypatch) -> None:
+    client = _make_client(tmp_path, budget_credits=200)
+    llm = FakeClaudeClient()
+
+    def fake_map(self, url):
+        return SimpleNamespace(links=[])
+
+    def fake_search(self, query, *, limit, tbs):
+        return SimpleNamespace(web=[])
+
+    def fake_scrape(self, url):
+        return MarkdownDocument(url=url, title="Home", markdown=f"Homepage for {url}")
+
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_map", fake_map)
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_search", fake_search)
+    monkeypatch.setattr(FirecrawlClient, "_dispatch_scrape_markdown", fake_scrape)
+
+    for i in range(25):
+        facts = firecrawl_enrich(client, llm, f"https://example{i}.com", name=f"Company {i}")
+        assert facts.confidence == 1.0
+
+    assert client.stats.credits_used == 200
+    with pytest.raises(FirecrawlBudgetExceeded):
+        firecrawl_enrich(client, llm, "https://example26.com", name="Company 26")
 
 
 def test_cache_round_trip_persists_to_disk(tmp_path, monkeypatch) -> None:
