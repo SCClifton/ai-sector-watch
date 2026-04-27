@@ -2,6 +2,23 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #40: Backfill Firecrawl enrichment
+
+**Shipped (codex/40-backfill-firecrawl-enrichment-for-existi):**
+- Added `companies.enriched_at` via an idempotent schema ALTER.
+- Added storage helpers to list verified companies in recency order and stamp enrichment updates.
+- Added `scripts/backfill_enrichment.py` with dry-run mode, safe merge semantics, recent-skip idempotency, credit budget progress logs, and JSON summary output.
+- Added operator docs for the backfill command and review gates.
+
+**Tested:**
+- `.venv/bin/pytest -q`: pass, 2 skipped live integration tests.
+- `.venv/bin/ruff check .`: clean.
+- `.venv/bin/black --check .`: clean.
+- Dry-run smoke: `op run --account my.1password.com --env-file=.env.local -- .venv/bin/python scripts/backfill_enrichment.py --limit 3 --dry-run` returned 1 verified company and estimated 8 credits. Live Supabase currently has 1 verified company and 2 pending candidates, not the expected 52 seeded companies.
+
+**Known limitations:**
+- The 3-company live smoke is blocked until Supabase contains at least 3 verified seed companies, or Sam confirms running the seed script first.
+
 ## 2026-04-27 - Issue #39: Multi-source Firecrawl enrichment
 
 **Shipped (codex/39-extend-firecrawl-enrichment-with-about-t):**

@@ -23,6 +23,7 @@ from importlib import resources
 from typing import Any
 
 import psycopg
+from psycopg import sql
 from psycopg.rows import dict_row
 from psycopg.types.json import Json
 
@@ -245,6 +246,104 @@ def list_companies(
             (statuses,),
         )
         return list(cur.fetchall())
+
+
+def companies_has_column(conn: psycopg.Connection, column_name: str) -> bool:
+    """Return true when a companies column exists."""
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_name = 'companies'
+                  AND column_name = %s
+            ) AS exists
+            """,
+            (column_name,),
+        )
+        row = cur.fetchone()
+        return bool(row and row["exists"])
+
+
+def companies_has_enriched_at(conn: psycopg.Connection) -> bool:
+    """Return true when the companies.enriched_at column exists."""
+    return companies_has_column(conn, "enriched_at")
+
+
+def list_companies_for_enrichment(
+    conn: psycopg.Connection,
+    *,
+    max_age_years: int,
+    limit: int | None = None,
+) -> list[dict[str, Any]]:
+    """List verified companies in enrichment priority order."""
+    evidence_urls_select = (
+        sql.SQL("evidence_urls")
+        if companies_has_column(conn, "evidence_urls")
+        else sql.SQL("'{}'::TEXT[] AS evidence_urls")
+    )
+    enriched_at_select = (
+        sql.SQL("enriched_at")
+        if companies_has_enriched_at(conn)
+        else sql.SQL("NULL::TIMESTAMPTZ AS enriched_at")
+    )
+    limit_clause = sql.SQL("LIMIT %s") if limit is not None else sql.SQL("")
+    params: list[Any] = [max_age_years]
+    if limit is not None:
+        params.append(limit)
+    query = sql.SQL("""
+        SELECT
+            id, name, website, country, city, lat, lon, sector_tags, stage,
+            founded_year, summary, {evidence_urls_select}, {enriched_at_select}
+        FROM companies
+        WHERE discovery_status = 'verified'
+          AND (
+              founded_year >= EXTRACT(YEAR FROM NOW())::int - %s
+              OR founded_year IS NULL
+          )
+        ORDER BY founded_year DESC NULLS LAST, name ASC
+        {limit_clause}
+        """).format(
+        evidence_urls_select=evidence_urls_select,
+        enriched_at_select=enriched_at_select,
+        limit_clause=limit_clause,
+    )
+    with conn.cursor() as cur:
+        cur.execute(query, params)
+        return list(cur.fetchall())
+
+
+def update_company_enrichment(
+    conn: psycopg.Connection,
+    company_id: str,
+    *,
+    updates: dict[str, Any],
+    enriched_at: datetime,
+) -> None:
+    """Update enrichment-backed company fields and stamp enriched_at."""
+    allowed_columns = {
+        "website",
+        "country",
+        "city",
+        "lat",
+        "lon",
+        "sector_tags",
+        "stage",
+        "founded_year",
+        "summary",
+        "evidence_urls",
+    }
+    unknown = set(updates) - allowed_columns
+    if unknown:
+        raise ValueError(f"unsupported company enrichment columns: {sorted(unknown)}")
+
+    assignments = [sql.SQL("{} = %s").format(sql.Identifier(column)) for column in updates]
+    assignments.append(sql.SQL("enriched_at = %s"))
+    values = [*updates.values(), enriched_at, company_id]
+    query = sql.SQL("UPDATE companies SET {} WHERE id = %s").format(sql.SQL(", ").join(assignments))
+    with conn.cursor() as cur:
+        cur.execute(query, values)
 
 
 # ----- Funding events -------------------------------------------------------
