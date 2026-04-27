@@ -13,6 +13,7 @@ gatherUsageStats = false
 
 [client]
 toolbarMode = "minimal"
+showSidebarNavigation = false
 
 [server]
 # Serve dashboard/static/ at /app/static/ so og-image and favicon resolve
