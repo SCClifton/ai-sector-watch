@@ -190,6 +190,23 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 11 — discovery (validator + classifier) + news-item linking.
 
+## 2026-04-27 — Commit 11: Discovery layer
+
+**Shipped:**
+- `src/ai_sector_watch/discovery/validator.py`: `validate_company()` runs the validation prompt; `is_acceptable()` is the single gating rule.
+- `src/ai_sector_watch/discovery/classifier.py`: `classify_company()` returns sector tags + stage + summary; `classify_news()` returns kind + relevance flag. Both pipe through `clean_classification()`/`clean_news_classification()` to drop tags/stages/kinds outside the canonical taxonomy and strip em dashes from summaries (PRD §16). `link_news_to_companies()` is a pure function that maps extracted mention names to existing company IDs by normalised name.
+- `tests/test_validator.py`: 8 tests with a stubbed `_dispatch` (no live API). Confirms validator round-trips, gating excludes non-AI, classifier strips invalid tags/stages and em dashes, falls back to a neutral tag when every tag is invalid, news-classifier pins to the known kind set, and the linker dedupes + skips unknowns.
+
+**Tested:**
+- `pytest -q`: 88 pass, 1 skipped.
+- `ruff check .`: clean.
+
+**Known limitations:**
+- `link_news_to_companies` requires exact-after-normalisation match; fuzzy matching (e.g. "Marqo Inc" vs "Marqo") is v1 scope.
+
+**Next:** Commit 12 — weekly pipeline orchestrator + `scripts/run_weekly_pipeline.py` + digest writer.
+
+
 
 
 
