@@ -127,7 +127,38 @@ op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
 gh workflow run weekly.yml -f limit=5
 ```
 
-## 7. Tone for AI agents
+## 7. Multi-tool coordination
+
+Multiple AI tools (Claude Code, Codex, future agents) may be working in this repo concurrently. To prevent collisions, follow this protocol on every task. Full detail and the recovery procedures live in [docs/multi-agent-workflow.md](docs/multi-agent-workflow.md).
+
+### Before you start (mandatory pre-flight)
+
+1. `git fetch && git checkout main && git pull --rebase`
+2. `gh issue view <#> --json assignees` — confirm it is unassigned (or assigned to you).
+3. `gh issue edit <#> --add-assignee @me` — claim the issue. Issue assignment is the lock.
+4. Set the Project's **Workflow** field to **In Progress**.
+5. `git checkout -b <tool>/<#>-<short-slug>` — branch naming convention is `<tool>/<issue-number>-<slug>`. Examples: `claude-code/4-live-pipeline`, `codex/8-sector-legend`.
+6. After your first commit, open a **Draft PR** via `gh pr create --draft` so the work is visible in the PR list.
+
+If you skip steps 1-3 and someone else is already working on the issue, your work will be wasted. The pre-flight is one-shot via `scripts/start_issue.sh <issue-number>`.
+
+### Branch and merge rules
+
+- **No direct commits to `main`.** Branch protection enforces this.
+- **PR must pass CI** (`pytest.yml`) before merge.
+- **One human merger** (Sam). AIs do not auto-merge.
+- **No force-push to `main`.** Branch protection rejects it. If history rewrite is unavoidable, ask Sam.
+- Rebase on `main` before opening a PR for review.
+
+### Live infrastructure coordination
+
+For changes that touch shared remote state (Azure resources, DNS records, Supabase schema migrations, GitHub repo settings), an in-flight signal is required. Open a draft PR or comment on the relevant issue *before* running the operation. The "stop and ask before" gates in §4 still apply.
+
+### When two PRs overlap
+
+Whoever opens their PR first owns the file conflict resolution. The second PR rebases. If the first PR is stalled (>1 day with no movement), the second PR can take over after commenting on issue #1 to claim ownership.
+
+## 8. Tone for AI agents
 
 Sam is an experienced operator with a deep tech and ML background. Write terse and sharp. Default to action; explain only when the action is non-obvious. Don't apologise. Don't editorialise. Don't add filler. State results and decisions directly.
 

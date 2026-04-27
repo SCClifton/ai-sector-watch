@@ -27,6 +27,19 @@ Use the issue templates under [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE
 
 ## Pull requests
 
-Trunk-based. Open a PR from a feature branch when the change is non-trivial; small fixes can land on `main` directly. The PR template lives at [`.github/pull_request_template.md`](.github/pull_request_template.md) and asks for the things a reviewer needs to see.
+Every change to `main` goes through a PR. Branch protection rejects direct pushes. The PR template lives at [`.github/pull_request_template.md`](.github/pull_request_template.md) and asks for the things a reviewer needs to see.
+
+## Working in parallel (multiple humans / AI tools)
+
+Multiple contributors (Claude Code, Codex, humans) may be in the repo at the same time. Read [`docs/multi-agent-workflow.md`](docs/multi-agent-workflow.md) before you start a task. The short version:
+
+1. Pull the latest `main`.
+2. Self-assign the issue (`gh issue edit <#> --add-assignee @me`). Issue assignment is the lock.
+3. Set the Project's **Workflow** field to **In Progress**.
+4. Branch as `<tool>/<issue-number>-<slug>` — e.g. `codex/8-sector-legend`.
+5. Open a Draft PR after the first commit.
+6. Rebase on `main` before requesting review.
+
+Use [`scripts/start_issue.sh <issue-number>`](scripts/start_issue.sh) to do steps 1-4 in one shot.
 
 Code of conduct: be terse, be sharp, be kind.
