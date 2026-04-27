@@ -1,6 +1,6 @@
 # Project Progress
 
-Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
+Chronological log of milestones: public features, closed Now/Next issues, live changes, and public breakages. For routine fixes, the PR body is the record.
 
 ## 2026-04-27 - Issue #40: Backfill Firecrawl enrichment
 

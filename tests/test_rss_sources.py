@@ -84,6 +84,30 @@ def test_parse_google_news_sitemap_bytes_extracts_items() -> None:
     assert items[0].raw["publication"] == "Capital Brief"
 
 
+def test_parse_google_news_sitemap_bytes_tolerates_bad_publication_date() -> None:
+    body = b"""<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+            xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+      <url>
+        <loc>https://www.capitalbrief.com/article/bad-date</loc>
+        <news:news>
+          <news:publication>
+            <news:name>Capital Brief</news:name>
+            <news:language>en</news:language>
+          </news:publication>
+          <news:publication_date>not-a-date</news:publication_date>
+          <news:title>Bad date should not drop the item</news:title>
+        </news:news>
+      </url>
+    </urlset>
+    """
+
+    items = parse_google_news_sitemap_bytes(body, slug="capital_brief")
+
+    assert len(items) == 1
+    assert items[0].published_at is None
+
+
 def test_capital_brief_factory_uses_news_sitemap() -> None:
     source = capital_brief()
     assert source.slug == "capital_brief"

@@ -285,26 +285,29 @@ def run_weekly_pipeline(
             )
             result.items_new += 1
             if news_class.kind == "funding" and linked_ids:
-                primary_company_id = linked_ids[0]
-                primary_company_name = company_names_by_id.get(primary_company_id)
-                if primary_company_name:
-                    try:
-                        funding = _extract_funding(client, item, primary_company_name)
-                    except BudgetExceeded as exc:
-                        result.errors.append(f"budget exceeded: {exc}")
-                        break
-                    if funding.has_funding_event:
-                        supabase_db.upsert_funding_event(
-                            conn,
-                            company_id=primary_company_id,
-                            announced_on=funding.announced_on,
-                            stage=_clean_funding_stage(funding.stage),
-                            amount_usd=funding.amount_usd,
-                            currency_raw=funding.currency_raw,
-                            lead_investor=funding.lead_investor,
-                            investors=funding.investors,
-                            source_url=item.url,
-                        )
+                try:
+                    funding_match = _extract_first_funding_event(
+                        client,
+                        item,
+                        company_ids=linked_ids,
+                        company_names_by_id=company_names_by_id,
+                    )
+                except BudgetExceeded as exc:
+                    result.errors.append(f"budget exceeded: {exc}")
+                    break
+                if funding_match is not None:
+                    company_id, funding = funding_match
+                    supabase_db.upsert_funding_event(
+                        conn,
+                        company_id=company_id,
+                        announced_on=funding.announced_on,
+                        stage=_clean_funding_stage(funding.stage),
+                        amount_usd=funding.amount_usd,
+                        currency_raw=funding.currency_raw,
+                        lead_investor=funding.lead_investor,
+                        investors=funding.investors,
+                        source_url=item.url,
+                    )
 
         # 5. Audit row per run.
         supabase_db.insert_ingest_event(
@@ -389,6 +392,24 @@ def _extract_funding(client: ClaudeClient, item: RawItem, company_name: str) -> 
         max_tokens=384,
     )
     return response.parsed  # type: ignore[return-value]
+
+
+def _extract_first_funding_event(
+    client: ClaudeClient,
+    item: RawItem,
+    *,
+    company_ids: list[str],
+    company_names_by_id: dict[str, str],
+) -> tuple[str, FundingExtraction] | None:
+    """Return the linked company whose funding extraction confirms the event."""
+    for company_id in company_ids:
+        company_name = company_names_by_id.get(company_id)
+        if not company_name:
+            continue
+        funding = _extract_funding(client, item, company_name)
+        if funding.has_funding_event:
+            return company_id, funding
+    return None
 
 
 def _dedupe_ids(ids: list[str]) -> list[str]:

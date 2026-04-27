@@ -23,7 +23,7 @@ LINKEDIN_URL = "https://www.linkedin.com/in/samclifton"
 def _render_architecture() -> None:
     """Render the pipeline diagram, falling back to ASCII if the SVG is unavailable."""
     if ARCHITECTURE_PATH.exists():
-        st.image(str(ARCHITECTURE_PATH), width="stretch")
+        st.image(str(ARCHITECTURE_PATH), use_container_width=True)
         return
 
     st.code(

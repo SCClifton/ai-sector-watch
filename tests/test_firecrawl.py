@@ -18,6 +18,7 @@ from ai_sector_watch.extraction.firecrawl_client import (
     FirecrawlBudgetExceeded,
     FirecrawlClient,
     MarkdownDocument,
+    _candidate_page_matches,
     _post_process,
     _sanitise,
     firecrawl_enrich,
@@ -208,6 +209,22 @@ def test_missing_confidence_is_derived(tmp_path, monkeypatch) -> None:
     assert facts.confidence == 0.5
 
 
+def test_invalid_numeric_confidence_is_recomputed_before_validation(tmp_path, monkeypatch) -> None:
+    client = _make_client(tmp_path)
+    payload = dict(SAMPLE_PAYLOAD)
+    payload["confidence"] = 2.0
+
+    def fake_dispatch(self, *, url, schema):
+        return payload
+
+    monkeypatch.setattr(FirecrawlClient, "_dispatch", fake_dispatch)
+
+    facts = client.scrape_facts("https://example.com").facts
+    assert facts.description == SAMPLE_PAYLOAD["description"]
+    assert facts.founders == SAMPLE_PAYLOAD["founders"]
+    assert facts.confidence == 1.0
+
+
 def test_firecrawl_enrich_handles_missing_website(tmp_path) -> None:
     client = _make_client(tmp_path)
     llm = FakeClaudeClient()
@@ -292,6 +309,12 @@ def test_find_company_pages_filters_keywords_domain_and_caps(tmp_path, monkeypat
         "https://example.com/company",
     ]
     assert client.stats.credits_used == 1
+
+
+def test_candidate_page_matching_ignores_domain_keywords() -> None:
+    assert _candidate_page_matches("https://example.com/about", None)
+    assert _candidate_page_matches("https://example.com/careers", "Leadership")
+    assert not _candidate_page_matches("https://team.example.com/careers", "Careers")
 
 
 def test_fetch_company_news_searches_last_year_and_scrapes_top_results(

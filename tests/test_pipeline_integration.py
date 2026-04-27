@@ -31,6 +31,7 @@ from ai_sector_watch.extraction.schema import (
     FundingExtraction,
     NewsClassification,
 )
+from ai_sector_watch.pipeline import weekly
 from ai_sector_watch.pipeline.weekly import run_weekly_pipeline
 from ai_sector_watch.sources.base import RawItem, SourceBase
 
@@ -209,6 +210,44 @@ def test_write_digest_handles_empty_run(tmp_path) -> None:
     text = path.read_text(encoding="utf-8")
     assert "Sources attempted: 0" in text
     assert "## Relevant news" not in text
+
+
+def test_extract_first_funding_event_uses_company_with_confirmed_event(monkeypatch) -> None:
+    item = RawItem(
+        source_slug="fake_source",
+        url="https://example.com/funding",
+        title="FundedCo raises seed from InvestorCo",
+        summary="InvestorCo backed FundedCo's new seed round.",
+        published_at=datetime(2026, 4, 21, tzinfo=UTC),
+    )
+    calls: list[str] = []
+
+    def fake_extract_funding(client, raw_item, company_name):
+        calls.append(company_name)
+        return FundingExtraction(
+            has_funding_event=company_name == "FundedCo",
+            announced_on=date(2026, 4, 21),
+            stage="seed",
+            amount_usd=5_000_000 if company_name == "FundedCo" else None,
+            currency_raw="USD 5M" if company_name == "FundedCo" else None,
+            lead_investor="InvestorCo" if company_name == "FundedCo" else None,
+            investors=["InvestorCo"] if company_name == "FundedCo" else [],
+        )
+
+    monkeypatch.setattr(weekly, "_extract_funding", fake_extract_funding)
+
+    match = weekly._extract_first_funding_event(
+        object(),  # type: ignore[arg-type]
+        item,
+        company_ids=["investor-id", "funded-id"],
+        company_names_by_id={"investor-id": "InvestorCo", "funded-id": "FundedCo"},
+    )
+
+    assert match is not None
+    company_id, funding = match
+    assert company_id == "funded-id"
+    assert funding.has_funding_event is True
+    assert calls == ["InvestorCo", "FundedCo"]
 
 
 # ----- Live-DB path -------------------------------------------------------

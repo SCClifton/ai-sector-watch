@@ -133,6 +133,21 @@ def _maybe_set(
         updates[column] = incoming
 
 
+def _has_enrichment_signal(facts: CompanyFacts) -> bool:
+    """Return true when Firecrawl produced at least one usable fact."""
+    values = (
+        facts.founded_year,
+        facts.description,
+        facts.founders,
+        facts.city,
+        facts.country,
+        facts.sector_keywords,
+        facts.last_funding_summary,
+        facts.evidence_urls,
+    )
+    return any(not _is_empty(value) for value in values)
+
+
 def build_update_payload(
     company: dict[str, Any],
     facts: CompanyFacts,
@@ -141,6 +156,7 @@ def build_update_payload(
 ) -> dict[str, Any]:
     """Build the safe update payload for one enriched company row."""
     updates: dict[str, Any] = {}
+    has_fact_signal = _has_enrichment_signal(facts)
     _maybe_set(
         updates,
         column="founded_year",
@@ -170,15 +186,17 @@ def build_update_payload(
         force_overwrite=force_overwrite,
     )
 
-    city_for_geo = str(updates.get("city") or company.get("city") or "").strip()
-    geo = geocode_city(city_for_geo, jitter_seed=str(company.get("name") or ""))
-    if geo is not None:
-        if force_overwrite or _is_empty(company.get("lat")):
-            updates["lat"] = geo.lat
-        if force_overwrite or _is_empty(company.get("lon")):
-            updates["lon"] = geo.lon
+    if has_fact_signal:
+        city_for_geo = str(updates.get("city") or company.get("city") or "").strip()
+        geo = geocode_city(city_for_geo, jitter_seed=str(company.get("name") or ""))
+        if geo is not None:
+            if force_overwrite or _is_empty(company.get("lat")):
+                updates["lat"] = geo.lat
+            if force_overwrite or _is_empty(company.get("lon")):
+                updates["lon"] = geo.lon
 
-    updates["evidence_urls"] = facts.evidence_urls
+    if facts.evidence_urls:
+        updates["evidence_urls"] = facts.evidence_urls
     return updates
 
 
@@ -314,6 +332,15 @@ def run_backfill(
                 facts,
                 force_overwrite=force_overwrite,
             )
+            summary.total_processed += 1
+            if not updates:
+                LOGGER.info(
+                    "[%d/%d] enriching %s... no usable updates, skipping write",
+                    index,
+                    total,
+                    name,
+                )
+                continue
             supabase_db.update_company_enrichment(
                 conn,
                 str(company["id"]),
@@ -321,7 +348,6 @@ def run_backfill(
                 enriched_at=_iso_now(),
             )
             conn.commit()
-            summary.total_processed += 1
             summary.total_updated += 1
             remaining = max(
                 firecrawl_client.budget_credits - firecrawl_client.stats.credits_used, 0
