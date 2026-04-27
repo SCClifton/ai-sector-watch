@@ -2,19 +2,24 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
-## 2026-04-27 - Issue #6: Azure OIDC deploy auth
+## 2026-04-27 - Issue #6: Azure OIDC deploy auth (FIRST LIVE CONTAINER DEPLOY)
 
 **Shipped (codex/6-set-up-oidc-federated-credential-for-dep):**
 - Created Azure AD app registration `ai-sector-watch-github` for GitHub Actions OIDC. Client ID ends in `4d1b`.
 - Created the service principal, assigned `Website Contributor` on resource group `ai-sector-watch`, and added the `github-main` federated credential for `repo:SCClifton/ai-sector-watch:ref:refs/heads/main`.
 - Set GitHub repo secrets `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID`.
 - Fixed `deploy.yml` to lower-case the GHCR image path before Docker build and Azure deploy.
+- Granted `packages: write` to `deploy.yml` so the default `GITHUB_TOKEN` can push the container image to GHCR.
+- Restored `README.md` to the Docker build context (it was excluded by `.dockerignore` but is required by `pyproject.toml`'s `readme` field, which broke the editable install during image build).
 
 **Tested:**
-- `gh workflow run deploy.yml` and `gh run watch 24978724476`: failed before OIDC at Docker build because `ghcr.io/SCClifton/...` is not a valid lowercase image name.
+- `gh run watch 24979030981` (workflow_dispatch on the branch under a temporary federated credential `github-branch-codex-6-verify`): `build-and-deploy` job green end-to-end in 3m32s. Image pushed to `ghcr.io/scclifton/ai-sector-watch/ai-sector-watch:21cbfe1...`. Azure Web App pulled the new image.
+- `curl -I https://ai-sector-watch.azurewebsites.net`: `HTTP/2 200`, `server: TornadoServer/6.5.5` (Streamlit's underlying server). Body grep returned `Streamlit`.
+- `curl -I https://ai-sector-watch.azurewebsites.net/_stcore/health`: `HTTP/2 200`.
+- This closes the deferred `curl -I` -> 200 acceptance from issue #5.
 
 **Known limitations:**
-- End-to-end deploy needs a rerun after the workflow fix lands on `main`, because the configured federated credential intentionally trusts only `refs/heads/main`.
+- The temporary `github-branch-codex-6-verify` federated credential will be removed after the PR merges; the `github-main` credential (which the deploy.yml workflow needs going forward) is the only one that should remain.
 
 ## 2026-04-27 - Issue #17: Capital Brief source
 
