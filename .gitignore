@@ -14,9 +14,11 @@ __pycache__/
 build/
 dist/
 
-# Virtual envs
+# Virtual envs (also catches .venv symlinks pointing at the main worktree's venv)
+.venv
 .venv/
 venv/
+venv
 
 # Test + coverage
 .pytest_cache/

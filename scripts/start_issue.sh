@@ -8,11 +8,17 @@
 # Exits non-zero if the issue is already assigned to someone else.
 #
 # What it does (in order):
-#   1. git fetch + git checkout main + git pull --rebase
-#   2. Verifies the issue exists and is unassigned (or assigned to you)
-#   3. Claims the issue (gh issue edit --add-assignee @me)
-#   4. Creates a feature branch named <tool>/<#>-<slug>
-#   5. Prints the next steps (move Project status, open Draft PR after first commit)
+#   1. Locate the main worktree and refresh it (`git fetch && git pull --rebase`)
+#      so we branch from the latest main.
+#   2. Verifies the issue exists and is unassigned (or assigned to you).
+#   3. Claims the issue (gh issue edit --add-assignee @me).
+#   4. Creates a per-issue worktree at ../AI-Sector-Watch-<#>-<slug>/ on
+#      branch <tool>/<#>-<slug>. The worktree is the agent's isolated
+#      working directory; multiple agents can run in parallel because each
+#      lives in its own.
+#   5. Symlinks .env.local from the main worktree so secrets resolve.
+#   6. Optionally creates a per-worktree .venv (controlled by AISW_VENV).
+#   7. Prints the next steps (cd into the worktree, open Draft PR, etc.).
 
 set -euo pipefail
 
@@ -24,31 +30,44 @@ fi
 ISSUE="$1"
 TOOL="${2:-${AISW_TOOL:-claude-code}}"
 
-# Sanitise tool name.
-case "$TOOL" in
-  claude-code|codex|human|*)
-    ;;
-esac
+# Discover the main worktree root by walking up from this script's location.
+# `git rev-parse --show-toplevel` would give us THIS worktree, but we want the
+# canonical (first-listed) worktree to anchor relative paths.
+MAIN_WT=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
+if [[ -z "$MAIN_WT" ]]; then
+  echo "ERROR: could not locate main worktree" >&2
+  exit 1
+fi
 
-REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
+REPO=$(cd "$MAIN_WT" && gh repo view --json nameWithOwner -q '.nameWithOwner')
 ME=$(gh api user -q '.login')
 
-echo "==> Repo:    $REPO"
-echo "==> Issue:   #$ISSUE"
-echo "==> Tool:    $TOOL"
-echo "==> Me:      $ME"
+echo "==> Repo:         $REPO"
+echo "==> Issue:        #$ISSUE"
+echo "==> Tool:         $TOOL"
+echo "==> Me:           $ME"
+echo "==> Main worktree: $MAIN_WT"
 
-# Step 1: latest main.
+# Step 1: refresh main in the canonical worktree.
 echo
-echo "==> Updating main"
-git fetch --prune
-git checkout main
-git pull --rebase
+echo "==> Refreshing main"
+(
+  cd "$MAIN_WT"
+  current=$(git branch --show-current)
+  if [[ "$current" != "main" ]]; then
+    echo "    Main worktree is on '$current' (not main). Skipping pull --rebase to avoid"
+    echo "    yanking the branch out from under another agent. Will branch from origin/main."
+    git fetch --prune origin
+  else
+    git fetch --prune origin
+    git pull --rebase
+  fi
+)
 
 # Step 2: verify issue and ownership.
 echo
 echo "==> Inspecting issue"
-ISSUE_JSON=$(gh issue view "$ISSUE" --json number,title,state,assignees,labels)
+ISSUE_JSON=$(gh issue view "$ISSUE" --repo "$REPO" --json number,title,state,assignees,labels)
 STATE=$(echo "$ISSUE_JSON" | jq -r '.state')
 TITLE=$(echo "$ISSUE_JSON" | jq -r '.title')
 ASSIGNEES=$(echo "$ISSUE_JSON" | jq -r '.assignees[].login // empty' | tr '\n' ' ')
@@ -72,40 +91,82 @@ fi
 if [[ "$ASSIGNEES" != *"$ME"* ]]; then
   echo
   echo "==> Claiming issue (self-assign)"
-  gh issue edit "$ISSUE" --add-assignee "@me"
+  gh issue edit "$ISSUE" --repo "$REPO" --add-assignee "@me"
 else
   echo
   echo "==> Already assigned to you; skipping claim."
 fi
 
-# Step 4: create branch.
+# Step 4: derive slug and worktree path.
 SLUG=$(echo "$TITLE" \
   | tr '[:upper:]' '[:lower:]' \
   | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' \
-  | cut -c1-40)
+  | cut -c1-40 \
+  | sed -E 's/-+$//')
 BRANCH="${TOOL}/${ISSUE}-${SLUG}"
+WT_DIR="$(dirname "$MAIN_WT")/$(basename "$MAIN_WT")-${ISSUE}-${SLUG}"
 
 echo
-echo "==> Creating branch: $BRANCH"
-if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
-  echo "    Branch already exists locally; checking out."
-  git checkout "$BRANCH"
+echo "==> Branch:    $BRANCH"
+echo "==> Worktree:  $WT_DIR"
+
+# Step 5: create the worktree.
+if [[ -d "$WT_DIR" ]]; then
+  echo "    Worktree directory already exists; assuming it's the right one."
+  if ! (cd "$WT_DIR" && git rev-parse --git-dir >/dev/null 2>&1); then
+    echo "ERROR: $WT_DIR exists but is not a worktree. Move or remove it." >&2
+    exit 1
+  fi
 else
-  git checkout -b "$BRANCH"
+  if git -C "$MAIN_WT" show-ref --verify --quiet "refs/heads/$BRANCH"; then
+    echo "    Branch already exists; checking it out into a new worktree."
+    git -C "$MAIN_WT" worktree add "$WT_DIR" "$BRANCH"
+  else
+    echo "    Creating fresh branch + worktree from origin/main."
+    git -C "$MAIN_WT" worktree add "$WT_DIR" -b "$BRANCH" origin/main
+  fi
 fi
 
-# Step 5: print next steps.
+# Step 6: link .env.local and optionally create a venv.
+if [[ -f "$MAIN_WT/.env.local" && ! -e "$WT_DIR/.env.local" ]]; then
+  ln -s "$MAIN_WT/.env.local" "$WT_DIR/.env.local"
+  echo "    Linked .env.local"
+fi
+
+if [[ -d "$MAIN_WT/.venv" && ! -e "$WT_DIR/.venv" ]]; then
+  case "${AISW_VENV:-symlink}" in
+    own)
+      echo "    Creating per-worktree venv (this takes ~30s)"
+      (cd "$WT_DIR" && python3.12 -m venv .venv && .venv/bin/pip install -e ".[dashboard,dev]" --quiet)
+      ;;
+    skip)
+      echo "    AISW_VENV=skip; not creating .venv"
+      ;;
+    *)
+      ln -s "$MAIN_WT/.venv" "$WT_DIR/.venv"
+      echo "    Linked .venv (note: editable install paths may still resolve to main worktree;"
+      echo "                  set AISW_VENV=own if you'll be editing src/ai_sector_watch/)"
+      ;;
+  esac
+fi
+
+# Step 7: print next steps.
 cat <<EOF
 
 ==> Pre-flight complete.
 
-Next steps:
-  1. Make your first commit, then open a Draft PR:
-       gh pr create --draft --title "[#$ISSUE] $TITLE" --body "Closes #$ISSUE"
-  2. Move the Project card to "In Progress" (Workflow field).
-  3. Run tests before pushing:
-       pytest -q && ruff check . && black --check .
-  4. When ready for review, mark the PR as ready and ping Sam.
+cd into the worktree:
+  cd $WT_DIR
+
+Make your first commit, then open a Draft PR:
+  gh pr create --draft --title "[#$ISSUE] $TITLE" --body "Closes #$ISSUE"
+
+Move the Project card to "In Progress" (Workflow field) via the GitHub UI.
+
+When ready for review, mark the PR as ready and ping Sam.
+
+When the PR merges, clean up the worktree:
+  git worktree remove $WT_DIR
 
 Reminders:
   - No direct commits to main (branch protection enforces this).

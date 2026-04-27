@@ -31,15 +31,22 @@ Every change to `main` goes through a PR. Branch protection rejects direct pushe
 
 ## Working in parallel (multiple humans / AI tools)
 
-Multiple contributors (Claude Code, Codex, humans) may be in the repo at the same time. Read [`docs/multi-agent-workflow.md`](docs/multi-agent-workflow.md) before you start a task. The short version:
+Multiple contributors (Claude Code, Codex, humans) may be in the repo at the same time. **Each active issue gets its own git worktree** — a sibling directory that shares the same `.git/`. Two agents working on different issues never collide because they're in different working directories.
 
-1. Pull the latest `main`.
-2. Self-assign the issue (`gh issue edit <#> --add-assignee @me`). Issue assignment is the lock.
-3. Set the Project's **Workflow** field to **In Progress**.
-4. Branch as `<tool>/<issue-number>-<slug>` — e.g. `codex/8-sector-legend`.
-5. Open a Draft PR after the first commit.
-6. Rebase on `main` before requesting review.
+Read [`docs/multi-agent-workflow.md`](docs/multi-agent-workflow.md) for the full protocol. The one-liner:
 
-Use [`scripts/start_issue.sh <issue-number>`](scripts/start_issue.sh) to do steps 1-4 in one shot.
+```bash
+scripts/start_issue.sh <issue-number> [tool-name]
+```
+
+That script: refreshes main, claims the issue, creates `../AI-Sector-Watch-<#>-<slug>/` on branch `<tool>/<#>-<slug>`, symlinks `.env.local`, and prints the next steps. Then `cd` into the new worktree and work there.
+
+After your PR merges:
+
+```bash
+scripts/finish_issue.sh <issue-number>
+```
+
+Removes the worktree and the local branch.
 
 Code of conduct: be terse, be sharp, be kind.

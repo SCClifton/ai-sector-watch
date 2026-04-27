@@ -2,6 +2,25 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #8 follow-up: per-issue worktree pattern
+
+**Shipped (claude-code/8-worktree-codification):**
+- `scripts/start_issue.sh` rewritten to create a per-issue git worktree at `../AI-Sector-Watch-<#>-<slug>/` on branch `<tool>/<#>-<slug>`. Discovers the main worktree automatically, refuses to yank a branch out from under another agent, symlinks `.env.local`, and supports `AISW_VENV={symlink,own,skip}` for the venv strategy.
+- `scripts/finish_issue.sh` added for cleanup after a PR merges (removes worktree + local branch; refuses if branch isn't on main without `--force`).
+- `docs/multi-agent-workflow.md` rewritten to lead with the per-issue worktree pattern and add an end-to-end example, recovery procedures, and a who-does-what table.
+- `AGENTS.md` section 7 updated to point at per-issue worktrees as the foundation rule.
+- `CONTRIBUTING.md` "Working in parallel" section simplified to two commands.
+- `.gitignore` updated to also match `.venv` (no slash) so symlinks pointing at the main worktree's venv don't show as untracked.
+
+**Why:** the prior protocol used per-tool worktrees, which serialised any tool that already had a worktree. Per-issue maps 1:1 to the work unit, so we can fan out N parallel agent sessions on N issues. Validated by setting up three worktrees (this branch, `claude-code/2-...`, `codex/1-...`) on the same checkout without collision.
+
+**Tested:**
+- `pytest -q` passes (unchanged code, sanity check).
+- `ruff check .` clean.
+
+**Known limitations:**
+- The per-worktree `.venv` strategy still has a footgun: symlinking the main worktree's venv means the editable install's `.pth` file resolves to the main worktree's `src/`. Documented in `docs/multi-agent-workflow.md §4`; mitigation is `AISW_VENV=own` for any task that edits `src/ai_sector_watch/`.
+
 ## 2026-04-27 — Commit 01: Repo scaffold
 
 **Shipped:**
