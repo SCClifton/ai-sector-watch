@@ -24,7 +24,7 @@ from dashboard.components.footer import render_footer  # noqa: E402
 from dashboard.components.map_view import build_map, split_geocoded  # noqa: E402
 
 st.set_page_config(
-    page_title="AI Sector Watch — Map",
+    page_title="AI Sector Watch: Map",
     page_icon="🌏",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -76,7 +76,7 @@ def main() -> None:
     if off_map:
         with st.expander(f"Companies without map coordinates ({len(off_map)})"):
             for c in off_map:
-                st.write(f"- **{c.name}** — {c.city or 'unknown city'}, {c.country or '?'}")
+                st.write(f"- **{c.name}** in {c.city or 'unknown city'}, {c.country or '?'}")
 
     render_footer()
 

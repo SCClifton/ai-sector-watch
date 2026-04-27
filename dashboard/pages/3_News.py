@@ -15,7 +15,7 @@ from ai_sector_watch.storage.data_source import get_data_source  # noqa: E402
 from dashboard.components.footer import render_footer  # noqa: E402
 
 st.set_page_config(
-    page_title="AI Sector Watch — News",
+    page_title="AI Sector Watch: News",
     page_icon="📰",
     layout="wide",
     initial_sidebar_state="expanded",

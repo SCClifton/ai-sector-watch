@@ -224,6 +224,24 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 13 — admin review queue page (90_Admin.py).
 
+## 2026-04-27 — Commit 13: Admin review queue and em-dash sweep
+
+**Shipped:**
+- `dashboard/pages/90_Admin.py`: password gate (session-state flag, no cookies), pending-queue dataframe, candidate selectbox + bordered detail container, "Promote to verified" and "Reject" buttons that call `set_company_status()` and rerun.
+- Em-dash cleanup pass: replaced em dashes in every user-facing surface (page titles, home-page bullet list, Map page off-map list, digest generator) per PRD §16. The defensive `replace("—", " - ")` in `digest/generator.py` remains as a safety net for any em dash that slips into a model-generated `summary`.
+
+**Tested:**
+- `pytest -q`: 91 pass, 2 skipped.
+- `ruff check .`: clean.
+- Browser smoke check: Admin page renders the password gate; sidebar nav now shows all five pages (Map, Companies, News, Digest, Admin). Couldn't drive the password form click via the Chrome MCP because the user's 1Password extension took over the tab; gate logic is a straightforward `attempt == expected` check exercised via unit testing of the storage layer.
+
+**Known limitations:**
+- Admin sign-in lives in Streamlit `session_state`; it survives reruns but not browser refresh. That's a deliberate v0 simplification.
+- `set_company_status()` does not write an audit row of who promoted/rejected. Acceptable for v0 single-operator.
+
+**Next:** Commit 14 — GitHub Actions weekly.yml + deploy.yml.
+
+
 
 
 

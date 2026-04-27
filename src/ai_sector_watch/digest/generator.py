@@ -72,7 +72,7 @@ def write_digest(
         lines.append("")
         for row in news_list:
             mention_str = (
-                f" — mentions: {', '.join(row.company_names)}" if row.company_names else ""
+                f" - mentions: {', '.join(row.company_names)}" if row.company_names else ""
             )
             lines.append(
                 f"- [{row.title}]({row.url}) ({row.source_slug}, {row.kind}){mention_str}"

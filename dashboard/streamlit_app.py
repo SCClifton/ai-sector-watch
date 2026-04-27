@@ -59,11 +59,11 @@ def main() -> None:
     st.subheader("How to use this dashboard")
     st.markdown(
         """
-- **Map** — interactive folium map of ANZ AI companies with sector colour and click-through popups.
-- **Companies** — filterable list of every verified company.
-- **News** — chronological feed of relevant news items linked to companies.
-- **Digest** — weekly markdown digests written by the pipeline.
-- **Admin** — review queue for auto-discovered candidates (password-gated).
+- **Map**: interactive folium map of ANZ AI companies with sector colour and click-through popups.
+- **Companies**: filterable list of every verified company.
+- **News**: chronological feed of relevant news items linked to companies.
+- **Digest**: weekly markdown digests written by the pipeline.
+- **Admin**: review queue for auto-discovered candidates (password-gated).
 
 Use the sidebar to navigate.
         """

@@ -22,7 +22,7 @@ from dashboard.components.filters import (  # noqa: E402
 from dashboard.components.footer import render_footer  # noqa: E402
 
 st.set_page_config(
-    page_title="AI Sector Watch — Companies",
+    page_title="AI Sector Watch: Companies",
     page_icon="🏢",
     layout="wide",
     initial_sidebar_state="expanded",

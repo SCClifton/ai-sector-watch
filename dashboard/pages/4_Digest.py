@@ -15,7 +15,7 @@ from ai_sector_watch.config import get_config  # noqa: E402
 from dashboard.components.footer import render_footer  # noqa: E402
 
 st.set_page_config(
-    page_title="AI Sector Watch — Digest",
+    page_title="AI Sector Watch: Digest",
     page_icon="📝",
     layout="wide",
     initial_sidebar_state="expanded",
