@@ -13,6 +13,7 @@ from ai_sector_watch.storage.data_source import (
     SupabaseSource,
     YamlSource,
     get_data_source,
+    safe_llm_spend_summary,
 )
 
 
@@ -140,6 +141,25 @@ def test_supabase_source_returns_no_llm_spend_when_empty(
     monkeypatch.setattr(supabase_db, "connection", fake_connection)
 
     assert SupabaseSource().llm_spend_summary() is None
+
+
+def test_safe_llm_spend_summary_catches_backend_failure() -> None:
+    class BoomSource:
+        backend = "boom"
+
+        def list_companies(self, *, statuses=("verified",)):
+            return []
+
+        def recent_news(self, *, limit=50):
+            return []
+
+        def llm_spend_summary(self):
+            raise RuntimeError("database unavailable")
+
+    summary, error = safe_llm_spend_summary(BoomSource())
+
+    assert summary is None
+    assert isinstance(error, RuntimeError)
 
 
 def test_factory_returns_yaml_when_supabase_url_unset(monkeypatch) -> None:

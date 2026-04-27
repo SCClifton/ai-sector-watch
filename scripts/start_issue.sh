@@ -159,6 +159,7 @@ PROJECT_OWNER="SCClifton"
 PROJECT_ID="PVT_kwHOCnSDOc4BVz2x"
 WORKFLOW_FIELD_ID="PVTSSF_lAHOCnSDOc4BVz2xzhRNAXY"
 WORKFLOW_IN_PROGRESS="e00b541b"
+PROJECT_CARD_MOVED=0
 
 set +e
 ITEM_ID=$(
@@ -172,12 +173,18 @@ if [[ -n "$ITEM_ID" && "$ITEM_ID" != "null" ]]; then
     --project-id "$PROJECT_ID" \
     --field-id "$WORKFLOW_FIELD_ID" \
     --single-select-option-id "$WORKFLOW_IN_PROGRESS" >/dev/null 2>&1 \
-    && echo "    Project Workflow set to In Progress" \
+    && { echo "    Project Workflow set to In Progress"; PROJECT_CARD_MOVED=1; } \
     || echo "    (could not move Project card; do it manually)"
 else
   echo "    Issue not on Project board yet; skipping Workflow move"
 fi
 set -e
+
+if [[ "$PROJECT_CARD_MOVED" == "1" ]]; then
+  PROJECT_CARD_NOTE='Project card has already been moved to "In Progress".'
+else
+  PROJECT_CARD_NOTE='Move the Project card to "In Progress" if it is on the board.'
+fi
 
 # Step 7: print next steps.
 cat <<EOF
@@ -197,7 +204,7 @@ Make your first commit, then open a Draft PR:
 Run secret-bearing commands with the explicit 1Password account:
   op run --account my.1password.com --env-file=.env.local -- <your command>
 
-Project card has already been moved to "In Progress".
+$PROJECT_CARD_NOTE
 
 When ready for review, mark the PR as ready and ping Sam.
 

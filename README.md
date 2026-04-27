@@ -234,7 +234,8 @@ Full detail in [`AGENTS.md`](AGENTS.md). Short version:
 - All secrets via 1Password (`op run --account my.1password.com --env-file=.env.local -- ...`). Bare values never in files; `.env.local` is gitignored; only `.env.template` (with `op://` references) is committed.
 - Idempotent operations: every upsert keys on a stable hash; the pipeline is safe to rerun.
 - No em dashes in any user-facing output (digest, dashboard copy, popups). Use a colon, comma, or " - " instead.
-- Every commit updates `PROJECT_PROGRESS.md`.
+- Update `PROJECT_PROGRESS.md` only for milestones: closing a Now/Next issue,
+  shipping a public feature, or documenting a public breakage.
 - The public map only shows `discovery_status = 'verified'`. Auto-discovered candidates wait in the admin queue.
 
 ## Disclaimer

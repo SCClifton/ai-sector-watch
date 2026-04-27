@@ -13,6 +13,7 @@ code never has to know which source it is reading from.
 
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -27,6 +28,7 @@ from ai_sector_watch.discovery.geocoder import geocode_city
 from ai_sector_watch.storage import supabase_db
 
 SEED_PATH = REPO_ROOT / "data" / "seed" / "companies.yaml"
+LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -262,6 +264,15 @@ def _company_from_row(r: dict) -> Company:
         discovery_source=r.get("discovery_source"),
         latest_funding_event=latest_funding_event,
     )
+
+
+def safe_llm_spend_summary(source: DataSource) -> tuple[LlmSpendSummary | None, Exception | None]:
+    """Return spend summary without letting a backend failure break dashboard rendering."""
+    try:
+        return source.llm_spend_summary(), None
+    except Exception as exc:  # noqa: BLE001
+        LOGGER.warning("llm spend summary unavailable from %s: %s", source.backend, exc)
+        return None, exc
 
 
 # ---------------------------------------------------------------------------

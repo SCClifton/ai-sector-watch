@@ -13,7 +13,11 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from ai_sector_watch.config import get_config  # noqa: E402
-from ai_sector_watch.storage.data_source import LlmSpendSummary, get_data_source  # noqa: E402
+from ai_sector_watch.storage.data_source import (  # noqa: E402
+    LlmSpendSummary,
+    get_data_source,
+    safe_llm_spend_summary,
+)
 from dashboard.components.footer import render_footer  # noqa: E402
 from dashboard.components.theme import render_page_chrome  # noqa: E402
 
@@ -39,7 +43,11 @@ def main() -> None:
     st.caption("Auto-generated summaries written by the weekly pipeline. Latest first.")
 
     source = get_data_source()
-    _render_spend_metrics(source.llm_spend_summary())
+    spend_summary, spend_error = safe_llm_spend_summary(source)
+    if spend_error is not None:
+        st.warning("Spend metrics unavailable; showing saved digests.")
+    else:
+        _render_spend_metrics(spend_summary)
 
     digest_dir = get_config().digest_output_dir
     digest_dir.mkdir(parents=True, exist_ok=True)

@@ -131,6 +131,21 @@ def test_build_update_payload_force_overwrite_replaces_curated_fields() -> None:
     assert updates["country"] == "NZ"
 
 
+def test_build_update_payload_empty_facts_do_not_clear_existing_evidence() -> None:
+    company = _company("Curated", founded_year=2019, summary="Human-written summary")
+    company["evidence_urls"] = ["https://existing.example"]
+    company["lat"] = None
+    company["lon"] = None
+
+    updates = backfill.build_update_payload(
+        company,
+        CompanyFacts.empty(),
+        force_overwrite=False,
+    )
+
+    assert updates == {}
+
+
 def test_dry_run_limit_only_processes_limited_company_count(monkeypatch) -> None:
     fake_conn = FakeConn()
     rows = [_company(f"Company {idx}", founded_year=2026 - idx) for idx in range(8)]
@@ -210,6 +225,52 @@ def test_recently_enriched_rows_are_skipped(monkeypatch) -> None:
     assert summary.total_processed == 1
     assert summary.total_updated == 1
     assert captured[0]["company_id"] == "id-Stale"
+
+
+def test_empty_enrichment_result_does_not_write_or_stamp(monkeypatch) -> None:
+    fake_conn = FakeConn()
+    rows = [_company("Target", founded_year=2023, summary="Existing summary")]
+    rows[0]["evidence_urls"] = ["https://existing.example"]
+    captured: list[dict[str, Any]] = []
+
+    @contextmanager
+    def fake_connection():
+        yield fake_conn
+
+    monkeypatch.setattr(backfill.supabase_db, "connection", fake_connection)
+    monkeypatch.setattr(backfill.supabase_db, "apply_schema", lambda conn: None)
+    monkeypatch.setattr(
+        backfill.supabase_db,
+        "list_companies_for_enrichment",
+        lambda conn, *, max_age_years, limit: rows,
+    )
+
+    def fake_update(conn, company_id, *, updates, enriched_at):
+        captured.append({"company_id": company_id, "updates": updates, "enriched_at": enriched_at})
+
+    monkeypatch.setattr(backfill.supabase_db, "update_company_enrichment", fake_update)
+    monkeypatch.setattr(backfill, "FirecrawlClient", FakeFirecrawlClient)
+    monkeypatch.setattr(backfill, "ClaudeClient", FakeClaudeClient)
+
+    def fake_enrich(client, llm_client, website, *, name):
+        client.stats.credits_used += DEFAULT_CREDITS_PER_ENRICH
+        client.stats.calls += 1
+        return CompanyFacts.empty()
+
+    monkeypatch.setattr(backfill, "firecrawl_enrich", fake_enrich)
+
+    summary = backfill.run_backfill(
+        limit=None,
+        max_age_years=10,
+        skip_if_newer_than_days=30,
+        dry_run=False,
+        force_overwrite=False,
+    )
+
+    assert summary.total_processed == 1
+    assert summary.total_updated == 0
+    assert fake_conn.commits == 0
+    assert captured == []
 
 
 def test_mocked_enrichment_updates_empty_fields(monkeypatch) -> None:

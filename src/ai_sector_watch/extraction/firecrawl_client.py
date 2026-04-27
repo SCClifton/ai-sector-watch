@@ -147,7 +147,8 @@ def _is_blocked_news_url(url: str) -> bool:
 
 
 def _candidate_page_matches(url: str, title: str | None) -> bool:
-    haystack = " ".join([url, title or ""]).lower()
+    parsed = urlparse(_normalise_url(url))
+    haystack = " ".join([parsed.path, title or ""]).lower()
     return any(keyword in haystack for keyword in COMPANY_PAGE_KEYWORDS)
 
 
@@ -408,6 +409,10 @@ class FirecrawlClient:
                 cleaned["confidence"] = float(confidence)
             except ValueError:
                 cleaned["confidence"] = _derive_confidence(cleaned)
+        if not isinstance(cleaned.get("confidence"), int | float) or not (
+            0.0 <= float(cleaned["confidence"]) <= 1.0
+        ):
+            cleaned["confidence"] = _derive_confidence(cleaned)
 
         return CompanyFacts.model_validate(cleaned)
 

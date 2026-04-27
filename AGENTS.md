@@ -73,11 +73,11 @@ These are hard rules. If a task seems to require breaking one, stop and ask.
 - Conventional Commits format: `<type>(<scope>): <subject>` (e.g. `feat(dashboard): add filters`). Subject line ≤ 72 chars.
 - Commit hooks reject AI-tool attribution (`Co-Authored-By: Claude ...`, `Generated with ...`). Don't add those.
 - Each commit either runs green tests or documents the manual smoke check that was performed.
-- Update `PROJECT_PROGRESS.md` in the same commit.
+- Update `PROJECT_PROGRESS.md` in the same commit only for milestones.
 
 ### Branching
 
-- Trunk-based. Work directly on `main` for now (single-operator project). Feature branches when a change is non-trivial enough to want a pre-merge review.
+- Trunk-based through per-issue worktrees. Do not commit directly on `main`; branch from `origin/main` with `scripts/start_issue.sh`.
 
 ### Style
 
