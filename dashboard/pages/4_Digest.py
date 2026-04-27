@@ -34,7 +34,7 @@ def main() -> None:
     if not files:
         st.info(
             "No digests yet. The weekly pipeline will write one each Monday morning "
-            "(Sydney time). Trigger one manually with `op run --env-file=.env.local "
+            "(Sydney time). Trigger one manually with `op run --account my.1password.com --env-file=.env.local "
             "-- python scripts/run_weekly_pipeline.py`."
         )
         render_footer()

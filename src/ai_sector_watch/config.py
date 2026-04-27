@@ -11,16 +11,41 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _load_env_once() -> None:
-    """Load .env.local if present (no-op in CI, where env vars are set directly)."""
+    """Load .env.local if present, but skip op:// references.
+
+    `.env.local` exists for two purposes: (1) hold non-secret config the same
+    way `.env.template` does, and (2) document op:// references that get
+    resolved at process start by `op run --account my.1password.com --env-file=.env.local -- <cmd>`.
+
+    If a Python process imports `ai_sector_watch.config` *without* having
+    been invoked via `op run`, the values are still raw `op://` strings.
+    Pushing those into `os.environ` is worse than leaving the variable
+    unset, because downstream code (psycopg, the Anthropic SDK) will treat
+    them as the actual secret and fail in confusing ways.
+
+    Solution: parse the file ourselves with `dotenv_values` and only push
+    values that are NOT op:// references into the environment. The op
+    references are loaded by `op run` directly and never need to flow
+    through this function.
+
+    Idempotent: never overwrites a variable already set by the parent shell
+    (so `op run` always wins).
+    """
     env_local = REPO_ROOT / ".env.local"
-    if env_local.exists():
-        load_dotenv(env_local)
+    if not env_local.exists():
+        return
+    for key, value in dotenv_values(env_local).items():
+        if value is None:
+            continue
+        if value.startswith("op://"):
+            continue
+        os.environ.setdefault(key, value)
 
 
 _load_env_once()

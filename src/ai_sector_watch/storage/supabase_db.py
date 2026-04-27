@@ -34,7 +34,9 @@ LOGGER = logging.getLogger(__name__)
 def _get_db_url() -> str:
     url = os.environ.get("SUPABASE_DB_URL")
     if not url:
-        raise KeyError("SUPABASE_DB_URL is not set. Run with `op run --env-file=.env.local -- ...`")
+        raise KeyError(
+            "SUPABASE_DB_URL is not set. Run with `op run --account my.1password.com --env-file=.env.local -- ...`"
+        )
     return url
 
 

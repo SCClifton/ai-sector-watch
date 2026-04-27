@@ -2,8 +2,8 @@
 """Smoke checks for AI Sector Watch local + Supabase + secret state.
 
 Usage:
-    op run --env-file=.env.local -- python scripts/verify_setup.py
-    op run --env-file=.env.local -- python scripts/verify_setup.py --apply-schema
+    op run --account my.1password.com --env-file=.env.local -- python scripts/verify_setup.py
+    op run --account my.1password.com --env-file=.env.local -- python scripts/verify_setup.py --apply-schema
 
 Exits non-zero if any required check FAILs. WARN does not affect exit code.
 """

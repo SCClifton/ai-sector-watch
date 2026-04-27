@@ -24,7 +24,7 @@ For v0 these are mirrored from 1Password into repo secrets manually. For v1 we'l
 Local:
 
 ```bash
-op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
+op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
 ```
 
 Production (via gh):

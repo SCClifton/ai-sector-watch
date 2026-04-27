@@ -150,6 +150,35 @@ if [[ -d "$MAIN_WT/.venv" && ! -e "$WT_DIR/.venv" ]]; then
   esac
 fi
 
+# Step 6.5: move the Project card to "In Progress".
+# Project metadata is hard-coded for this repo because gh has no nice
+# generic way to look it up. If you ever rename or recreate the project,
+# update these constants.
+PROJECT_NUMBER=3
+PROJECT_OWNER="SCClifton"
+PROJECT_ID="PVT_kwHOCnSDOc4BVz2x"
+WORKFLOW_FIELD_ID="PVTSSF_lAHOCnSDOc4BVz2xzhRNAXY"
+WORKFLOW_IN_PROGRESS="e00b541b"
+
+set +e
+ITEM_ID=$(
+  gh project item-list "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --format json --limit 200 \
+    | jq -r --argjson n "$ISSUE" '.items[] | select(.content.number == $n) | .id' \
+    | head -1
+)
+if [[ -n "$ITEM_ID" && "$ITEM_ID" != "null" ]]; then
+  gh project item-edit \
+    --id "$ITEM_ID" \
+    --project-id "$PROJECT_ID" \
+    --field-id "$WORKFLOW_FIELD_ID" \
+    --single-select-option-id "$WORKFLOW_IN_PROGRESS" >/dev/null 2>&1 \
+    && echo "    Project Workflow set to In Progress" \
+    || echo "    (could not move Project card; do it manually)"
+else
+  echo "    Issue not on Project board yet; skipping Workflow move"
+fi
+set -e
+
 # Step 7: print next steps.
 cat <<EOF
 
@@ -161,7 +190,11 @@ cd into the worktree:
 Make your first commit, then open a Draft PR:
   gh pr create --draft --title "[#$ISSUE] $TITLE" --body "Closes #$ISSUE"
 
-Move the Project card to "In Progress" (Workflow field) via the GitHub UI.
+Run secret-bearing commands with the explicit 1Password account, otherwise
+\`op run\` either uses the wrong account or times out on biometric auth:
+  op run --account my.1password.com --env-file=.env.local -- <your command>
+
+Project card has already been moved to "In Progress".
 
 When ready for review, mark the PR as ready and ping Sam.
 
