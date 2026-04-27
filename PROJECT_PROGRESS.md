@@ -117,6 +117,23 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 07 — sidebar filters + companies table below the map.
 
+## 2026-04-27 — Commit 07: Sidebar filters and companies table
+
+**Shipped:**
+- `dashboard/components/filters.py`: `FilterState` and `FilterMeta` frozen dataclasses, `derive_meta()` to compute country list and year bounds from the loaded set, `render_sidebar()` to produce the multi-selects + slider + text input, `apply_filters()` pure function (sector / stage / country / founded-year window / case-insensitive name substring), `companies_to_table_rows()` formatter.
+- Map page now: derives meta from full company list, renders sidebar filters (defaults to AU+NZ), filters before splitting into geocoded/not, four metric tiles (on map / in view / total / awaiting), Pandas dataframe with `LinkColumn` for the website, and a "no companies match" empty state.
+
+**Tested:**
+- `pytest -q`: 63 pass, 1 skipped (added 11 filter tests).
+- `ruff check .`: clean.
+- Browser smoke check: with no filters → 52 / 52 / 52 / 0; selecting "Foundation models" sector → 1 / 1 / 52 / 0 with a single pink marker in Sydney (Leonardo.Ai). Country chips for AU+NZ appear pre-selected. Year slider auto-bounds to actual founded years (2002-2023).
+
+**Known limitations:**
+- The founded-year filter currently keeps companies with no `founded_year` (treats unknown as "could match") to avoid silently hiding 30+ entries; revisit once seed data is more complete.
+
+**Next:** Commit 08 — Companies page + News page + Digest page.
+
+
 
 
 
