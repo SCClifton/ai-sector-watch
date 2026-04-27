@@ -74,9 +74,7 @@ def write_digest(
             mention_str = (
                 f" - mentions: {', '.join(row.company_names)}" if row.company_names else ""
             )
-            lines.append(
-                f"- [{row.title}]({row.url}) ({row.source_slug}, {row.kind}){mention_str}"
-            )
+            lines.append(f"- [{row.title}]({row.url}) ({row.source_slug}, {row.kind}){mention_str}")
         lines.append("")
 
     path.write_text("\n".join(lines).replace("—", " - "), encoding="utf-8")

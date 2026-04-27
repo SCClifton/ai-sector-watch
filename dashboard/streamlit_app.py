@@ -57,8 +57,7 @@ def main() -> None:
     st.divider()
 
     st.subheader("How to use this dashboard")
-    st.markdown(
-        """
+    st.markdown("""
 - **Map**: interactive folium map of ANZ AI companies with sector colour and click-through popups.
 - **Companies**: filterable list of every verified company.
 - **News**: chronological feed of relevant news items linked to companies.
@@ -66,8 +65,7 @@ def main() -> None:
 - **Admin**: review queue for auto-discovered candidates (password-gated).
 
 Use the sidebar to navigate.
-        """
-    )
+        """)
 
     render_footer()
 

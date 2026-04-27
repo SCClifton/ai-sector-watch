@@ -36,9 +36,7 @@ class RssSource(SourceBase):
         return parse_feed_bytes(body, slug=self.slug, limit=limit)
 
 
-def parse_feed_bytes(
-    body: bytes, *, slug: str, limit: int | None = None
-) -> list[RawItem]:
+def parse_feed_bytes(body: bytes, *, slug: str, limit: int | None = None) -> list[RawItem]:
     """Parse raw RSS/Atom bytes into `RawItem`s. Pure: no network."""
     parsed = feedparser.parse(body)
     items: list[RawItem] = []
@@ -77,8 +75,11 @@ def _entry_datetime(entry) -> datetime | None:
 
 # Pre-baked RSS source factories from PRD section 7.
 
+
 def techcrunch_ai() -> RssSource:
-    return RssSource("techcrunch_ai", "https://techcrunch.com/category/artificial-intelligence/feed/")
+    return RssSource(
+        "techcrunch_ai", "https://techcrunch.com/category/artificial-intelligence/feed/"
+    )
 
 
 def startup_daily_au() -> RssSource:

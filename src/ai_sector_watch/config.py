@@ -43,9 +43,7 @@ class Config:
         return cls(
             anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY"),
             anthropic_model=os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
-            anthropic_budget_usd_per_run=float(
-                os.environ.get("ANTHROPIC_BUDGET_USD_PER_RUN", "2")
-            ),
+            anthropic_budget_usd_per_run=float(os.environ.get("ANTHROPIC_BUDGET_USD_PER_RUN", "2")),
             supabase_db_url=os.environ.get("SUPABASE_DB_URL"),
             admin_password=os.environ.get("ADMIN_PASSWORD"),
             pipeline_log_level=os.environ.get("PIPELINE_LOG_LEVEL", "INFO"),

@@ -81,9 +81,7 @@ Article:
 {body}
 """
 
-CLASSIFY_NEWS_SYSTEM = (
-    "You classify news items. Return only structured JSON matching the schema."
-)
+CLASSIFY_NEWS_SYSTEM = "You classify news items. Return only structured JSON matching the schema."
 
 CLASSIFY_NEWS_USER_TEMPLATE = """\
 Classify this news item.

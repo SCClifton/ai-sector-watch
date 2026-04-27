@@ -129,18 +129,34 @@ gh workflow run weekly.yml -f limit=5
 
 ## 7. Multi-tool coordination
 
-Multiple AI tools (Claude Code, Codex, future agents) may be working in this repo concurrently. To prevent collisions, follow this protocol on every task. Full detail and the recovery procedures live in [docs/multi-agent-workflow.md](docs/multi-agent-workflow.md).
+Multiple AI tools (Claude Code, Codex, future agents) work in this repo concurrently. **Each active issue gets its own git worktree.** That is the foundation; everything else builds on it. Full detail and recovery procedures live in [docs/multi-agent-workflow.md](docs/multi-agent-workflow.md).
 
-### Before you start (mandatory pre-flight)
+### One worktree per issue
 
-1. `git fetch && git checkout main && git pull --rebase`
-2. `gh issue view <#> --json assignees` — confirm it is unassigned (or assigned to you).
-3. `gh issue edit <#> --add-assignee @me` — claim the issue. Issue assignment is the lock.
-4. Set the Project's **Workflow** field to **In Progress**.
-5. `git checkout -b <tool>/<#>-<short-slug>` — branch naming convention is `<tool>/<issue-number>-<slug>`. Examples: `claude-code/4-live-pipeline`, `codex/8-sector-legend`.
-6. After your first commit, open a **Draft PR** via `gh pr create --draft` so the work is visible in the PR list.
+The repo lives in `~/Documents/Projects/AI-Sector-Watch/` (the "main worktree", on `main`, used by Sam for reading and coordinating). Every active issue gets a sibling directory:
 
-If you skip steps 1-3 and someone else is already working on the issue, your work will be wasted. The pre-flight is one-shot via `scripts/start_issue.sh <issue-number>`.
+```
+~/Documents/Projects/
+├── AI-Sector-Watch/                    # main, reading/coordinating only
+├── AI-Sector-Watch-1-supabase/         # one agent on issue #1
+├── AI-Sector-Watch-2-wire-op-refs/     # another agent on issue #2
+├── AI-Sector-Watch-4-pipeline/         # another agent on issue #4
+└── ...
+```
+
+All siblings share the same `.git/`. They have isolated working trees, so two agents editing files at the same time never collide. The directory disappears when the PR merges.
+
+**Never commit from the main worktree.** Always work in a per-issue worktree.
+
+### Pre-flight (one command)
+
+```bash
+scripts/start_issue.sh <issue-number> [tool-name]
+```
+
+That script verifies the issue is open and unassigned, claims it, creates the per-issue worktree at `../AI-Sector-Watch-<#>-<slug>/` on branch `<tool>/<#>-<slug>`, symlinks `.env.local`, and prints the next steps. Run it from any existing worktree (it discovers the main worktree automatically).
+
+If the script ever fails, the manual fallback is documented in [docs/multi-agent-workflow.md §3](docs/multi-agent-workflow.md).
 
 ### Branch and merge rules
 
@@ -149,6 +165,7 @@ If you skip steps 1-3 and someone else is already working on the issue, your wor
 - **One human merger** (Sam). AIs do not auto-merge.
 - **No force-push to `main`.** Branch protection rejects it. If history rewrite is unavoidable, ask Sam.
 - Rebase on `main` before opening a PR for review.
+- After merge, run `scripts/finish_issue.sh <#>` to remove the worktree and delete the local branch.
 
 ### Live infrastructure coordination
 
@@ -156,7 +173,7 @@ For changes that touch shared remote state (Azure resources, DNS records, Supaba
 
 ### When two PRs overlap
 
-Whoever opens their PR first owns the file conflict resolution. The second PR rebases. If the first PR is stalled (>1 day with no movement), the second PR can take over after commenting on issue #1 to claim ownership.
+Whoever opens their PR first owns the file conflict resolution. The second PR rebases. If the first PR is stalled (>1 day with no movement), the second PR can take over after commenting on the first issue to claim ownership.
 
 ## 8. Tone for AI agents
 

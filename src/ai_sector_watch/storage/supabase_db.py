@@ -34,9 +34,7 @@ LOGGER = logging.getLogger(__name__)
 def _get_db_url() -> str:
     url = os.environ.get("SUPABASE_DB_URL")
     if not url:
-        raise KeyError(
-            "SUPABASE_DB_URL is not set. Run with `op run --env-file=.env.local -- ...`"
-        )
+        raise KeyError("SUPABASE_DB_URL is not set. Run with `op run --env-file=.env.local -- ...`")
     return url
 
 
@@ -64,9 +62,7 @@ def get_conn(*, autocommit: bool = False) -> psycopg.Connection:
             )
         except Exception as exc:  # noqa: BLE001 — broad ok at boundary
             last_exc = exc
-            LOGGER.warning(
-                "supabase connect attempt %d/%d failed: %s", attempt, max_attempts, exc
-            )
+            LOGGER.warning("supabase connect attempt %d/%d failed: %s", attempt, max_attempts, exc)
             if attempt < max_attempts:
                 time.sleep(min(sleep_s, 8.0))
                 sleep_s *= 2
@@ -88,9 +84,11 @@ def connection(*, autocommit: bool = False) -> Iterator[psycopg.Connection]:
 
 
 def load_schema_sql() -> str:
-    return resources.files("ai_sector_watch.storage").joinpath(
-        "supabase_schema.sql"
-    ).read_text(encoding="utf-8")
+    return (
+        resources.files("ai_sector_watch.storage")
+        .joinpath("supabase_schema.sql")
+        .read_text(encoding="utf-8")
+    )
 
 
 def apply_schema(conn: psycopg.Connection) -> None:

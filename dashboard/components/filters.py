@@ -101,8 +101,7 @@ def render_sidebar(meta: FilterMeta, *, default_countries: tuple[str, ...]) -> F
         name_query = st.text_input("Search name", value="", placeholder="e.g. Marqo")
 
         st.caption(
-            "Filters apply to the map and the table below it. "
-            "Reset by clearing each control."
+            "Filters apply to the map and the table below it. " "Reset by clearing each control."
         )
 
     return FilterState(
@@ -128,15 +127,9 @@ def apply_filters(companies: list[Company], state: FilterState) -> list[Company]
         wanted = set(state.countries)
         out = [c for c in out if c.country in wanted]
     if state.founded_min is not None:
-        out = [
-            c for c in out
-            if c.founded_year is None or c.founded_year >= state.founded_min
-        ]
+        out = [c for c in out if c.founded_year is None or c.founded_year >= state.founded_min]
     if state.founded_max is not None:
-        out = [
-            c for c in out
-            if c.founded_year is None or c.founded_year <= state.founded_max
-        ]
+        out = [c for c in out if c.founded_year is None or c.founded_year <= state.founded_max]
     q = state.name_query.strip().lower()
     if q:
         out = [c for c in out if q in c.name.lower()]

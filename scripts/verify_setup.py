@@ -84,9 +84,7 @@ def check_supabase_url_set() -> CheckResult:
 
 def check_supabase_connect() -> CheckResult:
     if not os.environ.get("SUPABASE_DB_URL"):
-        return _result(
-            "Supabase connect", False, "skipped: SUPABASE_DB_URL unset", warn=True
-        )
+        return _result("Supabase connect", False, "skipped: SUPABASE_DB_URL unset", warn=True)
     try:
         with supabase_db.connection() as conn, conn.cursor() as cur:
             cur.execute("SELECT 1 AS ok")
@@ -99,22 +97,18 @@ def check_supabase_connect() -> CheckResult:
 
 def check_supabase_schema(apply: bool) -> CheckResult:
     if not os.environ.get("SUPABASE_DB_URL"):
-        return _result(
-            "Supabase schema", False, "skipped: SUPABASE_DB_URL unset", warn=True
-        )
+        return _result("Supabase schema", False, "skipped: SUPABASE_DB_URL unset", warn=True)
     try:
         with supabase_db.connection() as conn:
             if apply:
                 supabase_db.apply_schema(conn)
             with conn.cursor() as cur:
-                cur.execute(
-                    """
+                cur.execute("""
                     SELECT COUNT(*) AS n FROM information_schema.tables
                     WHERE table_schema = 'public'
                       AND table_name IN
                         ('companies', 'funding_events', 'news_items', 'ingest_events')
-                    """
-                )
+                    """)
                 row = cur.fetchone()
         n = row["n"] if row else 0
         ok = n == 4
