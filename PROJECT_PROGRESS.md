@@ -172,6 +172,25 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 10 — Claude extraction client (cached, budget-capped) + Pydantic schema + prompts.
 
+## 2026-04-27 — Commit 10: Claude extraction client
+
+**Shipped:**
+- `src/ai_sector_watch/extraction/schema.py`: Pydantic models (`CompanyMention`, `CompanyMentionList`, `CompanyValidation`, `CompanyClassification`, `FundingExtraction`, `NewsClassification`) with validation bounds (e.g. sector_tags must be 1-4 entries).
+- `src/ai_sector_watch/extraction/prompts.py`: terse system + user templates for each step (extract companies, validate, classify, extract funding, classify news).
+- `src/ai_sector_watch/extraction/claude_client.py`: `ClaudeClient.structured_call()` enforces a per-run USD cap with a pre-flight estimate from `_rough_token_count`, caches successful responses to `data/local/claude_cache/{hash}.json`, dispatches via the SDK's `tool_use` shape with the Pydantic schema as the tool's `input_schema`. Uses Sonnet by default; pricing table covers Sonnet 4.6, Opus 4.7, Haiku 4.5. `BudgetExceeded` raised when the next call would push past the cap.
+- `tests/test_extraction.py`: 7 tests using monkeypatch on `_dispatch` to avoid live SDK calls. Confirms cache hit on second invocation, budget-cap raises, cost estimate matches the table, schema validation bounds work end-to-end.
+
+**Tested:**
+- `pytest -q`: 80 pass, 1 skipped.
+- `ruff check .`: clean.
+
+**Known limitations:**
+- The `_dispatch()` body uses the SDK shape that exists today; if Sonnet 4.6's tool-use response structure changes the parser may need a small tweak. Will smoke-test live in commit 12.
+- The cache is local-disk only and ignored by git (`data/local/`); CI runs will see a cold cache on every job. That's intentional for v0.
+
+**Next:** Commit 11 — discovery (validator + classifier) + news-item linking.
+
+
 
 
 
