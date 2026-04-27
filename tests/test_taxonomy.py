@@ -83,7 +83,6 @@ def test_primary_sector_colour_uses_first_known_tag() -> None:
 def test_primary_sector_colour_handles_empty_and_unknown() -> None:
     assert primary_sector_colour([]) == "gray"
     assert primary_sector_colour(["nonsense"]) == "gray"
-    assert (
-        primary_sector_colour(["nonsense", "agents_and_orchestration"])
-        == colour_for_sector("agents_and_orchestration")
+    assert primary_sector_colour(["nonsense", "agents_and_orchestration"]) == colour_for_sector(
+        "agents_and_orchestration"
     )

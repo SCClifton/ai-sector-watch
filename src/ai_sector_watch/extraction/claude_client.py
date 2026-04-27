@@ -89,9 +89,7 @@ class ClaudeClient:
     ) -> None:
         cfg = get_config()
         self.model = model or cfg.anthropic_model
-        self.budget_usd = (
-            budget_usd if budget_usd is not None else cfg.anthropic_budget_usd_per_run
-        )
+        self.budget_usd = budget_usd if budget_usd is not None else cfg.anthropic_budget_usd_per_run
         self.cache_dir = cache_dir or CACHE_DIR
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.stats = CallStats()

@@ -60,11 +60,9 @@ class NewsItem:
 class DataSource(Protocol):
     backend: str
 
-    def list_companies(self, *, statuses: tuple[str, ...] = ("verified",)) -> list[Company]:
-        ...
+    def list_companies(self, *, statuses: tuple[str, ...] = ("verified",)) -> list[Company]: ...
 
-    def recent_news(self, *, limit: int = 50) -> list[NewsItem]:
-        ...
+    def recent_news(self, *, limit: int = 50) -> list[NewsItem]: ...
 
 
 # ---------------------------------------------------------------------------

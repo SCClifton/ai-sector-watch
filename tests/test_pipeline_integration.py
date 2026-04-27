@@ -80,9 +80,7 @@ def _stub_client(tmp_path: Path) -> ClaudeClient:
             stage="seed",
             summary="A new Sydney foundation-model lab.",
         ),
-        "NewsClassification": NewsClassification(
-            kind="funding", is_relevant=True
-        ),
+        "NewsClassification": NewsClassification(kind="funding", is_relevant=True),
     }
 
     def fake_dispatch(self, *, system, prompt, schema_cls, max_tokens):
@@ -237,10 +235,6 @@ def test_pipeline_live_full_round_trip(tmp_path) -> None:
     assert result.digest_path is not None
     # Cleanup.
     with supabase_db.connection() as conn, conn.cursor() as cur:
-        cur.execute(
-            "DELETE FROM news_items WHERE source_url = %s", (items[0].url,)
-        )
-        cur.execute(
-            "DELETE FROM companies WHERE name_normalised = %s", ("newmarqo",)
-        )
+        cur.execute("DELETE FROM news_items WHERE source_url = %s", (items[0].url,))
+        cur.execute("DELETE FROM companies WHERE name_normalised = %s", ("newmarqo",))
         conn.commit()

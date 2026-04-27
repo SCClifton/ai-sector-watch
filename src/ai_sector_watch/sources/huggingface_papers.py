@@ -29,9 +29,7 @@ class HuggingFacePapers(SourceBase):
         return parse_huggingface_payload(payload, limit=limit)
 
 
-def parse_huggingface_payload(
-    payload: list[dict], *, limit: int | None = None
-) -> list[RawItem]:
+def parse_huggingface_payload(payload: list[dict], *, limit: int | None = None) -> list[RawItem]:
     """Pure parser for the HF daily-papers JSON shape."""
     items: list[RawItem] = []
     for entry in payload[: limit if limit else None]:

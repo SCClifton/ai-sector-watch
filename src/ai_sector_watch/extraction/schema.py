@@ -17,7 +17,9 @@ class CompanyMention(BaseModel):
 
     name: str = Field(..., description="Exact company name as it appears.")
     confidence: float = Field(
-        ..., ge=0.0, le=1.0,
+        ...,
+        ge=0.0,
+        le=1.0,
         description="Model confidence that this is a real AI-native or AI-applied company.",
     )
     is_anz: bool = Field(
@@ -46,10 +48,14 @@ class CompanyClassification(BaseModel):
     """Sector tags and stage assigned by Claude."""
 
     sector_tags: list[str] = Field(
-        ..., min_length=1, max_length=4,
+        ...,
+        min_length=1,
+        max_length=4,
         description="One to four sector tags from the canonical taxonomy.",
     )
-    stage: str | None = Field(None, description="One of pre_seed, seed, series_a, series_b_plus, mature.")
+    stage: str | None = Field(
+        None, description="One of pre_seed, seed, series_a, series_b_plus, mature."
+    )
     summary: str = Field(..., description="One-paragraph summary, no em dashes.")
 
 

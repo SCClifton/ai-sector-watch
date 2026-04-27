@@ -54,9 +54,7 @@ def _popup_html(c: Company) -> str:
     parts: list[str] = ['<div style="font-family: sans-serif; font-size: 13px;">']
     name_html = c.name
     if c.website:
-        name_html = (
-            f'<a href="{c.website}" target="_blank" rel="noopener noreferrer">{c.name}</a>'
-        )
+        name_html = f'<a href="{c.website}" target="_blank" rel="noopener noreferrer">{c.name}</a>'
     parts.append(f"<div><strong>{name_html}</strong></div>")
 
     location_bits = [b for b in (c.city, c.country) if b]
@@ -66,7 +64,7 @@ def _popup_html(c: Company) -> str:
     if c.stage:
         parts.append(f'<div style="margin-top:4px;"><em>Stage:</em> {c.stage}</div>')
     if c.founded_year:
-        parts.append(f'<div><em>Founded:</em> {c.founded_year}</div>')
+        parts.append(f"<div><em>Founded:</em> {c.founded_year}</div>")
 
     if sector_labels:
         chips = " ".join(
@@ -77,9 +75,7 @@ def _popup_html(c: Company) -> str:
         parts.append(f'<div style="margin-top:6px;">{chips}</div>')
 
     if c.summary:
-        parts.append(
-            f'<div style="margin-top:8px; line-height:1.35;">{c.summary}</div>'
-        )
+        parts.append(f'<div style="margin-top:8px; line-height:1.35;">{c.summary}</div>')
 
     parts.append("</div>")
     return "".join(parts)

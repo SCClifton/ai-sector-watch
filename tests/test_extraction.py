@@ -98,9 +98,9 @@ def test_estimate_cost_uses_known_model_table() -> None:
     assert sonnet == pytest.approx(3.0, rel=1e-6)
     assert opus == pytest.approx(15.0, rel=1e-6)
     # Unknown model defaults to Sonnet pricing.
-    unknown = ClaudeClient(
-        model="claude-future-x", budget_usd=10
-    )._estimate_cost(input_tokens=1_000_000, output_tokens=0)
+    unknown = ClaudeClient(model="claude-future-x", budget_usd=10)._estimate_cost(
+        input_tokens=1_000_000, output_tokens=0
+    )
     assert unknown == pytest.approx(3.0, rel=1e-6)
 
 

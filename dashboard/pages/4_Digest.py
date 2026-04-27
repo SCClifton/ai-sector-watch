@@ -24,10 +24,7 @@ st.set_page_config(
 
 def main() -> None:
     st.title("Weekly digest")
-    st.caption(
-        "Auto-generated summaries written by the weekly pipeline. "
-        "Latest first."
-    )
+    st.caption("Auto-generated summaries written by the weekly pipeline. " "Latest first.")
 
     digest_dir = get_config().digest_output_dir
     digest_dir.mkdir(parents=True, exist_ok=True)

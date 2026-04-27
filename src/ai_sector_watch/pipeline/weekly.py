@@ -134,8 +134,7 @@ def run_weekly_pipeline(
             statuses=("verified", "auto_discovered_pending_review"),
         )
         known_pairs = [
-            (supabase_db.normalise_name(c["name"]), str(c["id"]))
-            for c in existing_companies
+            (supabase_db.normalise_name(c["name"]), str(c["id"])) for c in existing_companies
         ]
 
         for item in raw_items:
@@ -294,9 +293,7 @@ def _write_empty_digest(today: date, result: PipelineResult) -> None:
         candidates_added=0,
         cost_usd=0.0,
     )
-    path = write_digest(
-        run_date=today, stats=stats, new_companies=[], news=[]
-    )
+    path = write_digest(run_date=today, stats=stats, new_companies=[], news=[])
     result.digest_path = str(path)
 
 

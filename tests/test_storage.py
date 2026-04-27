@@ -46,9 +46,7 @@ def test_normalise_name_lowercase_and_collapses_whitespace() -> None:
 def test_load_schema_sql_contains_core_tables() -> None:
     sql = load_schema_sql()
     for table in ("companies", "funding_events", "news_items", "ingest_events"):
-        assert f"CREATE TABLE IF NOT EXISTS {table}" in sql, (
-            f"schema is missing {table}"
-        )
+        assert f"CREATE TABLE IF NOT EXISTS {table}" in sql, f"schema is missing {table}"
     assert "discovery_status" in sql
     assert "company_stage" in sql
 
