@@ -2,6 +2,25 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #7: Custom domain + Azure-managed TLS (V0 LIVE)
+
+**Shipped (claude-code/7-cut-dns-over-to-aimap-cliftonfamily-co-w):**
+- v0 live at https://aimap.cliftonfamily.co.
+- Added Cloudflare CNAME `aimap.cliftonfamily.co` -> `ai-sector-watch.azurewebsites.net` (proxy DNS-only / grey cloud, so the SNI handshake reaches Azure directly).
+- Added `aimap.cliftonfamily.co` as a custom hostname binding on Azure Web App `ai-sector-watch`.
+- Issued + bound an Azure-managed TLS certificate (issuer DigiCert / GeoTrust TLS RSA CA G1, expires 2026-10-27, SNI-bound).
+- README.md no longer flags the public dashboard as "(coming online with v0)".
+- `docs/deployment.md` clarifies DNS-first ordering and notes the `asuid` TXT alternative for verification.
+
+**Tested:**
+- `curl -I https://aimap.cliftonfamily.co`: HTTP/2 200, server `TornadoServer/6.5.5`.
+- TLS chain: `subject=CN=aimap.cliftonfamily.co`, `issuer=GeoTrust TLS RSA CA G1` (publicly trusted).
+- All six dashboard pages render via the custom domain (Home / Map / Companies / News / Digest / Admin); screenshots captured headlessly via Chrome DevTools Protocol.
+
+**Known limitations:**
+- Cloudflare proxy is intentionally OFF for v0 to keep the cert flow simple. Switching to Full (strict) with the proxy on is a follow-up if we want CF caching/edge.
+- Azure-managed certs use DigiCert/GeoTrust, not Let's Encrypt (Azure migrated off LE for App Service managed certs in 2024).
+
 ## 2026-04-27 - Issue #6: Azure OIDC deploy auth (FIRST LIVE CONTAINER DEPLOY)
 
 **Shipped (codex/6-set-up-oidc-federated-credential-for-dep):**

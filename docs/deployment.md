@@ -95,16 +95,21 @@ gh secret set AZURE_SUBSCRIPTION_ID --body "$SUB_ID"
 ```bash
 DOMAIN=aimap.cliftonfamily.co
 
-# 1. Add the domain to the Web App.
+# 1. Point DNS first (manual step in Cloudflare DNS for cliftonfamily.co):
+#    CNAME aimap -> ai-sector-watch.azurewebsites.net
+#    Cloudflare proxy MUST be OFF (grey cloud) for the SNI handshake during
+#    Azure-managed cert issuance. Leave it off for v0.
+#
+#    Alternative for verification without DNS pointing yet: add a TXT record
+#    asuid.aimap = <customDomainVerificationId>, then add the binding,
+#    then add the CNAME. Get the verification id with:
+#      az webapp show -g "$RG" -n "$APP" --query customDomainVerificationId -o tsv
+
+# 2. Add the domain to the Web App (requires CNAME or asuid TXT in place).
 az webapp config hostname add \
   --webapp-name "$APP" \
   --resource-group "$RG" \
   --hostname "$DOMAIN"
-
-# 2. Point DNS (manual step in Cloudflare / your DNS provider):
-#    CNAME aimap -> <APP>.azurewebsites.net
-#    Cloudflare proxy off (orange cloud grey) so the SNI hits Azure directly,
-#    OR use full-strict mode if you want CF in front.
 
 # 3. Issue Azure-managed TLS cert.
 az webapp config ssl create \
@@ -112,10 +117,14 @@ az webapp config ssl create \
   --name "$APP" \
   --hostname "$DOMAIN"
 
+# Capture the thumbprint from the previous command's output (or query it):
+THUMBPRINT=$(az webapp config ssl list -g "$RG" \
+  --query "[?subjectName=='$DOMAIN'] | [0].thumbprint" -o tsv)
+
 az webapp config ssl bind \
   --resource-group "$RG" \
   --name "$APP" \
-  --certificate-thumbprint <thumbprint-from-previous-command> \
+  --certificate-thumbprint "$THUMBPRINT" \
   --ssl-type SNI
 ```
 
