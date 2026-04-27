@@ -1,0 +1,579 @@
+# Hand-curated seed list of Australian and New Zealand AI companies.
+#
+# Schema (per company entry):
+#   name: required, exact display name
+#   country: AU or NZ
+#   city: must exist in src/ai_sector_watch/discovery/geocoder.py ANZ_CITIES
+#   website: https URL preferred
+#   sector_tags: list of tags from src/ai_sector_watch/discovery/taxonomy.py
+#                first tag = primary (drives marker colour on map)
+#   stage: pre_seed | seed | series_a | series_b_plus | mature
+#   founded_year: optional integer
+#   description_seed: 1-3 sentence summary, no em dashes
+#
+# All entries below load with discovery_status = "verified".
+# To add a company: append a YAML block, run `python scripts/seed_companies.py`.
+
+companies:
+  # =========================================================================
+  # Pre-seed and seed AI-native (Australia)
+  # =========================================================================
+  - name: Marqo
+    country: AU
+    city: Sydney
+    website: https://www.marqo.ai
+    sector_tags: [vector_search_and_retrieval, ai_infrastructure]
+    stage: seed
+    founded_year: 2021
+    description_seed: >
+      End-to-end vector search engine for unstructured data. Combines embedding
+      generation, retrieval, and ranking in a single API. Used for product
+      search and recommendation systems.
+
+  - name: Relevance AI
+    country: AU
+    city: Sydney
+    website: https://relevanceai.com
+    sector_tags: [agents_and_orchestration, ai_infrastructure]
+    stage: series_a
+    founded_year: 2020
+    description_seed: >
+      Platform for building, deploying, and managing AI agents and workforces.
+      No-code agent builder targeted at operations and revenue teams.
+
+  - name: Kismet
+    country: AU
+    city: Sydney
+    website: https://www.kismet.com
+    sector_tags: [vertical_healthcare, agents_and_orchestration]
+    stage: seed
+    founded_year: 2023
+    description_seed: >
+      AI assistant for the National Disability Insurance Scheme (NDIS) sector,
+      automating provider workflows and participant matching.
+
+  - name: SourseAI
+    country: AU
+    city: Sydney
+    website: https://www.sourseai.com
+    sector_tags: [vertical_sales_marketing, agents_and_orchestration]
+    stage: pre_seed
+    description_seed: >
+      AI for telco growth and retention. Predictive next-best-action across
+      churn, upsell, and acquisition.
+
+  - name: Breaker
+    country: AU
+    city: Melbourne
+    website: https://breaker.com
+    sector_tags: [agents_and_orchestration, developer_tools]
+    stage: pre_seed
+    description_seed: >
+      Agent-native platform for shipping software faster, focused on coding
+      agents that integrate with existing developer toolchains.
+
+  - name: Imitation Machines
+    country: AU
+    city: Sydney
+    website: https://imitation.au
+    sector_tags: [robotics_industrial, robotics_household]
+    stage: pre_seed
+    description_seed: >
+      Imitation-learning-first robotics for general-purpose manipulation
+      across industrial and home contexts.
+
+  - name: PaperLab
+    country: AU
+    city: Melbourne
+    website: https://paperlab.ai
+    sector_tags: [vertical_legal, agents_and_orchestration]
+    stage: pre_seed
+    description_seed: >
+      AI agents for legal teams. Automates contract review and document
+      diligence workflows.
+
+  - name: Everbility
+    country: AU
+    city: Sydney
+    website: https://everbility.com
+    sector_tags: [vertical_healthcare, agents_and_orchestration]
+    stage: seed
+    description_seed: >
+      AI co-pilot for allied health professionals (occupational therapy,
+      physio), automating clinical documentation.
+
+  - name: Prefactor
+    country: AU
+    city: Sydney
+    website: https://prefactor.ai
+    sector_tags: [developer_tools, ai_infrastructure]
+    stage: pre_seed
+    description_seed: >
+      Database-aware schema and migration tooling that uses LLMs to refactor
+      production databases safely.
+
+  - name: Alloy
+    country: AU
+    city: Melbourne
+    website: https://alloy.au
+    sector_tags: [agents_and_orchestration, vertical_sales_marketing]
+    stage: pre_seed
+    description_seed: >
+      Agent platform for go-to-market teams, automating outbound and account
+      research workflows.
+
+  - name: Algenie
+    country: AU
+    city: Sydney
+    website: https://algenie.com
+    sector_tags: [vertical_finance, agents_and_orchestration]
+    stage: pre_seed
+    description_seed: >
+      AI co-pilot for accountants and bookkeepers, automating compliance and
+      advisory workflows.
+
+  - name: OptiGrid
+    country: AU
+    city: Melbourne
+    website: https://optigrid.au
+    sector_tags: [ai_for_climate_energy, ai_infrastructure]
+    stage: seed
+    description_seed: >
+      AI optimisation for distributed energy resources and grid-edge assets.
+      Targets virtual power plant operators.
+
+  - name: Hevi
+    country: AU
+    city: Sydney
+    website: https://hevi.ai
+    sector_tags: [vertical_sales_marketing, agents_and_orchestration]
+    stage: pre_seed
+    description_seed: >
+      AI for B2B sales operations. Automates pipeline review, deal hygiene,
+      and forecast scoring.
+
+  - name: Everlab
+    country: AU
+    city: Melbourne
+    website: https://www.everlab.com
+    sector_tags: [vertical_healthcare, ai_for_science_biology]
+    stage: seed
+    founded_year: 2023
+    description_seed: >
+      Preventative-health platform combining whole-body imaging with AI
+      analysis for early disease detection.
+
+  - name: Harrison.ai
+    country: AU
+    city: Sydney
+    website: https://harrison.ai
+    sector_tags: [vertical_healthcare, ai_for_science_biology]
+    stage: series_b_plus
+    founded_year: 2018
+    description_seed: >
+      Clinician-led healthcare AI company building diagnostic models for
+      radiology and pathology, deployed across multiple national health
+      systems.
+
+  - name: Diraq
+    country: AU
+    city: Sydney
+    website: https://diraq.com
+    sector_tags: [ai_infrastructure, ai_for_science_materials]
+    stage: series_a
+    description_seed: >
+      Quantum computing hardware company commercialising silicon CMOS
+      qubits, with applications in AI workloads.
+
+  - name: Advanced Navigation
+    country: AU
+    city: Sydney
+    website: https://www.advancednavigation.com
+    sector_tags: [robotics_autonomous_vehicles, defence_and_dual_use]
+    stage: series_b_plus
+    founded_year: 2012
+    description_seed: >
+      Inertial navigation, AI-based positioning, and underwater robotics for
+      autonomous vehicles and defence applications.
+
+  - name: Anduril Australia
+    country: AU
+    city: Sydney
+    website: https://www.anduril.com
+    sector_tags: [defence_and_dual_use, robotics_autonomous_vehicles]
+    stage: mature
+    description_seed: >
+      Australian arm of Anduril Industries, building autonomous defence
+      systems including the Ghost Shark extra-large autonomous undersea
+      vehicle for the Royal Australian Navy.
+
+  # =========================================================================
+  # AirTree portfolio and other ANZ scaleups with AI surface area
+  # =========================================================================
+  - name: Linktree
+    country: AU
+    city: Melbourne
+    website: https://linktr.ee
+    sector_tags: [creative_and_media, vertical_sales_marketing]
+    stage: series_b_plus
+    founded_year: 2016
+    description_seed: >
+      Link-in-bio platform with AI-driven creator monetisation features for
+      audience growth and content recommendations.
+
+  - name: Eucalyptus
+    country: AU
+    city: Sydney
+    website: https://eucalyptus.vc
+    sector_tags: [vertical_healthcare, agents_and_orchestration]
+    stage: series_b_plus
+    founded_year: 2019
+    description_seed: >
+      Telehealth holding company building digital-first healthcare brands
+      (Pilot, Juniper, Software). Increasingly applying AI to clinical
+      triage and patient onboarding.
+
+  - name: Employment Hero
+    country: AU
+    city: Sydney
+    website: https://employmenthero.com
+    sector_tags: [vertical_sales_marketing, agents_and_orchestration]
+    stage: mature
+    founded_year: 2014
+    description_seed: >
+      All-in-one HR, payroll and benefits platform with embedded AI
+      assistant SmartMatch for hiring and rostering.
+
+  - name: Immutable
+    country: AU
+    city: Sydney
+    website: https://www.immutable.com
+    sector_tags: [creative_and_media, ai_infrastructure]
+    stage: mature
+    founded_year: 2018
+    description_seed: >
+      Web3 gaming infrastructure company; AI-driven anti-fraud and player
+      matching across its zk-rollup chain.
+
+  - name: SafetyCulture
+    country: AU
+    city: Sydney
+    website: https://safetyculture.com
+    sector_tags: [vertical_security, agents_and_orchestration]
+    stage: mature
+    founded_year: 2004
+    description_seed: >
+      Operations platform (formerly iAuditor) with AI-driven inspection,
+      training, and incident-response workflows for frontline workers.
+
+  - name: Go1
+    country: AU
+    city: Brisbane
+    website: https://www.go1.com
+    sector_tags: [vertical_sales_marketing, agents_and_orchestration]
+    stage: mature
+    founded_year: 2015
+    description_seed: >
+      Workplace learning marketplace using AI to personalise course
+      recommendations and skills mapping.
+
+  - name: Atlassian
+    country: AU
+    city: Sydney
+    website: https://www.atlassian.com
+    sector_tags: [developer_tools, agents_and_orchestration]
+    stage: mature
+    founded_year: 2002
+    description_seed: >
+      Enterprise collaboration software (Jira, Confluence, Bitbucket).
+      Rovo AI agents and Atlassian Intelligence are now embedded across the
+      cloud product suite.
+
+  - name: Canva
+    country: AU
+    city: Sydney
+    website: https://www.canva.com
+    sector_tags: [creative_and_media, agents_and_orchestration]
+    stage: mature
+    founded_year: 2013
+    description_seed: >
+      Design platform with deep generative AI integration: Magic Studio,
+      Magic Write, image generation, and design-to-code workflows.
+
+  - name: Leonardo.Ai
+    country: AU
+    city: Sydney
+    website: https://leonardo.ai
+    sector_tags: [creative_and_media, foundation_models]
+    stage: series_a
+    founded_year: 2022
+    description_seed: >
+      Generative image platform for game artists and creative professionals,
+      with custom-trained model fine-tuning. Acquired by Canva in 2024.
+
+  - name: Lyrebird Health
+    country: AU
+    city: Melbourne
+    website: https://www.lyrebirdhealth.com
+    sector_tags: [vertical_healthcare, agents_and_orchestration]
+    stage: seed
+    founded_year: 2023
+    description_seed: >
+      AI medical scribe for general practitioners, generating clinical
+      notes from patient consultations in real time.
+
+  - name: Heidi Health
+    country: AU
+    city: Melbourne
+    website: https://www.heidihealth.com
+    sector_tags: [vertical_healthcare, agents_and_orchestration]
+    stage: series_a
+    founded_year: 2021
+    description_seed: >
+      AI medical scribe and clinical assistant deployed across primary care
+      and allied health practices in ANZ and the US.
+
+  - name: Pearler
+    country: AU
+    city: Perth
+    website: https://pearler.com
+    sector_tags: [vertical_finance, agents_and_orchestration]
+    stage: seed
+    founded_year: 2018
+    description_seed: >
+      Long-term-investing brokerage and FIRE-community platform; AI-driven
+      portfolio insights and goal tracking.
+
+  - name: Pyn
+    country: AU
+    city: Sydney
+    website: https://pyn.co
+    sector_tags: [vertical_sales_marketing, agents_and_orchestration]
+    stage: seed
+    description_seed: >
+      Personalised employee communications platform using AI to tailor
+      messaging by lifecycle stage and segment.
+
+  - name: Augmenta
+    country: AU
+    city: Melbourne
+    website: https://augmenta.ai
+    sector_tags: [vertical_legal, agents_and_orchestration]
+    stage: seed
+    description_seed: >
+      AI co-pilot for in-house legal teams, focused on contract lifecycle
+      management and review automation.
+
+  - name: Spaceship
+    country: AU
+    city: Sydney
+    website: https://www.spaceship.com.au
+    sector_tags: [vertical_finance, agents_and_orchestration]
+    stage: series_a
+    description_seed: >
+      Mobile-first investment and superannuation platform; AI-driven
+      portfolio construction and member engagement.
+
+  - name: Mable
+    country: AU
+    city: Sydney
+    website: https://mable.com.au
+    sector_tags: [vertical_healthcare, agents_and_orchestration]
+    stage: series_b_plus
+    description_seed: >
+      Marketplace for independent disability and aged-care workers, with
+      AI matching for participant-worker fit.
+
+  # =========================================================================
+  # New Zealand
+  # =========================================================================
+  - name: Composite
+    country: NZ
+    city: Auckland
+    website: https://composite.io
+    sector_tags: [agents_and_orchestration, developer_tools]
+    stage: pre_seed
+    description_seed: >
+      Multi-agent orchestration framework for building and observing
+      production agent systems.
+
+  - name: Soul Machines
+    country: NZ
+    city: Auckland
+    website: https://www.soulmachines.com
+    sector_tags: [agents_and_orchestration, creative_and_media]
+    stage: series_b_plus
+    founded_year: 2016
+    description_seed: >
+      Autonomous animated digital humans powered by generative AI,
+      deployed for customer experience and education applications.
+
+  - name: Tracksuit
+    country: NZ
+    city: Auckland
+    website: https://gotracksuit.com
+    sector_tags: [vertical_sales_marketing, ai_infrastructure]
+    stage: series_a
+    founded_year: 2021
+    description_seed: >
+      Always-on brand tracking platform; AI-driven survey panel analysis and
+      benchmarking for marketers.
+
+  - name: Halter
+    country: NZ
+    city: Auckland
+    website: https://halter.co
+    sector_tags: [robotics_industrial, ai_for_climate_energy]
+    stage: series_b_plus
+    founded_year: 2016
+    description_seed: >
+      Solar-powered smart collars and software for virtually fencing and
+      rotating dairy and beef cattle, increasing pasture utilisation.
+
+  - name: Partly
+    country: NZ
+    city: Christchurch
+    website: https://partly.com
+    sector_tags: [vertical_sales_marketing, ai_infrastructure]
+    stage: series_a
+    founded_year: 2019
+    description_seed: >
+      Auto-parts catalogue infrastructure using computer vision and LLMs
+      to map parts data across global vehicle datasets.
+
+  - name: Auror
+    country: NZ
+    city: Auckland
+    website: https://www.auror.co
+    sector_tags: [vertical_security, agents_and_orchestration]
+    stage: series_b_plus
+    founded_year: 2012
+    description_seed: >
+      Retail crime intelligence platform; AI matches incidents and
+      offenders across stores and jurisdictions.
+
+  - name: Vxt
+    country: NZ
+    city: Wellington
+    website: https://vxt.co
+    sector_tags: [vertical_legal, agents_and_orchestration]
+    stage: seed
+    description_seed: >
+      Communications platform for legal and accounting firms, with AI
+      transcription and summarisation built into the calling stack.
+
+  # =========================================================================
+  # AI infrastructure and tooling (ANZ-founded, often with global teams)
+  # =========================================================================
+  - name: Buildkite
+    country: AU
+    city: Melbourne
+    website: https://buildkite.com
+    sector_tags: [developer_tools, ai_infrastructure]
+    stage: series_a
+    founded_year: 2013
+    description_seed: >
+      Hybrid CI/CD platform; AI-assisted pipeline insights and test analytics
+      for engineering teams.
+
+  - name: Sourcegraph (origins)
+    country: AU
+    city: Sydney
+    website: https://sourcegraph.com
+    sector_tags: [developer_tools, agents_and_orchestration]
+    stage: mature
+    description_seed: >
+      Code-search and code-AI platform (Cody coding assistant). Founding
+      team has Sydney roots; v0 included for completeness pending review.
+
+  - name: Mantel Group
+    country: AU
+    city: Melbourne
+    website: https://mantelgroup.com.au
+    sector_tags: [developer_tools, ai_infrastructure]
+    stage: mature
+    description_seed: >
+      Cloud and data consultancy with a growing AI engineering practice
+      across ANZ enterprise customers.
+
+  - name: Chronos
+    country: AU
+    city: Sydney
+    website: https://chronos.ai
+    sector_tags: [vertical_healthcare, agents_and_orchestration]
+    stage: pre_seed
+    description_seed: >
+      AI assistant for radiologists, focused on workflow orchestration and
+      report generation. Pending verification.
+
+  - name: Maxwell Plus
+    country: AU
+    city: Brisbane
+    website: https://www.maxwellplus.com
+    sector_tags: [vertical_healthcare, ai_for_science_biology]
+    stage: seed
+    description_seed: >
+      AI for early-stage cancer detection and prevention, focused on
+      prostate cancer pathways.
+
+  - name: Cortical Labs
+    country: AU
+    city: Melbourne
+    website: https://corticallabs.com
+    sector_tags: [ai_for_science_biology, ai_infrastructure]
+    stage: series_a
+    founded_year: 2019
+    description_seed: >
+      Biological computing company building hybrid wetware-silicon systems
+      using human neurons cultured on electrode arrays.
+
+  - name: Volt
+    country: AU
+    city: Melbourne
+    website: https://volt.ai
+    sector_tags: [vertical_security, agents_and_orchestration]
+    stage: seed
+    description_seed: >
+      Computer-vision platform for physical security teams, automating
+      surveillance review and incident detection.
+
+  - name: NodeOps
+    country: AU
+    city: Sydney
+    website: https://nodeops.network
+    sector_tags: [ai_infrastructure, agents_and_orchestration]
+    stage: seed
+    description_seed: >
+      Decentralised compute orchestration layer for AI inference and
+      blockchain workloads.
+
+  - name: Castled
+    country: AU
+    city: Melbourne
+    website: https://castled.io
+    sector_tags: [ai_infrastructure, vertical_sales_marketing]
+    stage: pre_seed
+    description_seed: >
+      Reverse-ETL and AI activation layer for warehouse-native marketing
+      and customer data workflows.
+
+  - name: Skedulo
+    country: AU
+    city: Brisbane
+    website: https://www.skedulo.com
+    sector_tags: [agents_and_orchestration, vertical_sales_marketing]
+    stage: series_b_plus
+    founded_year: 2013
+    description_seed: >
+      AI-driven scheduling and dispatch platform for deskless workforce
+      management.
+
+  - name: Cipherise
+    country: AU
+    city: Brisbane
+    website: https://cipherise.com
+    sector_tags: [vertical_security, ai_infrastructure]
+    stage: seed
+    description_seed: >
+      Bidirectional authentication and identity platform; ML for anomaly
+      detection across enterprise access patterns.

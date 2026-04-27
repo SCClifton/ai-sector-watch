@@ -64,4 +64,23 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 04 — `data/seed/companies.yaml` (~50 ANZ AI co's) + `scripts/seed_companies.py`.
 
+## 2026-04-27 — Commit 04: Seed list and seeder script
+
+**Shipped:**
+- `data/seed/companies.yaml`: 52 hand-curated ANZ AI companies covering pre-seed agents and discovery, AirTree-portfolio scaleups, NZ ecosystem (Soul Machines, Halter, Tracksuit, Auror, Partly), and key infrastructure/tooling players. Each entry has name, country, city, website, sector_tags, stage, optional founded_year, and a 1-3 sentence summary (no em dashes).
+- `scripts/seed_companies.py`: loads YAML, runs static validation against geocoder + taxonomy + em-dash rule, then idempotently upserts each entry as `discovery_status = 'verified'` with `discovery_source = 'seed'`. Coordinates jittered per company name. Supports `--dry-run` to validate without DB writes.
+- `tests/test_seed_companies.py`: confirms ≥50 entries, every entry validates, no duplicates, AU+NZ coverage; positive guards on em-dash and unknown-sector detection.
+
+**Tested:**
+- `pytest -q`: 39 pass, 1 skipped (live DB still gated on SUPABASE_DB_URL).
+- `ruff check .`: clean.
+- `python scripts/seed_companies.py --dry-run`: 52 entries, validation passes.
+
+**Known limitations:**
+- Live `python scripts/seed_companies.py` (no `--dry-run`) still gated on Sam's new Supabase project.
+- Sourcegraph included with caveat in description; will be reviewed for ANZ-relevance in admin queue once Sam wires Supabase.
+
+**Next:** Commit 05 — Streamlit shell, page router, footer, Supabase read client.
+
+
 
