@@ -13,13 +13,9 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from ai_sector_watch.storage.data_source import get_data_source  # noqa: E402
 from dashboard.components.footer import render_footer  # noqa: E402
+from dashboard.components.theme import render_page_chrome  # noqa: E402
 
-st.set_page_config(
-    page_title="AI Sector Watch: News",
-    page_icon="📰",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+render_page_chrome(title="AI Sector Watch: News", page_icon="📰")
 
 
 def main() -> None:

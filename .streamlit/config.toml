@@ -1,0 +1,20 @@
+[theme]
+# Foundation visual layer for AI Sector Watch.
+# See docs/design-system.md for the decision log behind these choices.
+base = "dark"
+primaryColor = "#F4B740"
+backgroundColor = "#0B0F14"
+secondaryBackgroundColor = "#121821"
+textColor = "#E6EDF3"
+font = "sans-serif"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+
+[server]
+# Serve dashboard/static/ at /app/static/ so og-image and favicon resolve
+# from meta tags and external embeds.
+enableStaticServing = true
