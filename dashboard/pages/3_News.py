@@ -36,7 +36,7 @@ def main() -> None:
     if source.backend == "yaml" or not news:
         st.info(
             "No news yet. The weekly pipeline will populate this page once it runs. "
-            "Run manually with: `op run --env-file=.env.local -- python "
+            "Run manually with: `op run --account my.1password.com --env-file=.env.local -- python "
             "scripts/run_weekly_pipeline.py`"
         )
         render_footer()

@@ -38,14 +38,14 @@ If two sources of truth disagree, fix the disagreement in the same commit. Don't
 
 These are hard rules. If a task seems to require breaking one, stop and ask.
 
-1. **Never commit secrets.** `.env.local` is gitignored. Only `.env.template` (which holds `op://` references, not values) is in the repo. Run secret-bearing commands via `op run --env-file=.env.local -- <cmd>`.
+1. **Never commit secrets.** `.env.local` is gitignored. Only `.env.template` (which holds `op://` references, not values) is in the repo. Run secret-bearing commands via `op run --account my.1password.com --env-file=.env.local -- <cmd>`.
 2. **Public map only shows verified companies.** `discovery_status = 'verified'` is the gate. Auto-discovered candidates wait in the admin queue at `/Admin`.
 3. **Idempotent operations.** Every upsert keys on a stable hash (URL hash for news, normalised name + country for companies, payload hash for ingest events). Reruns must be safe.
 4. **UTC at storage boundaries.** Local time is for human-facing surfaces only.
 5. **LLM spend cap.** `ANTHROPIC_BUDGET_USD_PER_RUN` (default $2) is enforced in `extraction/claude_client.py`. Don't bypass it. Don't raise it without a reason.
 6. **Type hints everywhere.** `ruff check .` and `black --check .` run in CI.
 7. **No em dashes in user-facing output.** Digest markdown, dashboard copy, popup HTML. Use a colon, comma, or " - " instead. Docstrings are fine.
-8. **Update `PROJECT_PROGRESS.md` in every commit** that ships shipped functionality.
+8. **Update `PROJECT_PROGRESS.md` only for milestones** (closing a Now/Next issue, shipping a public feature, breaking something publicly). For everything else, the PR body is the record. This keeps parallel PRs from serially conflicting on the same file.
 
 ## 4. Stop and ask before
 
@@ -98,7 +98,7 @@ These are hard rules. If a task seems to require breaking one, stop and ask.
 
 1. Append a YAML block to [`data/seed/companies.yaml`](data/seed/companies.yaml). Schema is documented at the top of the file.
 2. `python scripts/seed_companies.py --dry-run` to validate.
-3. `op run --env-file=.env.local -- python scripts/seed_companies.py` to apply (idempotent).
+3. `op run --account my.1password.com --env-file=.env.local -- python scripts/seed_companies.py` to apply (idempotent).
 
 ### Add a sector tag
 
@@ -122,7 +122,7 @@ black --check .
 ### Trigger the weekly pipeline manually
 
 ```bash
-op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
+op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
 # or
 gh workflow run weekly.yml -f limit=5
 ```

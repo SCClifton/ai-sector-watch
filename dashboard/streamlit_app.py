@@ -1,7 +1,7 @@
 """Entry point for the AI Sector Watch Streamlit dashboard.
 
 Run locally:
-    op run --env-file=.env.local -- streamlit run dashboard/streamlit_app.py
+    op run --account my.1password.com --env-file=.env.local -- streamlit run dashboard/streamlit_app.py
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ def main() -> None:
     if source.backend == "yaml":
         st.info(
             "Running against the local seed YAML (no SUPABASE_DB_URL set). "
-            "Set up Supabase and re-run with `op run --env-file=.env.local -- "
+            "Set up Supabase and re-run with `op run --account my.1password.com --env-file=.env.local -- "
             "streamlit run dashboard/streamlit_app.py` to see live data."
         )
 

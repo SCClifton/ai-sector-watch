@@ -104,7 +104,7 @@ class ClaudeClient:
             cfg = get_config()
             if not cfg.anthropic_api_key:
                 raise RuntimeError(
-                    "ANTHROPIC_API_KEY not set; run via op run --env-file=.env.local -- ..."
+                    "ANTHROPIC_API_KEY not set; run via op run --account my.1password.com --env-file=.env.local -- ..."
                 )
             self._client = Anthropic(api_key=cfg.anthropic_api_key)
         return self._client

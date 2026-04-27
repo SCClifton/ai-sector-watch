@@ -12,7 +12,7 @@ Before you write code, read:
 - [ ] Python 3.12 venv created (`python3.12 -m venv .venv`).
 - [ ] `pip install -e ".[dashboard,dev]"`.
 - [ ] `pytest -q`, `ruff check .`, `black --check .` all pass.
-- [ ] Your change updates `PROJECT_PROGRESS.md` if it ships functionality.
+- [ ] If your change is a milestone (closes a Now/Next issue, ships a public feature, breaks something), update `PROJECT_PROGRESS.md`. Otherwise the PR body is the record.
 - [ ] Your change has a test or a documented manual smoke check.
 - [ ] No em dashes in user-facing copy (digest, dashboard, popups).
 - [ ] No bare secrets in any committed file.

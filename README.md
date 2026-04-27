@@ -158,9 +158,9 @@ AISW_FORCE_YAML=1 streamlit run dashboard/streamlit_app.py
 Once your Supabase project is provisioned and your 1Password references are wired:
 
 ```bash
-op run --env-file=.env.local -- python scripts/verify_setup.py --apply-schema
-op run --env-file=.env.local -- python scripts/seed_companies.py
-op run --env-file=.env.local -- streamlit run dashboard/streamlit_app.py
+op run --account my.1password.com --env-file=.env.local -- python scripts/verify_setup.py --apply-schema
+op run --account my.1password.com --env-file=.env.local -- python scripts/seed_companies.py
+op run --account my.1password.com --env-file=.env.local -- streamlit run dashboard/streamlit_app.py
 ```
 
 ## Running the pipeline
@@ -168,7 +168,7 @@ op run --env-file=.env.local -- streamlit run dashboard/streamlit_app.py
 Locally, with secrets:
 
 ```bash
-op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
+op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
 ```
 
 `--limit N` caps items per source (useful for cheap test runs). `--dry-run` exercises every step except the Supabase writes.
@@ -197,7 +197,7 @@ Append a block to [`data/seed/companies.yaml`](data/seed/companies.yaml) (schema
 
 ```bash
 python scripts/seed_companies.py --dry-run    # validate
-op run --env-file=.env.local -- python scripts/seed_companies.py    # apply
+op run --account my.1password.com --env-file=.env.local -- python scripts/seed_companies.py    # apply
 ```
 
 The seeder is idempotent (upsert by `(name_normalised, country)`).
@@ -231,7 +231,7 @@ Hit the **Admin** page (password-gated). The pipeline writes new candidates as `
 Full detail in [`AGENTS.md`](AGENTS.md). Short version:
 
 - Python 3.12, type hints everywhere, ruff + black configured in `pyproject.toml`.
-- All secrets via 1Password (`op run --env-file=.env.local -- ...`). Bare values never in files; `.env.local` is gitignored; only `.env.template` (with `op://` references) is committed.
+- All secrets via 1Password (`op run --account my.1password.com --env-file=.env.local -- ...`). Bare values never in files; `.env.local` is gitignored; only `.env.template` (with `op://` references) is committed.
 - Idempotent operations: every upsert keys on a stable hash; the pipeline is safe to rerun.
 - No em dashes in any user-facing output (digest, dashboard copy, popups). Use a colon, comma, or " - " instead.
 - Every commit updates `PROJECT_PROGRESS.md`.

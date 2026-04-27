@@ -18,7 +18,7 @@ What problem does it solve? What does it enable?
 - [ ] `ruff check .` passes
 - [ ] `black --check .` passes
 - [ ] Manual smoke check (describe)
-- [ ] `PROJECT_PROGRESS.md` updated
+- [ ] `PROJECT_PROGRESS.md` updated *if* this is a milestone (closes Now/Next issue, ships public feature, breaks something). Otherwise leave alone.
 
 ## Multi-agent coordination
 

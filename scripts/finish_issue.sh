@@ -23,7 +23,9 @@ if [[ -z "$MAIN_WT" ]]; then
 fi
 
 # Find the worktree directory that matches this issue number.
-WT_LINE=$(git -C "$MAIN_WT" worktree list --porcelain | grep -B1 "branch refs/heads/.*${ISSUE}-" | grep "^worktree " | head -1)
+# `git worktree list --porcelain` puts the worktree path TWO lines above
+# the branch line (worktree, HEAD, branch), so we need -B2 (not -B1).
+WT_LINE=$(git -C "$MAIN_WT" worktree list --porcelain | grep -B2 "branch refs/heads/.*${ISSUE}-" | grep "^worktree " | head -1)
 WT_DIR="${WT_LINE#worktree }"
 
 if [[ -z "$WT_DIR" ]]; then

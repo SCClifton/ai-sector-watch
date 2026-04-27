@@ -6,7 +6,7 @@ geocoder, then upserts each company with `discovery_status = 'verified'`.
 Idempotent: re-running is a no-op for unchanged rows.
 
 Usage:
-    op run --env-file=.env.local -- python scripts/seed_companies.py
+    op run --account my.1password.com --env-file=.env.local -- python scripts/seed_companies.py
     python scripts/seed_companies.py --dry-run   # validate only, no DB writes
 """
 
