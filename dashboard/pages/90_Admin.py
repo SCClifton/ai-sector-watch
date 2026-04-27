@@ -34,10 +34,7 @@ def _check_password() -> bool:
     cfg = get_config()
     expected = cfg.admin_password
     if not expected:
-        st.error(
-            "ADMIN_PASSWORD is not set. Run via "
-            "`op run --account my.1password.com --env-file=.env.local -- streamlit run dashboard/streamlit_app.py`."
-        )
+        st.error("`ADMIN_PASSWORD` is not set. Sign-in is disabled.")
         return False
     with st.form("admin_login"):
         attempt = st.text_input("Admin password", type="password")
