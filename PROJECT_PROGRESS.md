@@ -298,11 +298,23 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 16 — README polish, success-criteria checklist, final pass.
 
+## 2026-04-27 — Issue 01: Supabase project provisioned
 
+**Shipped:**
+- Created Supabase project `ai-sector-watch` in `ap-southeast-2`.
+- Stored the session-pooler Postgres connection string in 1Password as `Supabase AI Sector Watch`.
+- Wired local `.env.local` to resolve `SUPABASE_DB_URL` through 1Password.
+- Updated `.env.template` to use item UUID placeholders, because `op run --env-file` tokenises spaces inside item names before secret resolution.
 
+**Tested:**
+- `op run --env-file=.env.local -- .venv/bin/python scripts/verify_setup.py`: PASS for `SUPABASE_DB_URL` and Supabase connect.
+- `op run --env-file=.env.local -- .venv/bin/python scripts/verify_setup.py --apply-schema`: PASS for Supabase schema, 4/4 tables present.
+- `SUPABASE_DB_URL= PYTHONPATH=src .venv/bin/python -m pytest -q`: pass, with the two live Supabase tests skipped.
+- `.venv/bin/ruff check .`: pass.
 
-
-
+**Known limitations:**
+- `ANTHROPIC_API_KEY` and `ADMIN_PASSWORD` are still unset locally, so `verify_setup.py` reports WARN for those checks.
+- Local `black --check .` currently reports pre-existing formatting changes across 19 Python files unrelated to issue #1.
 
 
 
