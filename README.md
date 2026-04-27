@@ -2,7 +2,7 @@
 
 Live, public-facing ecosystem map of the Australian and New Zealand AI startup landscape, updated weekly by an automated agent pipeline.
 
-**Public dashboard:** https://aimap.cliftonfamily.co _(coming online with v0)_
+**Public dashboard:** https://aimap.cliftonfamily.co
 
 ---
 
