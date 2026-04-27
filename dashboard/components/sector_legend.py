@@ -54,12 +54,14 @@ def _legend_row_html(row: SectorLegendRow) -> str:
     examples = ", ".join(escape(example) for example in row.examples)
     return (
         '<div style="display:flex;gap:0.5rem;align-items:flex-start;margin:0.25rem 0;">'
-        f'<span style="background:{escape(row.colour)};border:1px solid #666;'
+        f'<span style="background:{escape(row.colour)};'
+        "border:1px solid var(--aisw-border-strong);"
         "border-radius:50%;display:inline-block;flex:0 0 0.75rem;"
         'height:0.75rem;margin-top:0.25rem;width:0.75rem;"></span>'
         "<span>"
         f"<strong>{escape(row.label)}</strong><br>"
-        f'<span style="color:#666;font-size:0.82rem;">{examples}</span>'
+        '<span style="color:var(--aisw-text-muted);font-size:0.8125rem;">'
+        f"{examples}</span>"
         "</span>"
         "</div>"
     )

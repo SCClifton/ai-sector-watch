@@ -33,7 +33,10 @@ def main() -> None:
     all_companies = source.list_companies()
 
     if source.backend == "yaml":
-        st.info("Showing seed data from data/seed/companies.yaml (no SUPABASE_DB_URL set).")
+        st.info(
+            "Showing seed data from `data/seed/companies.yaml`. Set `SUPABASE_DB_URL` "
+            "to read from the live index."
+        )
 
     meta = derive_meta(all_companies)
     state = render_sidebar(meta, default_countries=("AU", "NZ"))
@@ -45,7 +48,7 @@ def main() -> None:
 
     rows = companies_to_table_rows(companies)
     if not rows:
-        st.write("No companies match the current filters.")
+        st.info("No companies match these filters. Clear one in the sidebar to widen the view.")
         render_footer()
         return
 
