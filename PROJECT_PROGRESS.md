@@ -2,6 +2,20 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #6: Azure OIDC deploy auth
+
+**Shipped (codex/6-set-up-oidc-federated-credential-for-dep):**
+- Created Azure AD app registration `ai-sector-watch-github` for GitHub Actions OIDC. Client ID ends in `4d1b`.
+- Created the service principal, assigned `Website Contributor` on resource group `ai-sector-watch`, and added the `github-main` federated credential for `repo:SCClifton/ai-sector-watch:ref:refs/heads/main`.
+- Set GitHub repo secrets `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID`.
+- Fixed `deploy.yml` to lower-case the GHCR image path before Docker build and Azure deploy.
+
+**Tested:**
+- `gh workflow run deploy.yml` and `gh run watch 24978724476`: failed before OIDC at Docker build because `ghcr.io/SCClifton/...` is not a valid lowercase image name.
+
+**Known limitations:**
+- End-to-end deploy needs a rerun after the workflow fix lands on `main`, because the configured federated credential intentionally trusts only `refs/heads/main`.
+
 ## 2026-04-27 - Issue #17: Capital Brief source
 
 **Shipped (codex/17-wire-capital-brief-rss-source-into-the-p):**
@@ -381,4 +395,3 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 - The production GHCR image does not exist yet, so the dashboard URL currently returns `HTTP/2 503`. Issue #6 (deploy.yml: build container, push to GHCR, deploy) closes this. Once that runs, the configured image resolves and the dashboard serves on port 8000.
 - OIDC federated credential and the `AZURE_CLIENT_ID` / `TENANT_ID` / `SUBSCRIPTION_ID` GitHub secrets (deployment.md "OIDC federated credential" section) are deferred to whichever issue wires `deploy.yml` end-to-end.
 - Custom domain `aimap.cliftonfamily.co` and TLS binding are deferred to issue #7 (DNS).
-
