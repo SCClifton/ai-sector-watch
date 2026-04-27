@@ -14,12 +14,12 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 - `.venv/bin/pytest -q`: pass, 2 skipped live integration tests.
 - `.venv/bin/ruff check .`: clean.
 - `.venv/bin/black --check .`: clean.
-- Dry-run smoke: `op run --account my.1password.com --env-file=.env.local -- .venv/bin/python scripts/backfill_enrichment.py --limit 3 --dry-run` returned 1 verified company and estimated 8 credits. Live Supabase currently has 1 verified company and 2 pending candidates, not the expected 52 seeded companies.
-- Live smoke: `op run --account my.1password.com --env-file=.env.local -- .venv/bin/python scripts/backfill_enrichment.py --limit 3` processed the single verified company, stamped `enriched_at`, and used 0 credits because that row has no website.
-- Idempotency smoke: rerunning `--limit 3 --dry-run` immediately skipped the same row as recently enriched.
+- Seed check: live Supabase was missing seed data, so `scripts/seed_companies.py` was run idempotently and inserted 51 rows, updated 1 row. The dashboard reader now returns 52 verified companies.
+- Dry-run smoke: `op run --account my.1password.com --env-file=.env.local -- .venv/bin/python scripts/backfill_enrichment.py --limit 3 --dry-run` selected Everlab, Kismet, and Lyrebird Health and estimated 24 Firecrawl credits.
+- Live smoke: `op run --account my.1password.com --env-file=.env.local -- .venv/bin/python scripts/backfill_enrichment.py --limit 3` processed 3 companies, updated 3 rows, used 24 Firecrawl credits, made 3 LLM calls, and returned no errors.
 
 **Known limitations:**
-- The expected 3-company, ~24-credit smoke is blocked until Supabase contains at least 3 verified seed companies with websites, or Sam confirms running the seed script first.
+- None known for the operator-run v0 backfill.
 
 ## 2026-04-27 - Issue #39: Multi-source Firecrawl enrichment
 
