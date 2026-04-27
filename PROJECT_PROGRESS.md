@@ -2,6 +2,22 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #16: Digest LLM spend metrics
+
+**Shipped (codex/16-surface-running-llm-spend-on-the-digest):**
+- Digest page now reads recent weekly LLM spend from the dashboard data source and renders "4-week spend" plus "avg per run" metrics above the digest selector.
+- `SupabaseSource.llm_spend_summary()` selects `ingest_events` rows for `kind = 'weekly_run'` over the last 4 weeks and aggregates `cost_usd` into total, average, and run count.
+- YAML fallback returns no spend summary, so local/dev mode shows "No spend recorded yet" instead of `$0.00`.
+- Added mocked DB coverage for the spend summary helper, including a non-weekly row and a null-cost weekly row to verify filtering.
+
+**Tested:**
+- `pytest -q`: 91 pass, 2 skipped.
+- `ruff check .`: clean.
+- `black --check .`: clean.
+
+**Known limitations:**
+- Live Supabase integration tests skipped because `SUPABASE_DB_URL` was not exported in the test environment.
+
 ## 2026-04-27 - Issue #8 follow-up: per-issue worktree pattern
 
 **Shipped (claude-code/8-worktree-codification):**
@@ -315,7 +331,6 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 **Known limitations:**
 - `ANTHROPIC_API_KEY` and `ADMIN_PASSWORD` are still unset locally, so `verify_setup.py` reports WARN for those checks.
 - Local `black --check .` currently reports pre-existing formatting changes across 19 Python files unrelated to issue #1.
-
 
 
 
