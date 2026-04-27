@@ -1,0 +1,27 @@
+[
+  {
+    "publishedAt": "2026-04-25T00:00:00.000Z",
+    "upvotes": 12,
+    "paper": {
+      "id": "2604.01234",
+      "title": "Sample paper title",
+      "summary": "We propose a novel approach to vector search.",
+      "authors": [{"name": "Jane Doe"}, {"name": "John Smith"}]
+    }
+  },
+  {
+    "publishedAt": "2026-04-26T00:00:00.000Z",
+    "paper": {
+      "id": "2604.05678",
+      "title": "Another paper",
+      "summary": "An interesting paper about evals.",
+      "authors": []
+    }
+  },
+  {
+    "paper": {
+      "id": "",
+      "title": ""
+    }
+  }
+]

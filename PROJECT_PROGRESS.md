@@ -151,6 +151,28 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 09 — source ingestion layer (SourceBase, RSS, arXiv, HuggingFace papers).
 
+## 2026-04-27 — Commit 09: Source ingestion layer
+
+**Shipped:**
+- `src/ai_sector_watch/sources/base.py`: `RawItem` dataclass (`source_slug`, `url`, `title`, `summary`, `published_at`, `raw`), `SourceBase` ABC requiring `slug` + `kind` + `fetch()`.
+- `src/ai_sector_watch/sources/rss.py`: `RssSource` (httpx + feedparser + 30s timeout, polite User-Agent), `parse_feed_bytes()` pure parser, factories for every PRD §7 RSS source (TechCrunch AI, Startup Daily AU, SmartCompany, AirTree, Blackbird, Crunchbase AI, YC launches).
+- `src/ai_sector_watch/sources/arxiv_source.py`: factories `arxiv_cs_ai()`, `arxiv_cs_lg()`, `arxiv_cs_ro()` (delegate to `RssSource`).
+- `src/ai_sector_watch/sources/huggingface_papers.py`: `HuggingFacePapers` source (JSON API), `parse_huggingface_payload()` pure parser.
+- `tests/fixtures/sample_rss.xml`, `tests/fixtures/sample_huggingface.json`: realistic shape, includes a malformed entry to confirm the parsers skip it.
+- `tests/test_rss_sources.py`: 9 tests covering pure parsing, HTTP success path (monkeypatched httpx), HTTP error path, factory slugs, and the `SourceBase` slug/kind requirement.
+
+**Tested:**
+- `pytest -q`: 72 pass, 1 skipped.
+- `ruff check .`: clean.
+- No live network calls; `responses` swapped out for direct `httpx.Client.get` monkeypatching since `responses` only mocks `requests`.
+
+**Known limitations:**
+- Capital Brief RSS endpoint still unconfirmed; not wired as a factory yet.
+- No retry on transient network errors at the source layer; the orchestrator (commit 12) will catch and skip per-source failures.
+
+**Next:** Commit 10 — Claude extraction client (cached, budget-capped) + Pydantic schema + prompts.
+
+
 
 
 

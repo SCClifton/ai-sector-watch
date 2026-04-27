@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Sample feed</title>
+    <link>https://example.com</link>
+    <description>Test fixture</description>
+    <item>
+      <title>Australian AI startup Marqo raises seed</title>
+      <link>https://example.com/post/1</link>
+      <guid isPermaLink="true">https://example.com/post/1</guid>
+      <description>Marqo, a Sydney-based vector search company, raised seed funding led by Blackbird.</description>
+      <pubDate>Mon, 21 Apr 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Auckland-based Composite ships v0 of agent framework</title>
+      <link>https://example.com/post/2</link>
+      <guid isPermaLink="true">https://example.com/post/2</guid>
+      <description>Composite is a multi-agent orchestration framework out of Auckland.</description>
+      <pubDate>Tue, 22 Apr 2026 11:30:00 +0000</pubDate>
+    </item>
+    <item>
+      <title></title>
+      <link>https://example.com/post/empty</link>
+      <description>Malformed entry with no title; should be skipped.</description>
+    </item>
+  </channel>
+</rss>
