@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
+from types import TracebackType
+
 import folium
+import pytest
 
 from ai_sector_watch.storage.data_source import Company, YamlSource
+from dashboard.components import sector_legend
 from dashboard.components.map_view import (
     _popup_html,
     build_map,
     split_geocoded,
 )
+from dashboard.components.sector_legend import sector_legend_rows
 
 
 def _make_company(**overrides) -> Company:
@@ -97,3 +102,53 @@ def test_yaml_source_companies_can_render_to_map() -> None:
     # Sanity: at least some sample markers are present in the HTML.
     html = fmap.get_root().render()
     assert "Marqo" in html or "Canva" in html
+
+
+class _FakeExpander:
+    def __enter__(self) -> _FakeExpander:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        return None
+
+
+class _FakeSidebar:
+    def __init__(self) -> None:
+        self.expanders: list[tuple[str, bool]] = []
+
+    def expander(self, label: str, *, expanded: bool) -> _FakeExpander:
+        self.expanders.append((label, expanded))
+        return _FakeExpander()
+
+
+class _FakeStreamlit:
+    def __init__(self) -> None:
+        self.sidebar = _FakeSidebar()
+        self.captions: list[str] = []
+        self.markdowns: list[str] = []
+
+    def caption(self, text: str) -> None:
+        self.captions.append(text)
+
+    def markdown(self, text: str, *, unsafe_allow_html: bool) -> None:
+        assert unsafe_allow_html is True
+        self.markdowns.append(text)
+
+
+def test_sector_colour_legend_renders(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake_st = _FakeStreamlit()
+    monkeypatch.setattr(sector_legend, "st", fake_st)
+
+    sector_legend.render_sector_legend()
+
+    rows = sector_legend_rows()
+    assert fake_st.sidebar.expanders == [("Sector colours", True)]
+    assert fake_st.captions == ["Marker colour uses the first sector listed for each company."]
+    assert len(fake_st.markdowns) == len(rows)
+    assert rows[0].label in fake_st.markdowns[0]
+    assert rows[0].colour in fake_st.markdowns[0]
