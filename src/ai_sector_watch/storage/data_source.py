@@ -16,6 +16,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
+from decimal import Decimal
 from pathlib import Path
 from typing import Protocol
 
@@ -57,12 +58,23 @@ class NewsItem:
     company_ids: list[str] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class LlmSpendSummary:
+    """Aggregate LLM spend for recent weekly pipeline runs."""
+
+    total_usd: Decimal
+    average_usd: Decimal
+    run_count: int
+
+
 class DataSource(Protocol):
     backend: str
 
     def list_companies(self, *, statuses: tuple[str, ...] = ("verified",)) -> list[Company]: ...
 
     def recent_news(self, *, limit: int = 50) -> list[NewsItem]: ...
+
+    def llm_spend_summary(self) -> LlmSpendSummary | None: ...
 
 
 # ---------------------------------------------------------------------------
@@ -112,6 +124,9 @@ class YamlSource:
     def recent_news(self, *, limit: int = 50) -> list[NewsItem]:
         return []
 
+    def llm_spend_summary(self) -> LlmSpendSummary | None:
+        return None
+
 
 # ---------------------------------------------------------------------------
 # Supabase backend
@@ -154,6 +169,27 @@ class SupabaseSource:
             )
             for r in rows
         ]
+
+    def llm_spend_summary(self) -> LlmSpendSummary | None:
+        with supabase_db.connection() as conn, conn.cursor() as cur:
+            cur.execute("""
+                SELECT
+                    COUNT(cost_usd)::int AS run_count,
+                    SUM(cost_usd) AS total_usd,
+                    AVG(cost_usd) AS average_usd
+                FROM ingest_events
+                WHERE kind = 'weekly_run'
+                  AND cost_usd IS NOT NULL
+                  AND fetched_at >= NOW() - INTERVAL '4 weeks'
+                """)
+            row = cur.fetchone()
+        if not row or row["run_count"] == 0:
+            return None
+        return LlmSpendSummary(
+            total_usd=row["total_usd"],
+            average_usd=row["average_usd"],
+            run_count=row["run_count"],
+        )
 
 
 def _company_from_row(r: dict) -> Company:
