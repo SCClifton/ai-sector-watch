@@ -80,10 +80,11 @@ def render_sidebar(meta: FilterMeta, *, default_countries: tuple[str, ...]) -> F
             help="Empty = all stages.",
         )
 
+        valid_defaults = [c for c in default_countries if c in meta.countries]
         countries = st.multiselect(
             "Country",
             options=list(meta.countries),
-            default=list(default_countries),
+            default=valid_defaults,
             help="Default: ANZ. Clear to include everywhere.",
         )
 
