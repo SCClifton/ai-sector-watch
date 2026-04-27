@@ -82,5 +82,23 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 05 — Streamlit shell, page router, footer, Supabase read client.
 
+## 2026-04-27 — Commit 05: Dashboard shell
+
+**Shipped:**
+- `src/ai_sector_watch/storage/data_source.py`: `Company` and `NewsItem` dataclasses, `DataSource` Protocol, `SupabaseSource` (production), `YamlSource` (local-dev fallback that reads `data/seed/companies.yaml`), and `get_data_source()` factory. Falls back to YAML when `SUPABASE_DB_URL` is unset; `AISW_FORCE_YAML=1` forces YAML regardless.
+- `dashboard/streamlit_app.py`: page-config setup, headline metrics (companies tracked, AU count, NZ count), banner that flags YAML mode in dev, "how to use" intro.
+- `dashboard/components/footer.py`: PRD §13 footer with auto-dated "Last updated" string.
+
+**Tested:**
+- `pytest -q`: 45 pass, 1 skipped.
+- `ruff check .`: clean.
+- `streamlit run dashboard/streamlit_app.py` (headless on :8765): root returns HTTP 200, no Python-side errors in logs, page metrics show 52 / AU=46 / NZ=6.
+
+**Known limitations:**
+- The Streamlit "pages/" multi-page nav lights up automatically once the per-page files land in commits 06-08; the shell currently shows only the home view.
+
+**Next:** Commit 06 — Map page (folium markers, sector colour, clustering, popup, jitter).
+
+
 
 
