@@ -32,11 +32,11 @@ data/local/
 # Tests are not needed in the runtime image
 tests/
 
-# Docs
+# Docs (README.md is required by pyproject.toml's `readme` field and by
+# the Dockerfile COPY that feeds the editable install)
 docs/
-README.md
-PROJECT_PROGRESS.md
 AGENTS.md
+PROJECT_PROGRESS.md
 
 # Dropbox sync artefacts that shouldn't be in the repo anyway
 Sector_Map_PRD.md
