@@ -241,6 +241,27 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 14 — GitHub Actions weekly.yml + deploy.yml.
 
+## 2026-04-27 — Commit 14: GitHub Actions workflows
+
+**Shipped:**
+- `.github/workflows/pytest.yml`: lint (ruff + black --check) and pytest on push to main and on every PR. Python 3.12 with pip cache.
+- `.github/workflows/weekly.yml`: Sunday 18:00 UTC cron + `workflow_dispatch` (with `limit` input). Runs `verify_setup.py --apply-schema`, then `run_weekly_pipeline.py --limit N`, commits new digests back to main with a bot identity, uploads `pipeline_summary.json` artifact.
+- `.github/workflows/deploy.yml`: build a container image to GHCR, then deploy to Azure Web App for Containers via OIDC federated credentials. Triggers on `workflow_dispatch` and on `main` pushes that change `dashboard/`, `src/`, `pyproject.toml`, the workflow itself, or `Dockerfile`.
+- `docs/operations.md`: full runbook (cron behaviour, manual run commands, cost guardrails, rollback procedure, known quirks).
+
+**Tested:**
+- `pytest -q`: 91 pass, 2 skipped.
+- `ruff check .`: clean.
+- Workflows have not yet run because the repo has no remote and no GitHub secrets configured. Both are gated on Sam's approval.
+
+**Known limitations / pending Sam:**
+- Repo has no remote; needs `git remote add origin git@github.com:SCClifton/ai-sector-watch.git` (or similar) and an initial push (gated by working rules).
+- `ANTHROPIC_API_KEY` and `SUPABASE_DB_URL` repo secrets need to be set via `gh secret set`.
+- Azure OIDC federated credential (`AZURE_CLIENT_ID` / `TENANT_ID` / `SUBSCRIPTION_ID`) needs provisioning via Azure CLI before `deploy.yml` will run.
+
+**Next:** Commit 15 — Azure deploy artefacts (Dockerfile, startup, deployment docs).
+
+
 
 
 
