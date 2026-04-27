@@ -22,6 +22,7 @@ from dashboard.components.filters import (  # noqa: E402
 )
 from dashboard.components.footer import render_footer  # noqa: E402
 from dashboard.components.map_view import build_map, split_geocoded  # noqa: E402
+from dashboard.components.sector_legend import render_sector_legend  # noqa: E402
 
 st.set_page_config(
     page_title="AI Sector Watch: Map",
@@ -46,6 +47,7 @@ def main() -> None:
 
     meta = derive_meta(all_companies)
     state = render_sidebar(meta, default_countries=("AU", "NZ"))
+    render_sector_legend()
     companies = apply_filters(all_companies, state)
     on_map, off_map = split_geocoded(companies)
 
