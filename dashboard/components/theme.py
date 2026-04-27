@@ -25,6 +25,14 @@ _DESCRIPTION: str = (
     "Live ecosystem map of the Australian and New Zealand AI startup landscape, "
     "updated weekly by an automated agent pipeline."
 )
+_NAV_ITEMS: tuple[tuple[str, str], ...] = (
+    ("pages/0_About.py", "About"),
+    ("pages/1_Map.py", "Map"),
+    ("pages/2_Companies.py", "Companies"),
+    ("pages/3_News.py", "News"),
+    ("pages/4_Digest.py", "Digest"),
+    ("pages/90_Admin.py", "Admin"),
+)
 
 
 def _inject_styles() -> None:
@@ -106,6 +114,13 @@ def _render_wordmark() -> None:
     st.session_state[flag] = True
 
 
+def _render_sidebar_nav() -> None:
+    """Render the dashboard navigation in the intended order."""
+    with st.sidebar:
+        for page_path, label in _NAV_ITEMS:
+            st.page_link(page_path, label=label)
+
+
 def render_page_chrome(*, title: str, page_icon: str = "🌏") -> None:
     """Configure Streamlit page chrome for the current page.
 
@@ -126,4 +141,5 @@ def render_page_chrome(*, title: str, page_icon: str = "🌏") -> None:
     )
     _inject_styles()
     _inject_meta_tags(title=title)
+    _render_sidebar_nav()
     _render_wordmark()
