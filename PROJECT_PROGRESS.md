@@ -14,6 +14,7 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 - `PYTHONPATH=src .venv/bin/pytest -q`: 115 pass, 2 skipped.
 - `PYTHONPATH=src .venv/bin/ruff check .`: clean.
 - `PYTHONPATH=src .venv/bin/black --check .`: clean.
+- Manual smoke: live Heidi Health enrichment with `FIRECRAWL_BUDGET_CREDITS_PER_RUN=15` returned populated `CompanyFacts.evidence_urls` and reported 8 Firecrawl credits used.
 
 **Known limitations:**
 - Existing company backfill remains out of scope for this issue.
