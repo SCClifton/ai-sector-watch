@@ -28,13 +28,22 @@ from ai_sector_watch.extraction.claude_client import (
     BudgetExceeded,
     ClaudeClient,
 )
+from ai_sector_watch.extraction.firecrawl_client import (
+    FirecrawlBudgetExceeded,
+    FirecrawlClient,
+    firecrawl_enrich,
+)
 from ai_sector_watch.extraction.prompts import (
     EXTRACT_COMPANIES_SYSTEM,
     EXTRACT_COMPANIES_USER_TEMPLATE,
     EXTRACT_FUNDING_SYSTEM,
     EXTRACT_FUNDING_USER_TEMPLATE,
 )
-from ai_sector_watch.extraction.schema import CompanyMentionList, FundingExtraction
+from ai_sector_watch.extraction.schema import (
+    CompanyFacts,
+    CompanyMentionList,
+    FundingExtraction,
+)
 from ai_sector_watch.sources import (
     arxiv_source,
     huggingface_papers,
@@ -75,6 +84,9 @@ class PipelineResult:
     items_new: int = 0
     candidates_added: int = 0
     cost_usd: float = 0.0
+    firecrawl_credits_used: int = 0
+    firecrawl_calls: int = 0
+    firecrawl_cache_hits: int = 0
     digest_path: str | None = None
     new_companies: list[str] = field(default_factory=list)
     news_summary: list[dict] = field(default_factory=list)
@@ -85,6 +97,7 @@ def run_weekly_pipeline(
     *,
     sources: Iterable[SourceBase] | None = None,
     client: ClaudeClient | None = None,
+    firecrawl_client: FirecrawlClient | None = None,
     items_per_source: int = 25,
     write_to_db: bool = True,
     digest_date: date | None = None,
@@ -96,6 +109,7 @@ def run_weekly_pipeline(
     """
     sources = list(sources) if sources is not None else default_sources()
     client = client or ClaudeClient()
+    firecrawl_client = firecrawl_client or FirecrawlClient()
     result = PipelineResult()
     today = digest_date or datetime.now(UTC).date()
     raw_items: list[RawItem] = []
@@ -170,26 +184,41 @@ def run_weekly_pipeline(
                 if not val_mod.is_acceptable(validation):
                     continue
 
+                # 2. Firecrawl enrichment: scrape the company website for
+                # authoritative facts before the classifier runs. Skipped if
+                # no website is known. A scrape failure is non-fatal: facts
+                # comes back with confidence=0 and we fall through.
+                try:
+                    facts = firecrawl_enrich(firecrawl_client, validation.website)
+                except FirecrawlBudgetExceeded as exc:
+                    result.errors.append(
+                        f"firecrawl budget exceeded after "
+                        f"{firecrawl_client.stats.credits_used} credits: {exc}"
+                    )
+                    facts = CompanyFacts.empty()
+
                 try:
                     classification = cls_mod.classify_company(
                         client,
                         name=mention.name,
-                        context=item.title + "\n\n" + (item.summary or ""),
+                        context=_classifier_context(item, facts),
                     )
                 except BudgetExceeded as exc:
                     result.errors.append(f"budget exceeded: {exc}")
                     break
 
-                geo = geocode_city(mention.city, jitter_seed=mention.name)
+                geo = geocode_city(facts.city or mention.city, jitter_seed=mention.name)
                 company_id = supabase_db.upsert_company(
                     conn,
                     name=validation.canonical_name or mention.name,
-                    country=mention.country or "AU",
-                    city=geo.city if geo else mention.city,
+                    country=facts.country or mention.country or "AU",
+                    city=geo.city if geo else (facts.city or mention.city),
                     lat=geo.lat if geo else None,
                     lon=geo.lon if geo else None,
+                    website=validation.website,
                     sector_tags=classification.sector_tags,
                     stage=classification.stage,
+                    founded_year=facts.founded_year,
                     summary=classification.summary,
                     discovery_status="auto_discovered_pending_review",
                     discovery_source=item.source_slug,
@@ -273,7 +302,13 @@ def run_weekly_pipeline(
             conn,
             source_slug="pipeline",
             kind="weekly_run",
-            payload={"date": today.isoformat(), "cost_usd": client.stats.cost_usd},
+            payload={
+                "date": today.isoformat(),
+                "cost_usd": client.stats.cost_usd,
+                "firecrawl_credits_used": firecrawl_client.stats.credits_used,
+                "firecrawl_calls": firecrawl_client.stats.calls,
+                "firecrawl_cache_hits": firecrawl_client.stats.cache_hits,
+            },
             window_start=datetime.combine(today, datetime.min.time(), tzinfo=UTC),
             window_end=datetime.now(UTC),
             status="ok" if not result.errors else "partial",
@@ -285,12 +320,35 @@ def run_weekly_pipeline(
         conn.commit()
 
     result.cost_usd = client.stats.cost_usd
+    result.firecrawl_credits_used = firecrawl_client.stats.credits_used
+    result.firecrawl_calls = firecrawl_client.stats.calls
+    result.firecrawl_cache_hits = firecrawl_client.stats.cache_hits
 
     # 6. Digest --------------------------------------------------------
     digest_path = _write_digest(today, result)
     result.digest_path = str(digest_path)
 
     return result
+
+
+def _classifier_context(item: RawItem, facts: CompanyFacts) -> str:
+    """Build the classify-company context: news summary + enriched facts.
+
+    Facts only get appended when the scrape returned something useful
+    (confidence > 0); otherwise the context is identical to the
+    pre-Firecrawl behaviour.
+    """
+    news_summary = item.title + "\n\n" + (item.summary or "")
+    if facts.confidence <= 0:
+        return news_summary
+    chunks: list[str] = [news_summary]
+    if facts.description:
+        chunks.append(f"Company description (from website): {facts.description}")
+    if facts.sector_keywords:
+        chunks.append("Sector keywords (from website): " + ", ".join(facts.sector_keywords))
+    if facts.founded_year:
+        chunks.append(f"Founded: {facts.founded_year}")
+    return "\n\n".join(chunks)
 
 
 def _extract_mentions(client: ClaudeClient, item: RawItem) -> CompanyMentionList:

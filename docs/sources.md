@@ -28,3 +28,24 @@ To add a source: create a new module under `src/ai_sector_watch/sources/` that s
 - Idempotent: store a hash of each item; skip if seen.
 - Per-source failures must not abort the run; log and continue.
 - Never bypass `robots.txt`; never scrape HTML when an RSS or API feed exists.
+
+## Enrichment
+
+Discovery sources tell the pipeline that a company exists; enrichment fills in
+authoritative fields directly from the company's own website. Enrichment runs
+after LLM validation and before classification, only when a website URL is
+known for the candidate.
+
+| Provider | URL | Trigger | Cost | Notes |
+|---|---|---|---|---|
+| Firecrawl | https://www.firecrawl.dev/ | Per new ANZ candidate with a known website | ~5 credits per scrape (1 scrape + 4 JSON-mode extract) | Implementation: `src/ai_sector_watch/extraction/firecrawl_client.py`. JSON-mode extract uses the `CompanyFacts` schema. |
+
+Skipped when:
+
+- The candidate already exists in the DB (idempotent).
+- No website is known (LLM validator did not return one).
+- The per-run credit cap (`FIRECRAWL_BUDGET_CREDITS_PER_RUN`, default 200) is reached.
+
+Successful responses are cached on disk under `data/local/firecrawl_cache/` so
+reruns do not re-spend credits. The cache key includes the JSON-Schema hash so
+a schema change forces a re-scrape.
