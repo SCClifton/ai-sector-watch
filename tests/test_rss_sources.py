@@ -1,4 +1,4 @@
-"""Tests for the RSS, arXiv, and HuggingFace sources.
+"""Tests for the RSS, sitemap, arXiv, and HuggingFace sources.
 
 All tests are fixture-driven. No live network calls.
 """
@@ -22,6 +22,10 @@ from ai_sector_watch.sources.huggingface_papers import (
     parse_huggingface_payload,
 )
 from ai_sector_watch.sources.rss import RssSource, parse_feed_bytes
+from ai_sector_watch.sources.sitemap import (
+    capital_brief,
+    parse_google_news_sitemap_bytes,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -67,6 +71,24 @@ def test_rss_source_raises_on_http_error(monkeypatch) -> None:
     source = RssSource("bad", "https://example.com/bad")
     with pytest.raises(httpx.HTTPStatusError):
         source.fetch()
+
+
+def test_parse_google_news_sitemap_bytes_extracts_items() -> None:
+    body = (FIXTURES / "sample_capital_brief.xml").read_bytes()
+    items = parse_google_news_sitemap_bytes(body, slug="capital_brief")
+    assert len(items) >= 1
+    assert items[0].title == "Australian quantum startups seize on Nvidia's Ising AI model"
+    assert items[0].url.startswith("https://www.capitalbrief.com/article/")
+    assert items[0].source_slug == "capital_brief"
+    assert items[0].published_at is not None
+    assert items[0].raw["publication"] == "Capital Brief"
+
+
+def test_capital_brief_factory_uses_news_sitemap() -> None:
+    source = capital_brief()
+    assert source.slug == "capital_brief"
+    assert source.kind == "news"
+    assert source.url == "https://www.capitalbrief.com/sitemap/news.xml"
 
 
 def test_arxiv_factories_have_distinct_slugs() -> None:

@@ -14,7 +14,7 @@ To add a source: create a new module under `src/ai_sector_watch/sources/` that s
 | techcrunch_ai | https://techcrunch.com/category/artificial-intelligence/feed/ | News | Low | Global; filter for ANZ mentions |
 | startup_daily_au | https://www.startupdaily.net/feed/ | News | High |  |
 | smartcompany_startups | https://www.smartcompany.com.au/startupsmart/feed/ | News | High |  |
-| capital_brief | TBC | News | High | Confirm RSS endpoint before commit 09 |
+| capital_brief | https://www.capitalbrief.com/sitemap/news.xml | News sitemap | High | Google News sitemap advertised in robots.txt; native RSS not published as of 2026-04-27 |
 | airtree_open_source_vc | https://www.airtree.vc/open-source-vc/rss.xml | Blog | High |  |
 | blackbird_blog | https://www.blackbird.vc/blog/feed | Blog | High |  |
 | crunchbase_ai | https://news.crunchbase.com/sections/ai/feed/ | News | Medium |  |
