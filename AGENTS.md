@@ -2,7 +2,7 @@
 
 Operating manual for any human or AI agent working in this repo. Read this before you write code.
 
-**Last updated:** 2026-04-27
+**Last updated:** 2026-04-28
 
 ---
 
@@ -157,6 +157,10 @@ scripts/start_issue.sh <issue-number> [tool-name]
 That script verifies the issue is open and unassigned, claims it, creates the per-issue worktree at `../AI-Sector-Watch-<#>-<slug>/` on branch `<tool>/<#>-<slug>`, symlinks `.env.local`, and prints the next steps. Run it from any existing worktree (it discovers the main worktree automatically).
 
 If the script ever fails, the manual fallback is documented in [docs/multi-agent-workflow.md §3](docs/multi-agent-workflow.md).
+
+### Agent slash command (optional)
+
+A tool-neutral runbook for the full pre-flight → work → Draft PR loop lives at `.claude/commands/issue.md` (Claude Code) and `.codex/prompts/issue.md` (Codex). Bodies are identical apart from the default tool name. Invoke as `/issue <free-form narration>` — pass an issue number to skip drafting, or describe a new task to have it drafted via the right `.github/ISSUE_TEMPLATE/`. To wire up another agent (Gemini, etc.), copy either body into that agent's prompts directory and change the default tool name in the meta paragraph.
 
 ### Branch and merge rules
 
