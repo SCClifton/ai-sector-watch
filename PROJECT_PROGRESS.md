@@ -133,6 +133,25 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 08 — Companies page + News page + Digest page.
 
+## 2026-04-27 — Commit 08: Companies, News, Digest pages
+
+**Shipped:**
+- `dashboard/pages/2_Companies.py`: same sidebar filters as the Map page, two metric tiles (in view / total tracked), the dataframe table with `LinkColumn` for the website, plus a "Detail view" pane that picks one company from the filtered set and renders header + meta + sectors + summary in a bordered container.
+- `dashboard/pages/3_News.py`: chronological feed reading `recent_news()` from the data source, one bordered container per item with title link, kind+date+source caption, summary, and "Mentions" line. Empty-state copy when no news yet (today: YAML mode, so always empty).
+- `dashboard/pages/4_Digest.py`: glob `data/digests/*.md`, render the latest in `st.markdown`, with a `selectbox` for older digests. Empty-state when no digest files exist.
+
+**Tested:**
+- `pytest -q`: 63 pass, 1 skipped.
+- `ruff check .`: clean.
+- Browser smoke check on every page: all four (Map, Companies, News, Digest) appear in the sidebar nav, all render without Python errors, empty states show the right "run the pipeline" copy.
+
+**Known limitations:**
+- News and Digest pages are empty until commit 12 lands; that's expected and the empty-state copy explains it.
+- Companies "Detail view" pane is intentionally minimal for v0; richer per-company timeline view is in v1 scope.
+
+**Next:** Commit 09 — source ingestion layer (SourceBase, RSS, arXiv, HuggingFace papers).
+
+
 
 
 
