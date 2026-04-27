@@ -23,13 +23,9 @@ from dashboard.components.filters import (  # noqa: E402
 from dashboard.components.footer import render_footer  # noqa: E402
 from dashboard.components.map_view import build_map, split_geocoded  # noqa: E402
 from dashboard.components.sector_legend import render_sector_legend  # noqa: E402
+from dashboard.components.theme import render_page_chrome  # noqa: E402
 
-st.set_page_config(
-    page_title="AI Sector Watch: Map",
-    page_icon="🌏",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+render_page_chrome(title="AI Sector Watch: Map", page_icon="🌏")
 
 
 def main() -> None:

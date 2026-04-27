@@ -1,0 +1,368 @@
+/* AI Sector Watch design system. See docs/design-system.md for tokens + rationale. */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --aisw-bg: #0B0F14;
+  --aisw-surface: #121821;
+  --aisw-surface-2: #1B2230;
+  --aisw-border: #222B3B;
+  --aisw-border-strong: #2C384D;
+  --aisw-text: #E6EDF3;
+  --aisw-text-muted: #8B95A6;
+  --aisw-text-subtle: #5C6675;
+  --aisw-accent: #F4B740;
+  --aisw-accent-hover: #FFD074;
+  --aisw-accent-soft: rgba(244, 183, 64, 0.12);
+  --aisw-success: #3DDC84;
+  --aisw-warning: #F4B740;
+  --aisw-error: #F47171;
+  --aisw-radius-sm: 4px;
+  --aisw-radius: 6px;
+  --aisw-radius-lg: 8px;
+}
+
+html, body, [data-testid="stAppViewContainer"], button, input, textarea, select {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Inherit Inter through Streamlit components, but don't fight Material icons. */
+[class*="st-"]:not([class*="material-"]) {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+code, pre, kbd, samp {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Material icon families used by Streamlit must keep their glyph fonts. */
+.material-icons,
+.material-icons-outlined,
+.material-symbols-outlined,
+.material-symbols-rounded,
+.material-symbols-sharp,
+[class*="material-symbols"],
+[data-testid="stIconMaterial"],
+[data-testid="stIconEmoji"],
+[data-testid="stIconChevron"],
+[data-testid*="Icon"] {
+  font-family: 'Material Symbols Rounded', 'Material Symbols Outlined', 'Material Icons' !important;
+}
+
+/* Brand wordmark */
+.aisw-wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.25rem 0 1.25rem 0;
+  margin: 0;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--aisw-border);
+  margin-bottom: 1.5rem;
+}
+.aisw-wordmark__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--aisw-text);
+  letter-spacing: -0.005em;
+}
+.aisw-wordmark__title em {
+  font-style: normal;
+  color: var(--aisw-accent);
+  font-weight: 600;
+}
+.aisw-wordmark__tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--aisw-text-subtle);
+}
+
+/* Headings: editorial hierarchy, deliberate spacing */
+h1, h2, h3, h4 {
+  font-family: 'Inter', sans-serif !important;
+  letter-spacing: -0.018em;
+  color: var(--aisw-text);
+}
+h1 { font-size: 2rem !important; font-weight: 700 !important; line-height: 1.2 !important; }
+h2 { font-size: 1.375rem !important; font-weight: 600 !important; line-height: 1.3 !important; }
+h3 { font-size: 1.0625rem !important; font-weight: 600 !important; line-height: 1.4 !important; }
+
+/* Body */
+p, li, [data-testid="stMarkdownContainer"] p {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--aisw-text);
+}
+
+[data-testid="stCaptionContainer"], .stCaption, small, .aisw-caption {
+  color: var(--aisw-text-muted) !important;
+  font-size: 0.8125rem !important;
+  letter-spacing: 0;
+}
+
+/* Links */
+a, a:visited {
+  color: var(--aisw-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+a:hover {
+  color: var(--aisw-accent-hover);
+  border-bottom-color: var(--aisw-accent-hover);
+}
+
+/* Sidebar: cleaner separation, no shadow */
+[data-testid="stSidebar"] {
+  background: var(--aisw-surface);
+  border-right: 1px solid var(--aisw-border);
+  box-shadow: none;
+}
+[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+  padding-top: 1.5rem;
+}
+
+/* Dividers */
+hr, [data-testid="stDivider"] {
+  border-color: var(--aisw-border) !important;
+  background-color: var(--aisw-border) !important;
+  opacity: 1;
+}
+
+/* Buttons: square-ish, restrained, accent only on primary */
+.stButton > button, .stDownloadButton > button, [data-testid="stFormSubmitButton"] > button {
+  border-radius: var(--aisw-radius);
+  border: 1px solid var(--aisw-border-strong);
+  background: var(--aisw-surface-2);
+  color: var(--aisw-text);
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  box-shadow: none;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.stButton > button:hover, .stDownloadButton > button:hover, [data-testid="stFormSubmitButton"] > button:hover {
+  background: var(--aisw-surface);
+  border-color: var(--aisw-accent);
+  color: var(--aisw-accent);
+}
+.stButton > button[kind="primary"], [data-testid="stFormSubmitButton"] > button[kind="primary"] {
+  background: var(--aisw-accent);
+  border-color: var(--aisw-accent);
+  color: #1A1300;
+  font-weight: 600;
+}
+.stButton > button[kind="primary"]:hover {
+  background: var(--aisw-accent-hover);
+  border-color: var(--aisw-accent-hover);
+  color: #1A1300;
+}
+.stButton > button:focus, .stDownloadButton > button:focus {
+  outline: 2px solid var(--aisw-accent) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+/* Inputs */
+[data-baseweb="input"] input, [data-baseweb="textarea"] textarea, [data-baseweb="select"] > div {
+  background: var(--aisw-surface) !important;
+  border-color: var(--aisw-border-strong) !important;
+  border-radius: var(--aisw-radius) !important;
+  color: var(--aisw-text) !important;
+}
+[data-baseweb="input"] input:focus, [data-baseweb="textarea"] textarea:focus, [data-baseweb="select"] > div:focus-within {
+  border-color: var(--aisw-accent) !important;
+  box-shadow: 0 0 0 1px var(--aisw-accent) !important;
+}
+
+/* Metric cards: tight, no shadow */
+[data-testid="stMetric"] {
+  background: var(--aisw-surface);
+  border: 1px solid var(--aisw-border);
+  border-radius: var(--aisw-radius-lg);
+  padding: 0.875rem 1rem;
+}
+[data-testid="stMetricLabel"] {
+  color: var(--aisw-text-muted) !important;
+  font-size: 0.75rem !important;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+[data-testid="stMetricValue"] {
+  color: var(--aisw-text) !important;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+}
+[data-testid="stMetricDelta"] {
+  font-size: 0.75rem !important;
+}
+
+/* Containers (st.container(border=True)) */
+[data-testid="stVerticalBlockBorderWrapper"], [data-testid="stContainer"][data-border="true"] {
+  border-color: var(--aisw-border) !important;
+  border-radius: var(--aisw-radius-lg) !important;
+  background: var(--aisw-surface);
+  box-shadow: none !important;
+}
+
+/* DataFrame: cleaner header, denser body */
+[data-testid="stDataFrame"], [data-testid="stTable"] {
+  border: 1px solid var(--aisw-border);
+  border-radius: var(--aisw-radius);
+  overflow: hidden;
+}
+[data-testid="stDataFrame"] thead th,
+[data-testid="stTable"] thead th {
+  background: var(--aisw-surface-2) !important;
+  color: var(--aisw-text-muted) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--aisw-border) !important;
+}
+[data-testid="stDataFrame"] tbody td,
+[data-testid="stTable"] tbody td {
+  font-size: 0.875rem !important;
+  border-bottom: 1px solid var(--aisw-border) !important;
+}
+[data-testid="stDataFrame"] a, [data-testid="stTable"] a {
+  color: var(--aisw-accent) !important;
+}
+[data-testid="stDataFrame"] a:hover, [data-testid="stTable"] a:hover {
+  color: var(--aisw-accent-hover) !important;
+}
+
+/* Alerts: muted backgrounds, accent left rule */
+[data-testid="stAlert"] {
+  border-radius: var(--aisw-radius);
+  border: 1px solid var(--aisw-border);
+  background: var(--aisw-surface);
+  box-shadow: none;
+}
+[data-testid="stAlert"][data-baseweb="notification"] {
+  border-left: 3px solid var(--aisw-accent);
+}
+
+/* Tabs */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+  border-bottom: 1px solid var(--aisw-border);
+  gap: 1.25rem;
+}
+[data-testid="stTabs"] [data-baseweb="tab"] {
+  background: transparent;
+  color: var(--aisw-text-muted);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+[data-testid="stTabs"] [data-baseweb="tab"][aria-selected="true"] {
+  color: var(--aisw-accent);
+}
+[data-testid="stTabs"] [data-baseweb="tab-highlight"] {
+  background: var(--aisw-accent) !important;
+}
+
+/* Expander */
+[data-testid="stExpander"] {
+  border: 1px solid var(--aisw-border);
+  border-radius: var(--aisw-radius);
+  background: var(--aisw-surface);
+}
+[data-testid="stExpander"] summary {
+  color: var(--aisw-text);
+  font-weight: 500;
+}
+
+/* Map popup typography (folium) */
+.leaflet-popup-content-wrapper {
+  background: var(--aisw-surface) !important;
+  color: var(--aisw-text) !important;
+  border-radius: var(--aisw-radius) !important;
+  border: 1px solid var(--aisw-border) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+.leaflet-popup-content {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  margin: 0.75rem 1rem !important;
+}
+.leaflet-popup-content h1, .leaflet-popup-content h2, .leaflet-popup-content h3, .leaflet-popup-content h4 {
+  margin: 0 0 0.25rem 0 !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: var(--aisw-text) !important;
+}
+.leaflet-popup-content a {
+  color: var(--aisw-accent) !important;
+}
+.leaflet-popup-tip {
+  background: var(--aisw-surface) !important;
+  border: 1px solid var(--aisw-border) !important;
+}
+.leaflet-popup-close-button {
+  color: var(--aisw-text-muted) !important;
+}
+
+/* Folium attribution + zoom controls in dark surface */
+.leaflet-control-attribution {
+  background: rgba(11, 15, 20, 0.85) !important;
+  color: var(--aisw-text-muted) !important;
+}
+.leaflet-control-attribution a {
+  color: var(--aisw-text-muted) !important;
+}
+.leaflet-bar a, .leaflet-bar a:hover {
+  background: var(--aisw-surface) !important;
+  color: var(--aisw-text) !important;
+  border-color: var(--aisw-border) !important;
+}
+
+/* Selectbox / multiselect chip */
+[data-baseweb="tag"] {
+  background: var(--aisw-accent-soft) !important;
+  border-color: var(--aisw-accent) !important;
+  color: var(--aisw-accent) !important;
+  border-radius: var(--aisw-radius-sm) !important;
+}
+
+/* Footer caption */
+.aisw-footer {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--aisw-border);
+  color: var(--aisw-text-subtle);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+/* Streamlit chrome we don't want */
+[data-testid="stDecoration"] { display: none !important; }
+[data-testid="stToolbar"] { display: none !important; }
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+header[data-testid="stHeader"] { background: transparent; }
+
+/* Tighten main block top padding */
+.block-container {
+  padding-top: 2.5rem !important;
+  padding-bottom: 4rem !important;
+  max-width: 1280px;
+}
+
+/* Mobile sanity at 390px */
+@media (max-width: 480px) {
+  h1 { font-size: 1.625rem !important; }
+  h2 { font-size: 1.1875rem !important; }
+  .block-container { padding-top: 1.25rem !important; }
+  [data-testid="stMetric"] { padding: 0.625rem 0.75rem; }
+  [data-testid="stMetricValue"] { font-size: 1.25rem !important; }
+}

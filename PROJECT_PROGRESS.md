@@ -2,6 +2,27 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #30: Design system foundation
+
+**Shipped (claude-code/30-design-system-foundation-theme-typograph):**
+- Dark theme via `.streamlit/config.toml`: warm signal gold `#F4B740` accent on a `#0B0F14` base, Inter typeface (loaded from Google Fonts).
+- `dashboard/static/styles.css` injects the design tokens: surfaces, borders, type scale, links, buttons, metric cards, dataframe headers, tabs, expanders, alerts, leaflet popup typography, mobile sanity overrides.
+- `dashboard/components/theme.py` exposes `render_page_chrome(*, title, page_icon)`, which replaces every direct `st.set_page_config(...)` call across the dashboard. It runs CSS injection, OG and Twitter meta-tag hoisting (via a zero-height `components.html` shim), and renders the brand wordmark.
+- Brand wordmark: "AI **Sector** Watch" with the middle word in accent gold and an `ANZ AI ECOSYSTEM` tag in subtle uppercase.
+- Favicon: 32x32 PNG with the letters "AI" in accent gold on the surface, generated with Pillow at 4x supersample.
+- OG image: 1200x630 PNG screenshot of the rendered map page in the new theme, served via Streamlit static-serving from `dashboard/static/og-image.png`.
+- `docs/design-system.md` documents the palette, type scale, spacing, radius tokens, and a decision log for why dark base, why warm gold, why Inter, why no shadows, why a text-only wordmark.
+
+**Tested:**
+- `pytest -q`: 98 pass, 2 skipped (live DB).
+- `ruff check .` clean. `black --check .` clean.
+- All six pages screenshot at 1440x900 with consistent chrome (Home / Map / Companies / News / Digest / Admin), saved under `docs/screenshots/issue-30/`.
+- Browser tab shows the favicon (verified via `document.querySelector('link[rel*="icon"]').href`).
+- OG and Twitter meta tags verified in the parent document head: `og:type`, `og:site_name`, `og:title`, `og:description`, `og:url`, `og:image` (1200x630), `twitter:card=summary_large_image`, plus `twitter:title/description/image`.
+
+**Known limitations:**
+- `st.dataframe` link cells render through Glide Data Grid's canvas; CSS overrides do not reach them, so the "Website" column on the Companies page still uses Streamlit's upstream blue. Documented in `docs/design-system.md`.
+
 ## 2026-04-27 - Issue #7: Custom domain + Azure-managed TLS (V0 LIVE)
 
 **Shipped (claude-code/7-cut-dns-over-to-aimap-cliftonfamily-co-w):**
