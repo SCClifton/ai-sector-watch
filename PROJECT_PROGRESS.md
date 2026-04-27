@@ -206,6 +206,25 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 
 **Next:** Commit 12 — weekly pipeline orchestrator + `scripts/run_weekly_pipeline.py` + digest writer.
 
+## 2026-04-27 — Commit 12: Weekly pipeline orchestrator
+
+**Shipped:**
+- `src/ai_sector_watch/pipeline/weekly.py`: `run_weekly_pipeline()` orchestrates ingest -> extract mentions -> validate per ANZ candidate -> classify -> geocode -> upsert as pending -> classify news kind -> upsert news with linked company IDs. Per-source failures are caught and recorded but don't abort the run; budget exhaustion stops cleanly. Writes a single `ingest_events` audit row per run (status `ok` or `partial`). Returns a typed `PipelineResult`.
+- `src/ai_sector_watch/digest/generator.py`: `write_digest()` renders pipeline summary + new candidates + relevant news as a markdown file at `data/digests/{run_date}.md`. Strips em dashes from output.
+- `scripts/run_weekly_pipeline.py`: CLI entry point with `--dry-run` (extracts but skips DB writes) and `--limit` flags. Prints a JSON summary to stdout for CI grepability.
+- `tests/test_pipeline_integration.py`: 4 dry-run tests + 1 live-DB test (auto-skipped without `SUPABASE_DB_URL`). Covers happy path with stubbed sources/LLM, source-failure resilience, digest rendering, and an empty-run digest.
+
+**Tested:**
+- `pytest -q`: 91 pass, 2 skipped (both live-DB tests).
+- `ruff check .`: clean.
+
+**Known limitations:**
+- Live end-to-end run is blocked on Sam provisioning the Supabase project and `ANTHROPIC_API_KEY` in 1Password. Once those are wired, run `op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5` to verify the PRD §18 success criteria (>= 5 news items, >= 1 pending candidate, digest written, < $2 spent).
+- Funding-event extraction is plumbed in `extraction/prompts.py` but not yet called by the orchestrator; will land in commit 12.5 if needed before deploy or punt to v1.
+
+**Next:** Commit 13 — admin review queue page (90_Admin.py).
+
+
 
 
 
