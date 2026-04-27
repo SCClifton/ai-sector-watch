@@ -36,7 +36,7 @@ def _render_spend_metrics(summary: LlmSpendSummary | None) -> None:
 
 def main() -> None:
     st.title("Weekly digest")
-    st.caption("Auto-generated summaries written by the weekly pipeline. " "Latest first.")
+    st.caption("Auto-generated summaries written by the weekly pipeline. Latest first.")
 
     source = get_data_source()
     _render_spend_metrics(source.llm_spend_summary())
@@ -48,9 +48,9 @@ def main() -> None:
 
     if not files:
         st.info(
-            "No digests yet. The weekly pipeline will write one each Monday morning "
-            "(Sydney time). Trigger one manually with `op run --account my.1password.com --env-file=.env.local "
-            "-- python scripts/run_weekly_pipeline.py`."
+            "No digests yet. The pipeline writes one each Monday morning "
+            "(Sydney time): a short, sourced summary of the week's ANZ AI "
+            "activity."
         )
         render_footer()
         return

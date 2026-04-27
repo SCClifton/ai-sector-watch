@@ -63,7 +63,7 @@ def main() -> None:
 
     if not get_config().supabase_db_url:
         st.warning(
-            "SUPABASE_DB_URL is not set. The admin queue is empty until the "
+            "`SUPABASE_DB_URL` is not set. The review queue stays empty until the "
             "pipeline writes to Supabase."
         )
         render_footer()
@@ -80,7 +80,10 @@ def main() -> None:
     st.write(f"Previously rejected: {len(rejected)}")
 
     if not pending:
-        st.success("Queue is empty. Nothing to review.")
+        st.success(
+            "Review queue is clear. Auto-discovered candidates land here after "
+            "each pipeline run."
+        )
         render_footer()
         return
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from html import escape
 
 import folium
 from folium.plugins import MarkerCluster
@@ -25,6 +26,65 @@ _STAGE_LABELS = {
     "mature": "Mature",
 }
 
+# Folium renders the map (and its leaflet popups) inside an iframe, so the
+# dashboard's parent stylesheet does not reach them. Mirror the design tokens
+# from docs/design-system.md here and inject once per map.
+_POPUP_CSS: str = """
+.leaflet-popup-content-wrapper {
+  background: #121821 !important;
+  color: #E6EDF3 !important;
+  border-radius: 6px !important;
+  border: 1px solid #222B3B !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+.leaflet-popup-tip {
+  background: #121821 !important;
+  border: 1px solid #222B3B !important;
+}
+.leaflet-popup-close-button { color: #8B95A6 !important; }
+.aisw-popup {
+  --aisw-text: #E6EDF3;
+  --aisw-text-muted: #8B95A6;
+  --aisw-border: #222B3B;
+  --aisw-accent: #F4B740;
+  --aisw-accent-hover: #FFD074;
+  --aisw-accent-soft: rgba(244, 183, 64, 0.12);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--aisw-text);
+}
+.aisw-popup__title { font-weight: 600; font-size: 14px; }
+.aisw-popup__title a { color: var(--aisw-accent); text-decoration: none; }
+.aisw-popup__title a:hover { color: var(--aisw-accent-hover); }
+.aisw-popup__meta {
+  color: var(--aisw-text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.aisw-popup__row { margin-top: 4px; }
+.aisw-popup__row em { font-style: normal; color: var(--aisw-text-muted); }
+.aisw-popup__chips {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.aisw-popup__chip {
+  background: var(--aisw-accent-soft);
+  color: var(--aisw-accent);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.aisw-popup__summary {
+  margin-top: 8px;
+  line-height: 1.45;
+  color: var(--aisw-text);
+}
+"""
+
 
 def build_map(companies: list[Company]) -> folium.Map:
     """Build a folium map with one clustered marker per company that has coords."""
@@ -34,6 +94,7 @@ def build_map(companies: list[Company]) -> folium.Map:
         tiles="cartodbpositron",
         control_scale=True,
     )
+    fmap.get_root().header.add_child(folium.Element(f"<style>{_POPUP_CSS}</style>"))
     cluster = MarkerCluster(name="Companies", show=True).add_to(fmap)
 
     geocoded = 0
@@ -54,41 +115,44 @@ def build_map(companies: list[Company]) -> folium.Map:
 
 
 def _popup_html(c: Company) -> str:
-    """Render the per-marker popup. No em dashes (PRD section 16)."""
+    """Render the per-marker popup with design-system tokens."""
     sector_labels = []
     for tag in c.sector_tags:
         sector = get_sector(tag)
         sector_labels.append(sector.label if sector else tag)
 
-    parts: list[str] = ['<div style="font-family: sans-serif; font-size: 13px;">']
-    name_html = c.name
+    parts: list[str] = ['<div class="aisw-popup">']
+    name_html = escape(c.name)
     if c.website:
-        name_html = f'<a href="{c.website}" target="_blank" rel="noopener noreferrer">{c.name}</a>'
-    parts.append(f"<div><strong>{name_html}</strong></div>")
+        name_html = (
+            f'<a href="{escape(c.website)}" target="_blank" '
+            f'rel="noopener noreferrer">{escape(c.name)}</a>'
+        )
+    parts.append(f'<div class="aisw-popup__title">{name_html}</div>')
 
-    location_bits = [b for b in (c.city, c.country) if b]
+    location_bits = [escape(b) for b in (c.city, c.country) if b]
     if location_bits:
-        parts.append(f'<div style="color:#555">{", ".join(location_bits)}</div>')
+        parts.append(f'<div class="aisw-popup__meta">{", ".join(location_bits)}</div>')
 
     if c.stage:
-        parts.append(f'<div style="margin-top:4px;"><em>Stage:</em> {c.stage}</div>')
+        parts.append(f'<div class="aisw-popup__row"><em>Stage:</em> {escape(c.stage)}</div>')
     if c.founded_year:
-        parts.append(f"<div><em>Founded:</em> {c.founded_year}</div>")
+        parts.append(f'<div class="aisw-popup__row"><em>Founded:</em> {c.founded_year}</div>')
 
     funding_line = _latest_funding_line(c)
     if funding_line:
-        parts.append(f'<div style="margin-top:4px;"><em>Latest funding:</em> {funding_line}</div>')
+        parts.append(
+            f'<div class="aisw-popup__row"><em>Latest funding:</em> {escape(funding_line)}</div>'
+        )
 
     if sector_labels:
-        chips = " ".join(
-            f'<span style="background:#eef;border-radius:6px;padding:1px 6px;'
-            f'margin-right:4px;font-size:11px;">{label}</span>'
-            for label in sector_labels
+        chips = "".join(
+            f'<span class="aisw-popup__chip">{escape(label)}</span>' for label in sector_labels
         )
-        parts.append(f'<div style="margin-top:6px;">{chips}</div>')
+        parts.append(f'<div class="aisw-popup__chips">{chips}</div>')
 
     if c.summary:
-        parts.append(f'<div style="margin-top:8px; line-height:1.35;">{c.summary}</div>')
+        parts.append(f'<div class="aisw-popup__summary">{escape(c.summary)}</div>')
 
     parts.append("</div>")
     return "".join(parts)
