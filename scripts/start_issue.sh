@@ -187,11 +187,14 @@ cat <<EOF
 cd into the worktree:
   cd $WT_DIR
 
+Cache 1Password auth ONCE for this shell session (one Touch ID tap, then
+~30 minutes of free op access; without this, every op call re-prompts):
+  eval \$(op signin --account my.1password.com)
+
 Make your first commit, then open a Draft PR:
   gh pr create --draft --title "[#$ISSUE] $TITLE" --body "Closes #$ISSUE"
 
-Run secret-bearing commands with the explicit 1Password account, otherwise
-\`op run\` either uses the wrong account or times out on biometric auth:
+Run secret-bearing commands with the explicit 1Password account:
   op run --account my.1password.com --env-file=.env.local -- <your command>
 
 Project card has already been moved to "In Progress".
