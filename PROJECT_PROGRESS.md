@@ -2,6 +2,22 @@
 
 Chronological log of what shipped, what was tested, and known limitations. Update on every commit.
 
+## 2026-04-27 - Issue #2: wire op:// references for Anthropic + Admin
+
+**Shipped (claude-code/2-wire-op-references):**
+- Reused the existing personal Anthropic API Key from the Clifton Family Vault (item id `zefzvqdmqoywb3qan5x6svj6vy`, vault id `ejqpm4ik2eggtu3zahx35vuhfe`, field `credential`). The `.env.template` continues to point at the Private vault as the canonical layout, but `.env.local` cross-references the Clifton Family Vault for the Anthropic key.
+- Created a new 1Password item `AI Sector Watch Admin` in the Private vault (item id `qwhn4zqtbumat33lnttozgmyim`, field `password`) with a 32-character generated password.
+- Updated the local `.env.local` (gitignored) with both UUID-based `op://` references.
+
+**Tested:**
+- `op read op://...credential` resolves the Anthropic key (108 bytes).
+- `op read op://...password` resolves the admin password (32 bytes).
+- Full `op run --env-file=.env.local -- python scripts/verify_setup.py` blocked on the Supabase reference, which is Codex's branch (issue #1). Will rerun after #1 lands.
+
+**Known limitations:**
+- Issue #1 (Supabase, on `codex/1-...`) added a placeholder UUID for `SUPABASE_DB_URL` that doesn't yet resolve. Once that branch fills in the real UUID and merges, full `verify_setup` will pass.
+- Cross-vault Anthropic reference is intentional but should be called out in `docs/operations.md` so a fresh contributor knows to look in the right vault.
+
 ## 2026-04-27 — Commit 01: Repo scaffold
 
 **Shipped:**
