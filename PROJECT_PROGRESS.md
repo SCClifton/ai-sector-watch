@@ -365,7 +365,20 @@ Chronological log of what shipped, what was tested, and known limitations. Updat
 **Known limitations:**
 - The orchestrator extracts one funding event for the first linked company on a funding-kind article. That matches the current prompt shape and budget estimate.
 
+## 2026-04-27 - Issue #5: Azure App Service provisioned
 
+**Shipped (claude-code/5-provision-azure-app-service-for-the-dash):**
+- Resource group `ai-sector-watch` in `australiaeast`.
+- App Service plan `ai-sector-watch-plan`: Linux, B1, single instance.
+- Web App for Containers `ai-sector-watch` (kind `app,linux,container`), default hostname `ai-sector-watch.azurewebsites.net`. Configured to pull `ghcr.io/scclifton/ai-sector-watch/ai-sector-watch:latest`.
+- App settings written: `WEBSITES_PORT=8000`, `ANTHROPIC_API_KEY`, `SUPABASE_DB_URL`, `ADMIN_PASSWORD` (sourced via `op read --account my.1password.com`), plus `ANTHROPIC_BUDGET_USD_PER_RUN=2` and `ANTHROPIC_MODEL=claude-sonnet-4-6`.
 
+**Tested:**
+- `az webapp show -g ai-sector-watch -n ai-sector-watch` returns the resource: `state=Running`, `linuxFxVersion=DOCKER|ghcr.io/scclifton/ai-sector-watch/ai-sector-watch:latest`.
+- App Service plumbing (TLS, hostname, port routing) verified by temporarily swapping the image to `nginx:stable-alpine` with `WEBSITES_PORT=80`: `curl -I https://ai-sector-watch.azurewebsites.net` returned `HTTP/2 200`. Image and port reverted to the production target.
 
+**Known limitations:**
+- The production GHCR image does not exist yet, so the dashboard URL currently returns `HTTP/2 503`. Issue #6 (deploy.yml: build container, push to GHCR, deploy) closes this. Once that runs, the configured image resolves and the dashboard serves on port 8000.
+- OIDC federated credential and the `AZURE_CLIENT_ID` / `TENANT_ID` / `SUBSCRIPTION_ID` GitHub secrets (deployment.md "OIDC federated credential" section) are deferred to whichever issue wires `deploy.yml` end-to-end.
+- Custom domain `aimap.cliftonfamily.co` and TLS binding are deferred to issue #7 (DNS).
 
