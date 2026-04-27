@@ -36,14 +36,10 @@ _NAV_ITEMS: tuple[tuple[str, str], ...] = (
 
 
 def _inject_styles() -> None:
-    """Inject ``styles.css`` once per Streamlit session."""
-    flag = "_aisw_styles_injected"
-    if st.session_state.get(flag):
-        return
+    """Inject ``styles.css`` for the current page render."""
     if _STYLES_PATH.exists():
         css = _STYLES_PATH.read_text(encoding="utf-8")
         st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-        st.session_state[flag] = True
 
 
 def _inject_meta_tags(*, title: str) -> None:
@@ -101,9 +97,6 @@ def _inject_meta_tags(*, title: str) -> None:
 
 def _render_wordmark() -> None:
     """Render the AI Sector Watch wordmark at the top of every page."""
-    flag = "_aisw_wordmark_rendered"
-    if st.session_state.get(flag):
-        return
     st.markdown(
         '<div class="aisw-wordmark">'
         '<span class="aisw-wordmark__title">AI <em>Sector</em> Watch</span>'
@@ -111,7 +104,6 @@ def _render_wordmark() -> None:
         "</div>",
         unsafe_allow_html=True,
     )
-    st.session_state[flag] = True
 
 
 def _render_sidebar_nav() -> None:
