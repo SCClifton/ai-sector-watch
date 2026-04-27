@@ -2,7 +2,7 @@
 
 The visual foundation for the AI Sector Watch dashboard. Every page inherits these tokens via [`dashboard/components/theme.py`](../dashboard/components/theme.py); no page should redefine palette, type, or spacing.
 
-**Last updated:** 2026-04-27
+**Last updated:** 2026-04-28
 
 ---
 
@@ -12,7 +12,7 @@ The visual foundation for the AI Sector Watch dashboard. Every page inherits the
 |---|---|---|
 | Streamlit theme | [.streamlit/config.toml](../.streamlit/config.toml) | base, primaryColor, background, font |
 | Custom CSS | [dashboard/static/styles.css](../dashboard/static/styles.css) | tokens, typography, components, map popup, dataframe |
-| Page chrome helper | [dashboard/components/theme.py](../dashboard/components/theme.py) | `set_page_config` + CSS injection + OG meta + wordmark |
+| Page chrome helper | [dashboard/components/theme.py](../dashboard/components/theme.py) | `set_page_config` + CSS injection + OG meta + sidebar nav + wordmark |
 | Favicon | [dashboard/static/favicon.png](../dashboard/static/favicon.png) | 32x32 PNG, "AI" glyph in accent gold |
 | OG image | [dashboard/static/og-image.png](../dashboard/static/og-image.png) | 1200x630 PNG, screenshot of the live map page |
 
@@ -51,14 +51,14 @@ Contrast: text on `--aisw-bg` clears WCAG AA (`#E6EDF3` on `#0B0F14` is 14.7:1; 
 
 | Role | Size | Weight | Line-height | Tracking |
 |---|---|---|---|---|
-| h1 | 32px (2rem) | 700 | 1.2 | -0.018em |
-| h2 | 22px (1.375rem) | 600 | 1.3 | -0.018em |
-| h3 | 17px (1.0625rem) | 600 | 1.4 | -0.018em |
+| h1 | 32px (2rem) | 700 | 1.2 | 0 |
+| h2 | 22px (1.375rem) | 600 | 1.3 | 0 |
+| h3 | 17px (1.0625rem) | 600 | 1.4 | 0 |
 | Body | 15px (0.9375rem) | 400 | 1.65 | 0 |
 | Caption | 13px (0.8125rem) | 400 | 1.5 | 0 |
-| Metric label | 12px (0.75rem) | 500 | 1.4 | +0.06em uppercase |
-| Wordmark title | 16.8px (1.05rem) | 600 | 1 | -0.005em |
-| Wordmark tag | 11.5px (0.72rem) | 500 | 1 | +0.12em uppercase |
+| Metric label | 12px (0.75rem) | 500 | 1.25 | 0 uppercase |
+| Wordmark title | 16.8px (1.05rem) | 600 | 1 | 0 |
+| Wordmark tag | 11.5px (0.72rem) | 500 | 1 | 0 uppercase |
 
 Inter is rendered with `font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'` for the alternate single-storey `a` and straighter digits, which read as more editorial.
 
@@ -99,7 +99,7 @@ text-primary        text-subtle uppercase
    accent gold
 ```
 
-The middle word, "Sector", is set in accent gold. The right-aligned tag in subtle uppercase with `+0.12em` letter-spacing acts as a section label without competing with page titles.
+The middle word, "Sector", is set in accent gold. The right-aligned tag in subtle uppercase acts as a section label without competing with page titles.
 
 ## Favicon
 

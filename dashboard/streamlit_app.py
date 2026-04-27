@@ -36,28 +36,27 @@ def main() -> None:
         st.info("Reading from the local seed YAML. Set `SUPABASE_DB_URL` to switch to live data.")
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Companies tracked", len(companies))
+    col1.metric("Tracked", len(companies))
     col2.metric(
-        "Australian companies",
+        "Australia",
         sum(1 for c in companies if c.country == "AU"),
     )
     col3.metric(
-        "New Zealand companies",
+        "New Zealand",
         sum(1 for c in companies if c.country == "NZ"),
     )
 
     st.divider()
 
-    st.subheader("How to use this dashboard")
-    st.markdown("""
-- **Map**: interactive folium map of ANZ AI companies with sector colour and click-through popups.
-- **Companies**: filterable list of every verified company.
-- **News**: chronological feed of relevant news items linked to companies.
-- **Digest**: weekly markdown digests written by the pipeline.
-- **Admin**: review queue for auto-discovered candidates (password-gated).
-
-Use the sidebar to navigate.
-        """)
+    st.subheader("Public index")
+    st.write(
+        "The public dashboard shows verified companies only. Auto-discovered candidates "
+        "wait in the admin review queue before they appear on the map or company list."
+    )
+    action_cols = st.columns([1, 1, 1, 2])
+    action_cols[0].link_button("Map", "/Map", type="primary")
+    action_cols[1].link_button("Companies", "/Companies")
+    action_cols[2].link_button("News", "/News")
 
     render_footer()
 

@@ -10,6 +10,7 @@ See ``docs/design-system.md`` for the design tokens themselves.
 from __future__ import annotations
 
 import json
+from html import escape
 from pathlib import Path
 
 import streamlit as st
@@ -26,12 +27,13 @@ _DESCRIPTION: str = (
     "updated weekly by an automated agent pipeline."
 )
 _NAV_ITEMS: tuple[tuple[str, str], ...] = (
-    ("pages/0_About.py", "About"),
-    ("pages/1_Map.py", "Map"),
-    ("pages/2_Companies.py", "Companies"),
-    ("pages/3_News.py", "News"),
-    ("pages/4_Digest.py", "Digest"),
-    ("pages/90_Admin.py", "Admin"),
+    ("/", "Overview"),
+    ("/About", "About"),
+    ("/Map", "Map"),
+    ("/Companies", "Companies"),
+    ("/News", "News"),
+    ("/Digest", "Digest"),
+    ("/Admin", "Admin"),
 )
 
 
@@ -89,11 +91,6 @@ def _inject_meta_tags(*, title: str) -> None:
     """
     components.html(script, height=0)
 
-    body_meta = "\n".join(
-        f'<meta {attr}="{name}" content="{content}">' for attr, name, content in tags
-    )
-    st.markdown(body_meta, unsafe_allow_html=True)
-
 
 def _render_wordmark() -> None:
     """Render the AI Sector Watch wordmark at the top of every page."""
@@ -106,11 +103,39 @@ def _render_wordmark() -> None:
     )
 
 
-def _render_sidebar_nav() -> None:
+def _active_nav_label(title: str) -> str:
+    """Return the sidebar label that should be marked as current."""
+    if title == "AI Sector Watch":
+        return "Overview"
+    if ": " in title:
+        return title.rsplit(": ", maxsplit=1)[-1]
+    return "Overview"
+
+
+def _sidebar_nav_html(*, active_label: str) -> str:
+    """Render the project navigation as stable HTML instead of Streamlit's native nav."""
+    items: list[str] = []
+    for href, label in _NAV_ITEMS:
+        active_attr = ' aria-current="page"' if label == active_label else ""
+        class_name = "aisw-sidebar-nav__link"
+        if label == active_label:
+            class_name += " aisw-sidebar-nav__link--active"
+        items.append(
+            f'<a class="{class_name}" href="{escape(href)}"{active_attr}>' f"{escape(label)}</a>"
+        )
+    return (
+        '<nav class="aisw-sidebar-nav" aria-label="Dashboard navigation">'
+        '<div class="aisw-sidebar-nav__eyebrow">Dashboard</div>' + "".join(items) + "</nav>"
+    )
+
+
+def _render_sidebar_nav(*, title: str) -> None:
     """Render the dashboard navigation in the intended order."""
     with st.sidebar:
-        for page_path, label in _NAV_ITEMS:
-            st.page_link(page_path, label=label)
+        st.markdown(
+            _sidebar_nav_html(active_label=_active_nav_label(title)),
+            unsafe_allow_html=True,
+        )
 
 
 def render_page_chrome(*, title: str, page_icon: str = "🌏") -> None:
@@ -133,5 +158,5 @@ def render_page_chrome(*, title: str, page_icon: str = "🌏") -> None:
     )
     _inject_styles()
     _inject_meta_tags(title=title)
-    _render_sidebar_nav()
+    _render_sidebar_nav(title=title)
     _render_wordmark()

@@ -147,7 +147,7 @@ def companies_to_table_rows(companies: list[Company]) -> list[dict]:
                 "Country": c.country or "",
                 "City": c.city or "",
                 "Stage": c.stage or "",
-                "Founded": c.founded_year or "",
+                "Founded": c.founded_year,
                 "Sectors": ", ".join(
                     (get_sector(t).label if get_sector(t) else t) for t in c.sector_tags
                 ),
