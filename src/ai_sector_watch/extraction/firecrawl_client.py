@@ -289,11 +289,39 @@ def _derive_confidence(raw: dict[str, Any]) -> float:
 
 
 def _post_process(facts: CompanyFacts) -> CompanyFacts:
-    """Sanitise user-facing strings: strip em dashes from description / summary."""
+    """Sanitise user-facing strings and recompute confidence from populated fields.
+
+    The LLM tends to either echo the schema default (0.0) or hallucinate a
+    high value regardless of how much it actually filled in. Compute it
+    deterministically here so downstream `confidence > 0` checks behave.
+    """
+    cleaned_description = _sanitise(facts.description)
+    cleaned_summary = _sanitise(facts.last_funding_summary)
+    populated_other = sum(
+        1
+        for v in (
+            facts.founded_year,
+            facts.city,
+            facts.country,
+            cleaned_summary,
+        )
+        if v
+    )
+    if facts.founders:
+        populated_other += 1
+    if facts.sector_keywords:
+        populated_other += 1
+    if cleaned_description and populated_other >= 1:
+        confidence = 1.0
+    elif cleaned_description or populated_other >= 1:
+        confidence = 0.5
+    else:
+        confidence = 0.0
     return facts.model_copy(
         update={
-            "description": _sanitise(facts.description),
-            "last_funding_summary": _sanitise(facts.last_funding_summary),
+            "description": cleaned_description,
+            "last_funding_summary": cleaned_summary,
+            "confidence": confidence,
         }
     )
 

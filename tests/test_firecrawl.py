@@ -250,3 +250,24 @@ def test_post_process_strips_em_dashes_from_facts() -> None:
     assert "—" not in cleaned.description
     assert cleaned.last_funding_summary is not None
     assert "—" not in cleaned.last_funding_summary
+
+
+def test_post_process_recomputes_confidence_from_populated_fields() -> None:
+    """Model-emitted confidence is overridden so downstream `>0` checks behave."""
+    # Model returned 0.0 but description + 3 other fields are populated.
+    rich = CompanyFacts(
+        description="A real description.",
+        founders=["Alice"],
+        sector_keywords=["agents"],
+        last_funding_summary="Series B led by Foo.",
+        confidence=0.0,
+    )
+    assert _post_process(rich).confidence == 1.0
+
+    # Description only, nothing else → 0.5.
+    description_only = CompanyFacts(description="Only this.", confidence=1.0)
+    assert _post_process(description_only).confidence == 0.5
+
+    # Empty payload → 0.0 regardless of model claim.
+    empty = CompanyFacts(confidence=1.0)
+    assert _post_process(empty).confidence == 0.0
