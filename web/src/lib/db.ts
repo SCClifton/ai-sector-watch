@@ -9,7 +9,6 @@ import "server-only";
 import postgres from "postgres";
 
 declare global {
-  // eslint-disable-next-line no-var
   var __aisw_sql__: ReturnType<typeof postgres> | undefined;
 }
 
