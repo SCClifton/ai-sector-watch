@@ -46,3 +46,14 @@ export interface Company {
   profile_verified_at: string | null;
   latest_funding_event: FundingEvent | null;
 }
+
+export interface NewsItem {
+  id: string;
+  source_slug: string;
+  source_url: string;
+  title: string;
+  summary: string | null;
+  published_at: string | null;
+  kind: string;
+  company_ids: string[];
+}
