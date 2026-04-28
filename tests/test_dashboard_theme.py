@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from dashboard.components.theme import _active_nav_label, _sidebar_nav_html
+from dashboard.components import theme
+from dashboard.components.theme import _active_nav_label, _nav_items_with_active
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -16,21 +17,47 @@ def test_active_nav_label_maps_page_titles() -> None:
 
 
 def test_sidebar_nav_marks_one_current_page() -> None:
-    html = _sidebar_nav_html(active_label="Map")
+    items = _nav_items_with_active(active_label="Map")
 
-    assert html.count('aria-current="page"') == 1
-    assert 'href="/"' in html
-    assert 'href="/Map"' in html
-    assert "aisw-sidebar-nav__link--active" in html
+    assert sum(1 for _, _, is_active in items if is_active) == 1
+    assert ("streamlit_app.py", "Overview", False) in items
+    assert ("pages/1_Map.py", "Map", True) in items
+
+
+def test_sidebar_nav_uses_streamlit_page_links(monkeypatch) -> None:
+    calls: list[tuple[str, str, bool, bool]] = []
+    markdown_calls: list[str] = []
+
+    class Sidebar:
+        def __enter__(self) -> None:
+            return None
+
+        def __exit__(self, exc_type, exc_value, traceback) -> None:
+            return None
+
+    def page_link(page: str, *, label: str, disabled: bool, use_container_width: bool) -> None:
+        calls.append((page, label, disabled, use_container_width))
+
+    monkeypatch.setattr(theme.st, "sidebar", Sidebar())
+    monkeypatch.setattr(
+        theme.st, "markdown", lambda body, *args, **kwargs: markdown_calls.append(body)
+    )
+    monkeypatch.setattr(theme.st, "page_link", page_link)
+
+    theme._render_sidebar_nav(title="AI Sector Watch: Map")
+
+    assert calls[0] == ("streamlit_app.py", "Overview", False, True)
+    assert ("pages/1_Map.py", "Map", True, True) in calls
+    assert ("pages/90_Admin.py", "Admin", False, True) in calls
+    assert any("Operations" in body for body in markdown_calls)
+    assert all(not page.startswith("/") for page, _, _, _ in calls)
 
 
 def test_sidebar_nav_separates_admin_from_public_pages() -> None:
-    html = _sidebar_nav_html(active_label="Admin")
+    items = _nav_items_with_active(active_label="Admin")
 
-    assert "Operations" in html
-    assert 'href="/Admin"' in html
-    assert "aisw-sidebar-nav__link--operations" in html
-    assert html.count('aria-current="page"') == 1
+    assert ("pages/90_Admin.py", "Admin", True) in items
+    assert sum(1 for _, _, is_active in items if is_active) == 1
 
 
 def test_docker_image_includes_streamlit_config() -> None:

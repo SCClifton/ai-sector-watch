@@ -107,10 +107,8 @@ code, pre, kbd, samp {
 .aisw-sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin: 0 0 1.5rem 0;
-  padding: 0 0 1.25rem 0;
-  border-bottom: 1px solid var(--aisw-border);
+  margin: 0 0 0.5rem 0;
+  padding: 0;
 }
 
 .aisw-sidebar-nav__eyebrow {
@@ -133,9 +131,15 @@ code, pre, kbd, samp {
   text-transform: uppercase;
 }
 
-.aisw-sidebar-nav__link,
-.aisw-sidebar-nav__link:visited {
-  display: block;
+[data-testid="stSidebar"] [data-testid="stPageLink"] {
+  margin: 0 0 0.25rem 0;
+}
+
+[data-testid="stSidebar"] [data-testid="stPageLink"] a,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:visited {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   min-height: 2rem;
   padding: 0.4rem 0.65rem;
   border: 1px solid transparent;
@@ -149,21 +153,37 @@ code, pre, kbd, samp {
   text-decoration: none !important;
 }
 
-.aisw-sidebar-nav__link:hover {
+[data-testid="stSidebar"] [data-testid="stPageLink"] a p,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a span {
+  color: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {
   background: rgba(244, 183, 64, 0.08);
   border-color: rgba(244, 183, 64, 0.28);
   color: var(--aisw-text) !important;
 }
 
-.aisw-sidebar-nav__link--active,
-.aisw-sidebar-nav__link--active:visited {
+[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-disabled="true"],
+[data-testid="stSidebar"] [data-testid="stPageLink"] a[disabled] {
   background: var(--aisw-accent-soft);
   border-color: rgba(244, 183, 64, 0.42);
   color: var(--aisw-accent-hover) !important;
+  opacity: 1;
+  pointer-events: none;
 }
 
-.aisw-sidebar-nav__link--operations {
-  color: var(--aisw-text-subtle) !important;
+[data-testid="stSidebar"] [data-testid="stPageLink"]:has(a[aria-disabled="true"]),
+[data-testid="stSidebar"] [data-testid="stPageLink"]:has(a[disabled]) {
+  cursor: default;
+}
+
+[data-testid="stSidebar"] [data-testid="stPageLink"]:last-of-type {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--aisw-border);
 }
 
 /* Headings: editorial hierarchy, deliberate spacing */

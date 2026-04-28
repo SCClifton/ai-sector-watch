@@ -10,7 +10,7 @@ See ``docs/design-system.md`` for the design tokens themselves.
 from __future__ import annotations
 
 import json
-from html import escape
+from dataclasses import dataclass
 from pathlib import Path
 
 import streamlit as st
@@ -26,15 +26,25 @@ _DESCRIPTION: str = (
     "Live ecosystem map of the Australian and New Zealand AI startup landscape, "
     "updated weekly by an automated agent pipeline."
 )
-_PUBLIC_NAV_ITEMS: tuple[tuple[str, str], ...] = (
-    ("/", "Overview"),
-    ("/About", "About"),
-    ("/Map", "Map"),
-    ("/Companies", "Companies"),
-    ("/News", "News"),
-    ("/Digest", "Digest"),
+
+
+@dataclass(frozen=True)
+class NavItem:
+    """A dashboard page exposed in the sidebar navigation."""
+
+    page: str
+    label: str
+
+
+_PUBLIC_NAV_ITEMS: tuple[NavItem, ...] = (
+    NavItem("streamlit_app.py", "Overview"),
+    NavItem("pages/0_About.py", "About"),
+    NavItem("pages/1_Map.py", "Map"),
+    NavItem("pages/2_Companies.py", "Companies"),
+    NavItem("pages/3_News.py", "News"),
+    NavItem("pages/4_Digest.py", "Digest"),
 )
-_OPERATIONS_NAV_ITEMS: tuple[tuple[str, str], ...] = (("/Admin", "Admin"),)
+_OPERATIONS_NAV_ITEMS: tuple[NavItem, ...] = (NavItem("pages/90_Admin.py", "Admin"),)
 
 
 def _inject_styles() -> None:
@@ -112,43 +122,42 @@ def _active_nav_label(title: str) -> str:
     return "Overview"
 
 
-def _sidebar_nav_html(*, active_label: str) -> str:
-    """Render the project navigation as stable HTML instead of Streamlit's native nav."""
-    public_items: list[str] = []
-    operations_items: list[str] = []
-    for href, label in _PUBLIC_NAV_ITEMS:
-        active_attr = ' aria-current="page"' if label == active_label else ""
-        class_name = "aisw-sidebar-nav__link"
-        if label == active_label:
-            class_name += " aisw-sidebar-nav__link--active"
-        public_items.append(
-            f'<a class="{class_name}" href="{escape(href)}"{active_attr}>' f"{escape(label)}</a>"
-        )
-    for href, label in _OPERATIONS_NAV_ITEMS:
-        active_attr = ' aria-current="page"' if label == active_label else ""
-        class_name = "aisw-sidebar-nav__link aisw-sidebar-nav__link--operations"
-        if label == active_label:
-            class_name += " aisw-sidebar-nav__link--active"
-        operations_items.append(
-            f'<a class="{class_name}" href="{escape(href)}"{active_attr}>' f"{escape(label)}</a>"
-        )
-    return (
-        '<nav class="aisw-sidebar-nav" aria-label="Dashboard navigation">'
-        '<div class="aisw-sidebar-nav__eyebrow">Dashboard</div>'
-        + "".join(public_items)
-        + '<div class="aisw-sidebar-nav__section">Operations</div>'
-        + "".join(operations_items)
-        + "</nav>"
+def _nav_items_with_active(*, active_label: str) -> tuple[tuple[str, str, bool], ...]:
+    """Return sidebar page links with their active state."""
+    return tuple(
+        (item.page, item.label, item.label == active_label)
+        for item in (*_PUBLIC_NAV_ITEMS, *_OPERATIONS_NAV_ITEMS)
     )
 
 
 def _render_sidebar_nav(*, title: str) -> None:
     """Render the dashboard navigation in the intended order."""
+    active_label = _active_nav_label(title)
     with st.sidebar:
         st.markdown(
-            _sidebar_nav_html(active_label=_active_nav_label(title)),
+            '<div class="aisw-sidebar-nav" aria-label="Dashboard navigation">'
+            '<div class="aisw-sidebar-nav__eyebrow">Dashboard</div>'
+            "</div>",
             unsafe_allow_html=True,
         )
+        for item in _PUBLIC_NAV_ITEMS:
+            st.page_link(
+                item.page,
+                label=item.label,
+                disabled=item.label == active_label,
+                use_container_width=True,
+            )
+        st.markdown(
+            '<div class="aisw-sidebar-nav__section">Operations</div>',
+            unsafe_allow_html=True,
+        )
+        for item in _OPERATIONS_NAV_ITEMS:
+            st.page_link(
+                item.page,
+                label=item.label,
+                disabled=item.label == active_label,
+                use_container_width=True,
+            )
 
 
 def render_page_chrome(*, title: str, page_icon: str = "🌏") -> None:
