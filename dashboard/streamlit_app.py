@@ -21,6 +21,30 @@ from dashboard.components.theme import render_page_chrome  # noqa: E402
 
 render_page_chrome(title="AI Sector Watch", page_icon="🌏")
 
+_INTRO_DISMISSED_KEY = "aisw_intro_dismissed"
+
+
+def _render_intro_hint() -> None:
+    """Render a one-time welcome banner the user can dismiss.
+
+    Uses ``st.container(key=...)`` so the styling lives in
+    ``dashboard/static/styles.css`` against the matching ``.st-key-`` selector.
+    """
+    if st.session_state.get(_INTRO_DISMISSED_KEY):
+        return
+    with st.container(key="aisw_intro_hint"):
+        cols = st.columns([20, 1])
+        with cols[0]:
+            st.markdown(
+                "**Welcome.** Use the sidebar to jump between pages, or pick a path "
+                "below. Click any marker on the map for the full company profile, "
+                "and use the filters in the sidebar to narrow by sector, stage, or city."
+            )
+        with cols[1]:
+            if st.button("✕", key="aisw_intro_dismiss", help="Dismiss this hint"):
+                st.session_state[_INTRO_DISMISSED_KEY] = True
+                st.rerun()
+
 
 def main() -> None:
     source = get_source()
@@ -32,19 +56,17 @@ def main() -> None:
         "updated weekly by an automated agent pipeline."
     )
 
+    _render_intro_hint()
+
     if source.backend == "yaml":
         st.info("Reading from the local seed YAML. Set `SUPABASE_DB_URL` to switch to live data.")
 
+    au_count = sum(1 for c in companies if c.country == "AU")
+    nz_count = sum(1 for c in companies if c.country == "NZ")
     col1, col2, col3 = st.columns(3)
-    col1.metric("Tracked", len(companies))
-    col2.metric(
-        "Australia",
-        sum(1 for c in companies if c.country == "AU"),
-    )
-    col3.metric(
-        "New Zealand",
-        sum(1 for c in companies if c.country == "NZ"),
-    )
+    col1.metric("Tracked companies", f"{len(companies):,}")
+    col2.metric("Australia", f"{au_count:,}")
+    col3.metric("New Zealand", f"{nz_count:,}")
 
     st.divider()
 

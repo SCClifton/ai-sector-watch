@@ -29,8 +29,21 @@ render_page_chrome(title="AI Sector Watch: Map", page_icon="🌏")
 
 
 def main() -> None:
-    st.title("Map")
-    st.caption("Click a marker for company detail. Markers cluster at low zoom.")
+    title_cols = st.columns([5, 1])
+    with title_cols[0]:
+        st.title("Map")
+        st.caption("Click a marker for company detail. Markers cluster at low zoom.")
+    with title_cols[1], st.popover("How to read this map", use_container_width=True):
+        st.markdown(
+            "**Each marker is one verified ANZ AI company.** Colour follows its "
+            "primary sector. The sidebar legend lists the colour groups.\n\n"
+            "**Gold bubbles** are clusters: the number is how many companies "
+            "sit at that zoom level. Click one to zoom in until the markers "
+            "split apart.\n\n"
+            "**Sidebar filters** narrow the map and the table below by sector, "
+            "stage, country, founded year, or name. The Reset button clears "
+            "every filter."
+        )
 
     source = get_source()
     all_companies = load_companies()
@@ -65,7 +78,15 @@ def main() -> None:
             width="stretch",
             hide_index=True,
             column_config={
-                "Website": st.column_config.LinkColumn("Website"),
+                "Name": st.column_config.TextColumn("Name", width="medium"),
+                "Country": st.column_config.TextColumn("Country", width="small"),
+                "City": st.column_config.TextColumn("City", width="small"),
+                "Stage": st.column_config.TextColumn("Stage", width="small"),
+                "Founded": st.column_config.NumberColumn("Founded", width="small", format="%d"),
+                "Sectors": st.column_config.TextColumn("Sectors", width="large"),
+                "Website": st.column_config.LinkColumn(
+                    "Website", width="medium", display_text=r"https?://([^/]+).*"
+                ),
             },
         )
     else:

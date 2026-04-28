@@ -1,6 +1,8 @@
 /* AI Sector Watch design system. See docs/design-system.md for tokens + rationale. */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Inter and JetBrains Mono are loaded by the [theme] font/codeFont URL syntax in
+   .streamlit/config.toml so they apply to both the styled body and the native
+   Streamlit chrome (toolbar, deploy modal). No CSS @import needed here. */
 
 :root {
   --aisw-bg: #0B0F14;
@@ -458,6 +460,15 @@ hr, [data-testid="stDivider"] {
   color: var(--aisw-text-subtle);
   font-size: 0.75rem;
   line-height: 1.6;
+}
+
+/* First-run welcome banner on Home (st.container(key="aisw_intro_hint")). */
+.st-key-aisw_intro_hint {
+  background: rgba(244, 183, 64, 0.10);
+  border: 1px solid rgba(244, 183, 64, 0.42);
+  border-radius: var(--aisw-radius-lg);
+  padding: 14px 18px;
+  margin-bottom: 1.25rem;
 }
 
 /* Streamlit chrome we don't want */
