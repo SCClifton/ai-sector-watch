@@ -27,48 +27,6 @@ from dashboard.components.theme import render_page_chrome  # noqa: E402
 render_page_chrome(title="AI Sector Watch: Companies", page_icon="🏢")
 
 
-@st.fragment
-def _filtered_directory(all_companies: list[Company]) -> None:
-    """Render the filter sidebar, the directory table, and the detail card.
-
-    Wrapped in ``@st.fragment`` so filter changes only redraw this block
-    instead of the whole page.
-    """
-    meta = derive_meta(all_companies)
-    state = render_sidebar(meta, default_countries=("AU", "NZ"), key_prefix="company_filters")
-    companies = apply_filters(all_companies, state)
-
-    cols = st.columns(2)
-    cols[0].metric("In view", len(companies))
-    cols[1].metric("Total tracked", len(all_companies))
-
-    rows = companies_to_table_rows(companies)
-    if not rows:
-        st.info("No companies match these filters. Clear one in the sidebar to widen the view.")
-        return
-
-    df = pd.DataFrame(rows)
-    st.dataframe(
-        df,
-        width="stretch",
-        hide_index=True,
-        column_config={
-            "Website": st.column_config.LinkColumn("Website"),
-        },
-    )
-
-    st.subheader("Detail view")
-    options = [c.name for c in companies]
-    selected_name = st.selectbox(
-        "Pick a company",
-        options=options,
-        index=0 if options else None,
-    )
-    if selected_name:
-        company = next(c for c in companies if c.name == selected_name)
-        _render_company_detail(company)
-
-
 def _render_company_detail(company: Company) -> None:
     """Render a single company's detail card."""
     with st.container(border=True):
@@ -138,7 +96,41 @@ def main() -> None:
             "to read from the live index."
         )
 
-    _filtered_directory(all_companies)
+    meta = derive_meta(all_companies)
+    state = render_sidebar(meta, default_countries=("AU", "NZ"), key_prefix="company_filters")
+    companies = apply_filters(all_companies, state)
+
+    cols = st.columns(2)
+    cols[0].metric("In view", len(companies))
+    cols[1].metric("Total tracked", len(all_companies))
+
+    rows = companies_to_table_rows(companies)
+    if not rows:
+        st.info("No companies match these filters. Clear one in the sidebar to widen the view.")
+        render_footer()
+        return
+
+    df = pd.DataFrame(rows)
+    st.dataframe(
+        df,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            "Website": st.column_config.LinkColumn("Website"),
+        },
+    )
+
+    st.subheader("Detail view")
+    options = [c.name for c in companies]
+    selected_name = st.selectbox(
+        "Pick a company",
+        options=options,
+        index=0 if options else None,
+    )
+    if selected_name:
+        company = next(c for c in companies if c.name == selected_name)
+        _render_company_detail(company)
+
     render_footer()
 
 

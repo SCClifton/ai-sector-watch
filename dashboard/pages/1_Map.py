@@ -13,7 +13,6 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from ai_sector_watch.storage.data_source import Company  # noqa: E402
 from dashboard.components.data_loaders import get_source, load_companies  # noqa: E402
 from dashboard.components.filters import (  # noqa: E402
     apply_filters,
@@ -29,14 +28,32 @@ from dashboard.components.theme import render_page_chrome  # noqa: E402
 render_page_chrome(title="AI Sector Watch: Map", page_icon="🌏")
 
 
-@st.fragment
-def _filtered_map_view(all_companies: list[Company]) -> None:
-    """Render the filter sidebar, the map, and the in-view table.
+def main() -> None:
+    title_cols = st.columns([5, 1])
+    with title_cols[0]:
+        st.title("Map")
+        st.caption("Click a marker for company detail. Markers cluster at low zoom.")
+    with title_cols[1], st.popover("How to read this map", use_container_width=True):
+        st.markdown(
+            "**Each marker is one verified ANZ AI company.** Colour follows its "
+            "primary sector. The sidebar legend lists the colour groups.\n\n"
+            "**Gold bubbles** are clusters: the number is how many companies "
+            "sit at that zoom level. Click one to zoom in until the markers "
+            "split apart.\n\n"
+            "**Sidebar filters** narrow the map and the table below by sector, "
+            "stage, country, founded year, or name. The Reset button clears "
+            "every filter."
+        )
 
-    Wrapped in ``@st.fragment`` so changing a filter triggers a partial
-    rerun of just this block — the page title, popover, and brand
-    wordmark stay put instead of flashing.
-    """
+    source = get_source()
+    all_companies = load_companies()
+
+    if source.backend == "yaml":
+        st.info(
+            "Showing seed data from `data/seed/companies.yaml`. Set `SUPABASE_DB_URL` "
+            "to read from the live index."
+        )
+
     meta = derive_meta(all_companies)
     state = render_sidebar(meta, default_countries=("AU", "NZ"), key_prefix="map_filters")
     render_sector_legend()
@@ -71,35 +88,6 @@ def _filtered_map_view(all_companies: list[Company]) -> None:
         with st.expander(f"Companies without map coordinates ({len(off_map)})"):
             for c in off_map:
                 st.write(f"- **{c.name}** in {c.city or 'unknown city'}, {c.country or '?'}")
-
-
-def main() -> None:
-    title_cols = st.columns([5, 1])
-    with title_cols[0]:
-        st.title("Map")
-        st.caption("Click a marker for company detail. Markers cluster at low zoom.")
-    with title_cols[1], st.popover("How to read this map", use_container_width=True):
-        st.markdown(
-            "**Each marker is one verified ANZ AI company.** Colour follows its "
-            "primary sector. The sidebar legend lists the colour groups.\n\n"
-            "**Gold bubbles** are clusters: the number is how many companies "
-            "sit at that zoom level. Click one to zoom in until the markers "
-            "split apart.\n\n"
-            "**Sidebar filters** narrow the map and the table below by sector, "
-            "stage, country, founded year, or name. The Reset button clears "
-            "every filter."
-        )
-
-    source = get_source()
-    all_companies = load_companies()
-
-    if source.backend == "yaml":
-        st.info(
-            "Showing seed data from `data/seed/companies.yaml`. Set `SUPABASE_DB_URL` "
-            "to read from the live index."
-        )
-
-    _filtered_map_view(all_companies)
 
     render_footer()
 
