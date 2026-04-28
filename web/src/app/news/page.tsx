@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
 
-import { StubPage } from "@/components/StubPage";
+import { NewsContent } from "@/components/news/NewsContent";
 
 export const metadata: Metadata = {
   title: "News",
+  description:
+    "Chronological feed of relevant ANZ AI news linked to companies, plus pipeline cost.",
 };
 
 export default function NewsPage() {
-  return (
-    <StubPage
-      eyebrow="Pipeline"
-      title="News & weekly digest"
-      body="The most recent items the pipeline has ingested, plus the weekly markdown digest of what changed. Stub for now: the prototype focuses on the map page first."
-    />
-  );
+  return <NewsContent />;
 }
