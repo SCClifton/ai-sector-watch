@@ -108,6 +108,11 @@ def test_companies_to_table_rows_renders_sector_labels() -> None:
     assert rows[0]["Name"] == "Test Co"
 
 
+def test_companies_to_table_rows_keeps_missing_founded_year_null() -> None:
+    rows = companies_to_table_rows([_make(founded_year=None)])
+    assert rows[0]["Founded"] is None
+
+
 def test_full_pipeline_against_yaml_source() -> None:
     source = YamlSource()
     companies = source.list_companies()

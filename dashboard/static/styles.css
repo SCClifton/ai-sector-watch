@@ -29,6 +29,15 @@ html, body, [data-testid="stAppViewContainer"], button, input, textarea, select 
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
+html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+  background: var(--aisw-bg) !important;
+  color: var(--aisw-text) !important;
+}
+
+[data-testid="stMainBlockContainer"] {
+  background: var(--aisw-bg) !important;
+}
+
 /* Inherit Inter through Streamlit components, but don't fight Material icons. */
 [class*="st-"]:not([class*="material-"]) {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
@@ -59,7 +68,7 @@ code, pre, kbd, samp {
   gap: 0.5rem;
   padding: 0.25rem 0 1.25rem 0;
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   border-bottom: 1px solid var(--aisw-border);
   margin-bottom: 1.5rem;
 }
@@ -67,7 +76,7 @@ code, pre, kbd, samp {
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--aisw-text);
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
 }
 .aisw-wordmark__title em {
   font-style: normal;
@@ -78,14 +87,74 @@ code, pre, kbd, samp {
   font-size: 0.72rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
   color: var(--aisw-text-subtle);
+}
+
+/* Sidebar navigation */
+[data-testid="stSidebarNav"] {
+  display: none !important;
+}
+
+[data-testid="stSidebar"] {
+  color: var(--aisw-text) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+  padding-top: 1.25rem;
+}
+
+.aisw-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0 0 1.5rem 0;
+  padding: 0 0 1.25rem 0;
+  border-bottom: 1px solid var(--aisw-border);
+}
+
+.aisw-sidebar-nav__eyebrow {
+  margin: 0 0 0.5rem 0.25rem;
+  color: var(--aisw-text-subtle);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.aisw-sidebar-nav__link,
+.aisw-sidebar-nav__link:visited {
+  display: block;
+  min-height: 2rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: var(--aisw-radius);
+  border-bottom: 1px solid transparent;
+  color: var(--aisw-text-muted) !important;
+  font-size: 0.93rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.3;
+  text-decoration: none !important;
+}
+
+.aisw-sidebar-nav__link:hover {
+  background: rgba(244, 183, 64, 0.08);
+  border-color: rgba(244, 183, 64, 0.28);
+  color: var(--aisw-text) !important;
+}
+
+.aisw-sidebar-nav__link--active,
+.aisw-sidebar-nav__link--active:visited {
+  background: var(--aisw-accent-soft);
+  border-color: rgba(244, 183, 64, 0.42);
+  color: var(--aisw-accent-hover) !important;
 }
 
 /* Headings: editorial hierarchy, deliberate spacing */
 h1, h2, h3, h4 {
   font-family: 'Inter', sans-serif !important;
-  letter-spacing: -0.018em;
+  letter-spacing: 0;
   color: var(--aisw-text);
 }
 h1 { font-size: 2rem !important; font-weight: 700 !important; line-height: 1.2 !important; }
@@ -123,8 +192,12 @@ a:hover {
   border-right: 1px solid var(--aisw-border);
   box-shadow: none;
 }
-[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
-  padding-top: 1.5rem;
+
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+  color: var(--aisw-text) !important;
 }
 
 /* Dividers */
@@ -192,13 +265,17 @@ hr, [data-testid="stDivider"] {
   font-size: 0.75rem !important;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
+}
+[data-testid="stMetricLabel"] p {
+  line-height: 1.25 !important;
+  white-space: normal !important;
 }
 [data-testid="stMetricValue"] {
   color: var(--aisw-text) !important;
   font-size: 1.5rem !important;
   font-weight: 600 !important;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 [data-testid="stMetricDelta"] {
   font-size: 0.75rem !important;
@@ -225,7 +302,7 @@ hr, [data-testid="stDivider"] {
   font-size: 0.75rem !important;
   font-weight: 600 !important;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   border-bottom: 1px solid var(--aisw-border) !important;
 }
 [data-testid="stDataFrame"] tbody td,
@@ -249,6 +326,10 @@ hr, [data-testid="stDivider"] {
 }
 [data-testid="stAlert"][data-baseweb="notification"] {
   border-left: 3px solid var(--aisw-accent);
+}
+[data-testid="stAlert"] [data-testid="stMarkdownContainer"],
+[data-testid="stAlert"] [data-testid="stMarkdownContainer"] p {
+  color: var(--aisw-text) !important;
 }
 
 /* Tabs */
