@@ -36,6 +36,13 @@ az webapp config appsettings set \
   --name "$APP" \
   --settings WEBSITES_PORT=8000
 
+# Streamlit needs a persistent WebSocket connection for the browser session.
+# Without this, health checks can pass while visitors see only the empty shell.
+az webapp config set \
+  --resource-group "$RG" \
+  --name "$APP" \
+  --web-sockets-enabled true
+
 # 5. App settings (mirror from 1Password manually for v0)
 ANTHROPIC_API_KEY=$(op read "op://Private/Anthropic API Key/credential")
 SUPABASE_DB_URL=$(op read "op://Private/Supabase AI Sector Watch/connection_string")
@@ -131,8 +138,12 @@ az webapp config ssl bind \
 ## Smoke checks
 
 ```bash
+az webapp config show -g ai-sector-watch -n ai-sector-watch \
+  --query webSocketsEnabled -o tsv                 # expect true
 curl -I https://aimap.cliftonfamily.co               # expect HTTP/2 200, valid cert
 curl -fsS https://aimap.cliftonfamily.co/_stcore/health
+# Browser smoke: open /, /Map, and /Companies. Expect rendered headings, not
+# just the blank Streamlit shell.
 gh workflow run weekly.yml -f limit=5
 gh run watch
 ```
