@@ -101,6 +101,10 @@ class AuditArtifacts:
     json_path: Path
 
 
+class AuditBudgetExceeded(RuntimeError):
+    """Raised when the audit cannot finish within the configured budgets."""
+
+
 def _is_empty(value: Any) -> bool:
     if value is None:
         return True
@@ -407,8 +411,9 @@ def run_audit(
                 name=name,
             )
         except (BudgetExceeded, FirecrawlBudgetExceeded) as exc:
-            LOGGER.warning("budget exhausted while auditing %s: %s", name, exc)
-            break
+            raise AuditBudgetExceeded(
+                f"budget exhausted while auditing {name}; audit artifacts would be incomplete"
+            ) from exc
         updates = _fact_to_updates(company, facts)
         findings.extend(_findings_for_update(company, facts, updates))
         if updates:
@@ -471,15 +476,19 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     if args.enrich:
         LOGGER.info("estimated Firecrawl credits for this run: %d", estimated_credits)
-    artifacts = run_audit(
-        limit=args.limit,
-        offset=args.offset,
-        dry_run=args.dry_run,
-        enrich=args.enrich,
-        output_dir=args.output_dir,
-        run_date=args.run_date,
-        artifact_suffix=args.artifact_suffix,
-    )
+    try:
+        artifacts = run_audit(
+            limit=args.limit,
+            offset=args.offset,
+            dry_run=args.dry_run,
+            enrich=args.enrich,
+            output_dir=args.output_dir,
+            run_date=args.run_date,
+            artifact_suffix=args.artifact_suffix,
+        )
+    except AuditBudgetExceeded as exc:
+        LOGGER.error("%s", exc)
+        return 1
     print(json.dumps({k: str(v) for k, v in asdict(artifacts).items()}, indent=2))
     return 0
 

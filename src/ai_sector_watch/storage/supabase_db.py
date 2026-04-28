@@ -339,6 +339,17 @@ def companies_has_enriched_at(conn: psycopg.Connection) -> bool:
     return companies_has_column(conn, "enriched_at")
 
 
+def _company_column_select(
+    conn: psycopg.Connection,
+    column_name: str,
+    fallback: sql.SQL,
+) -> sql.Composable:
+    """Return a real company column or a typed fallback alias."""
+    if companies_has_column(conn, column_name):
+        return sql.Identifier(column_name)
+    return fallback
+
+
 def list_companies_for_enrichment(
     conn: psycopg.Connection,
     *,
@@ -356,6 +367,29 @@ def list_companies_for_enrichment(
         if companies_has_enriched_at(conn)
         else sql.SQL("NULL::TIMESTAMPTZ AS enriched_at")
     )
+    optional_profile_selects = {
+        "founders": sql.SQL("'{}'::TEXT[] AS founders"),
+        "total_raised_usd": sql.SQL("NULL::NUMERIC AS total_raised_usd"),
+        "total_raised_currency_raw": sql.SQL("NULL::TEXT AS total_raised_currency_raw"),
+        "total_raised_as_of": sql.SQL("NULL::DATE AS total_raised_as_of"),
+        "total_raised_source_url": sql.SQL("NULL::TEXT AS total_raised_source_url"),
+        "valuation_usd": sql.SQL("NULL::NUMERIC AS valuation_usd"),
+        "valuation_currency_raw": sql.SQL("NULL::TEXT AS valuation_currency_raw"),
+        "valuation_as_of": sql.SQL("NULL::DATE AS valuation_as_of"),
+        "valuation_source_url": sql.SQL("NULL::TEXT AS valuation_source_url"),
+        "headcount_estimate": sql.SQL("NULL::INTEGER AS headcount_estimate"),
+        "headcount_min": sql.SQL("NULL::INTEGER AS headcount_min"),
+        "headcount_max": sql.SQL("NULL::INTEGER AS headcount_max"),
+        "headcount_as_of": sql.SQL("NULL::DATE AS headcount_as_of"),
+        "headcount_source_url": sql.SQL("NULL::TEXT AS headcount_source_url"),
+        "profile_confidence": sql.SQL("NULL::NUMERIC AS profile_confidence"),
+        "profile_sources": sql.SQL("'{}'::TEXT[] AS profile_sources"),
+        "profile_verified_at": sql.SQL("NULL::TIMESTAMPTZ AS profile_verified_at"),
+    }
+    profile_selects = [
+        _company_column_select(conn, column_name, fallback)
+        for column_name, fallback in optional_profile_selects.items()
+    ]
     limit_clause = sql.SQL("LIMIT %s") if limit is not None else sql.SQL("")
     params: list[Any] = [max_age_years]
     if limit is not None:
@@ -364,12 +398,7 @@ def list_companies_for_enrichment(
         SELECT
             id, name, website, country, city, lat, lon, sector_tags, stage,
             founded_year, summary, {evidence_urls_select}, {enriched_at_select},
-            founders, total_raised_usd, total_raised_currency_raw,
-            total_raised_as_of, total_raised_source_url, valuation_usd,
-            valuation_currency_raw, valuation_as_of, valuation_source_url,
-            headcount_estimate, headcount_min, headcount_max, headcount_as_of,
-            headcount_source_url, profile_confidence, profile_sources,
-            profile_verified_at
+            {profile_selects}
         FROM companies
         WHERE discovery_status = 'verified'
           AND (
@@ -381,6 +410,7 @@ def list_companies_for_enrichment(
         """).format(
         evidence_urls_select=evidence_urls_select,
         enriched_at_select=enriched_at_select,
+        profile_selects=sql.SQL(", ").join(profile_selects),
         limit_clause=limit_clause,
     )
     with conn.cursor() as cur:

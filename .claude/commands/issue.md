@@ -81,7 +81,7 @@ Commit:
 ## Step 6 — push and open a Draft PR
 
     cd <WT> && git push -u origin HEAD
-    cd <WT> && gh pr create --draft --title "[#<#>] <issue title>" --body "Closes #<#>"
+    cd <WT> && PR_BODY="$(mktemp)" && cp .github/pull_request_template.md "$PR_BODY" && printf "\nCloses #%s\n" "<#>" >> "$PR_BODY" && gh pr create --draft --title "[#<#>] <issue title>" --body-file "$PR_BODY"
 
 Use the issue title verbatim from `gh issue view <#> --json title -q .title`.
 
