@@ -1,0 +1,395 @@
+{
+  "generated_at": "2026-04-28T03:15:01.773632+00:00",
+  "dry_run": false,
+  "enrich": true,
+  "company_count": 15,
+  "proposed_update_count": 15,
+  "companies": [
+    {
+      "id": "1d518785-d8da-4f7c-a5a4-0565e538dbb0",
+      "name": "Linktree",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Linktree is a link-in-bio platform that enables users to aggregate multiple online destinations into a single, customizable landing page, offering tools for social media management, audience growth, content monetization, and performance analytics.",
+        "founders": [
+          "Alex Zaccaria",
+          "Anthony Zaccaria",
+          "Nick Humphreys"
+        ],
+        "total_raised_usd": "166000000",
+        "total_raised_currency_raw": "$166.0M",
+        "total_raised_source_url": "https://startupintros.com/orgs/linktree",
+        "profile_sources": [
+          "https://linktr.ee",
+          "https://startupintros.com/orgs/linktree"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:09:05.232799+00:00"
+      },
+      "evidence_urls": [
+        "https://linktr.ee",
+        "https://startupintros.com/orgs/linktree"
+      ]
+    },
+    {
+      "id": "c7eb2e1e-9312-4100-bc44-fe6c693ec171",
+      "name": "Lyrebird Health",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Lyrebird Health is an AI medical scribe platform built for Australian GPs and specialists, offering deeply integrated clinical documentation tools that automate non-patient-facing work so doctors can spend more time with patients and less time on paperwork.",
+        "founders": [
+          "Kai Van Lieshout"
+        ],
+        "total_raised_usd": "0",
+        "total_raised_currency_raw": "AUD 12M",
+        "total_raised_as_of": "2025-06-17",
+        "total_raised_source_url": "https://www.mobihealthnews.com/news/anz/aussie-ai-scribe-startup-go-global-12m-funding",
+        "valuation_usd": "0",
+        "valuation_currency_raw": "A$50 million",
+        "valuation_as_of": "2025-06-11",
+        "valuation_source_url": "https://www.hsfkramer.com/news/2025-06/hsf-kramer-lyrebird-health-12-million-capital-raise",
+        "profile_sources": [
+          "https://www.lyrebirdhealth.com",
+          "https://www.mobihealthnews.com/news/anz/aussie-ai-scribe-startup-go-global-12m-funding",
+          "https://www.hsfkramer.com/news/2025-06/hsf-kramer-lyrebird-health-12-million-capital-raise"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:09:27.487106+00:00"
+      },
+      "evidence_urls": [
+        "https://www.lyrebirdhealth.com",
+        "https://www.mobihealthnews.com/news/anz/aussie-ai-scribe-startup-go-global-12m-funding",
+        "https://www.hsfkramer.com/news/2025-06/hsf-kramer-lyrebird-health-12-million-capital-raise"
+      ]
+    },
+    {
+      "id": "3fbc7d68-d90a-40cf-94ed-db01b45b49f4",
+      "name": "Mable",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Mable is Australia's largest online platform connecting people looking for disability or aged care support with local independent support workers, operating a peer-to-peer model for in-home care and supported independent living.",
+        "founders": [
+          "Tony Charara",
+          "Peter Scutt"
+        ],
+        "total_raised_usd": "100000000",
+        "total_raised_currency_raw": "$100 million",
+        "total_raised_as_of": "2021-01-01",
+        "total_raised_source_url": "https://helloleaders.com.au/article/mable-denies-1-billion-sale-rumours",
+        "headcount_estimate": 500,
+        "headcount_source_url": "https://helloleaders.com.au/article/mable-denies-1-billion-sale-rumours",
+        "profile_sources": [
+          "https://mable.com.au",
+          "https://mable.com.au/about-us/careers-at-mable",
+          "https://helloleaders.com.au/article/mable-denies-1-billion-sale-rumours",
+          "https://www.afr.com/street-talk/general-atlantic-weighs-ipo-for-1b-plus-mable-hires-four-banks-20260412-p5zn9y"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:09:57.358316+00:00"
+      },
+      "evidence_urls": [
+        "https://mable.com.au",
+        "https://mable.com.au/about-us/careers-at-mable",
+        "https://helloleaders.com.au/article/mable-denies-1-billion-sale-rumours",
+        "https://www.afr.com/street-talk/general-atlantic-weighs-ipo-for-1b-plus-mable-hires-four-banks-20260412-p5zn9y"
+      ]
+    },
+    {
+      "id": "2b48d040-ba30-4f56-bc19-98aa371696d6",
+      "name": "Mantel Group",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2017,
+        "summary": "Mantel Group is Australia and New Zealand-owned next-gen tech and AI consultancy that blends brilliant thinkers with expert engineers, transforming businesses through AI, data, digital, cyber security, and cloud expertise.",
+        "founders": [
+          "Michael Gansel"
+        ],
+        "headcount_estimate": 550,
+        "headcount_as_of": "2024-07-01",
+        "headcount_source_url": "https://tracxn.com/d/companies/mantelgroup/__9lJr_xFfKNdOmCt3dYKhlEIt8JKWxdWYyo1KVrWSXg8",
+        "profile_sources": [
+          "https://mantelgroup.com.au",
+          "https://greatplacetowork.com.au/case-studies/people-first-creating-a-culture-of-trust-and-ownership",
+          "https://tracxn.com/d/companies/mantelgroup/__9lJr_xFfKNdOmCt3dYKhlEIt8JKWxdWYyo1KVrWSXg8"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:10:22.590167+00:00"
+      },
+      "evidence_urls": [
+        "https://mantelgroup.com.au",
+        "https://greatplacetowork.com.au/case-studies/people-first-creating-a-culture-of-trust-and-ownership",
+        "https://tracxn.com/d/companies/mantelgroup/__9lJr_xFfKNdOmCt3dYKhlEIt8JKWxdWYyo1KVrWSXg8"
+      ]
+    },
+    {
+      "id": "70a1672a-55a2-4d1e-92f4-e290606875bb",
+      "name": "Marqo",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2022,
+        "summary": "Marqo is an AI-powered search and discovery platform for ecommerce, optimizing search conversion using click-stream, purchase, and event data to deliver more intelligent results with every interaction.",
+        "city": "San Francisco",
+        "country": "US",
+        "founders": [
+          "Jesse Clark",
+          "Tom Hamer"
+        ],
+        "profile_sources": [
+          "https://www.marqo.ai",
+          "https://www.marqo.ai/blog/why-i-joined-marqo",
+          "https://www.preqin.com/data/profile/asset/marqo/559830"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:10:44.068994+00:00"
+      },
+      "evidence_urls": [
+        "https://www.marqo.ai",
+        "https://www.marqo.ai/blog/why-i-joined-marqo",
+        "https://www.preqin.com/data/profile/asset/marqo/559830"
+      ]
+    },
+    {
+      "id": "46823475-e780-4c3b-b373-88a4fda8a514",
+      "name": "Maxwell Plus",
+      "discovery_status": "verified",
+      "updates": {
+        "profile_sources": [
+          "https://gregolear.substack.com/p/infrequently-asked-questions-about",
+          "https://www.golocalprov.com/politics/ice-on-the-move-and-epstein-case-too-the-sunday-political-brunch"
+        ],
+        "profile_verified_at": "2026-04-28T03:11:24.006109+00:00"
+      },
+      "evidence_urls": [
+        "https://gregolear.substack.com/p/infrequently-asked-questions-about",
+        "https://www.golocalprov.com/politics/ice-on-the-move-and-epstein-case-too-the-sunday-political-brunch"
+      ]
+    },
+    {
+      "id": "1c10d287-c16c-4cfe-9b44-cf58d1c03379",
+      "name": "NodeOps",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2023,
+        "summary": "NodeOps is the home of CreateOS, an intelligent workspace that enables builders to deploy AI-generated applications in seconds - without DevOps, Docker, or complexity, combining decentralized compute and Web3 infrastructure into one unified platform.",
+        "city": "Bengaluru",
+        "country": "IN",
+        "founders": [
+          "Naman Kabra"
+        ],
+        "total_raised_usd": "5000000",
+        "total_raised_currency_raw": "$5.0M",
+        "total_raised_source_url": "https://startupintros.com/orgs/nodeops",
+        "headcount_estimate": 15,
+        "headcount_source_url": "https://nodeops.network/about",
+        "profile_sources": [
+          "https://nodeops.network",
+          "https://nodeops.network/about",
+          "https://startupintros.com/orgs/nodeops"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:11:52.673464+00:00"
+      },
+      "evidence_urls": [
+        "https://nodeops.network",
+        "https://nodeops.network/about",
+        "https://startupintros.com/orgs/nodeops"
+      ]
+    },
+    {
+      "id": "0ab57223-2f5c-4539-9c5e-b03391ca3eb2",
+      "name": "OptiGrid",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "OptiGrid is a U.S.-based company delivering battery-integrated DC fast charging solutions for fleets, combining onboard energy storage, smart load management, and ultrafast charging to eliminate the need for costly grid upgrades.",
+        "city": "Kansas City",
+        "country": "US",
+        "founders": [
+          "Wayne Hoovestol",
+          "Kurt Neutgens",
+          "Wayne Mathisen"
+        ],
+        "headcount_estimate": 50,
+        "headcount_source_url": "https://orangeev.com/charging-the-battery/ev-charging",
+        "profile_sources": [
+          "https://pulse2.com/optigrid-profile-tyler-phillipi-interview",
+          "https://orangeev.com/charging-the-battery/ev-charging"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:12:16.051819+00:00"
+      },
+      "evidence_urls": [
+        "https://pulse2.com/optigrid-profile-tyler-phillipi-interview",
+        "https://orangeev.com/charging-the-battery/ev-charging"
+      ]
+    },
+    {
+      "id": "a29ae776-e219-455e-828d-79441897f66a",
+      "name": "PaperLab",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "PaperLab is an AI-powered parsing engine that converts complex PDFs into accurate, AI-ready Markdown at scale, using diffusion-based models for deterministic parsing with no hallucinations - serving AI vendors, legaltech, fintech, scientific R&D, and data-platform teams.",
+        "profile_sources": [
+          "https://paperlab.ai"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:12:36.974233+00:00"
+      },
+      "evidence_urls": [
+        "https://paperlab.ai"
+      ]
+    },
+    {
+      "id": "38b15906-e178-40b4-b4b0-5583bda2422a",
+      "name": "Partly",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2020,
+        "summary": "Partly provides AI parts infrastructure and a common protocol standardising how the auto parts industry communicates, offering purpose-built AI models, APIs, and pre-built products for enterprises, bodyshops, dealerships, and dismantlers across the collision parts supply chain.",
+        "founders": [
+          "Levi Fawcett",
+          "Nathan Taylor",
+          "Mark Song",
+          "Tony Austin"
+        ],
+        "total_raised_usd": "41300000",
+        "total_raised_currency_raw": "$41.3M",
+        "total_raised_source_url": "https://tracxn.com/d/companies/partly/__Ap5vIsA-TWTnWZmD--AsMKP8tgSwojznvemmmiWHJl4",
+        "headcount_min": 11,
+        "headcount_max": 50,
+        "headcount_as_of": "2024-07-01",
+        "headcount_source_url": "https://tracxn.com/d/companies/partly/__Ap5vIsA-TWTnWZmD--AsMKP8tgSwojznvemmmiWHJl4",
+        "profile_sources": [
+          "https://partly.com",
+          "https://www.partly.com/about",
+          "https://www.partly.com/blog",
+          "https://tracxn.com/d/companies/partly/__Ap5vIsA-TWTnWZmD--AsMKP8tgSwojznvemmmiWHJl4",
+          "https://tracxn.com/d/companies/partly/__Ap5vIsA-TWTnWZmD--AsMKP8tgSwojznvemmmiWHJl4/funding-and-investors"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:13:02.635456+00:00"
+      },
+      "evidence_urls": [
+        "https://partly.com",
+        "https://www.partly.com/about",
+        "https://www.partly.com/blog",
+        "https://tracxn.com/d/companies/partly/__Ap5vIsA-TWTnWZmD--AsMKP8tgSwojznvemmmiWHJl4",
+        "https://tracxn.com/d/companies/partly/__Ap5vIsA-TWTnWZmD--AsMKP8tgSwojznvemmmiWHJl4/funding-and-investors"
+      ]
+    },
+    {
+      "id": "3cb1da58-6d1f-4707-be2e-58f02fc4477d",
+      "name": "Pearler",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Pearler is an all-in-one finance platform for the next generation, helping hardworking Australians take control of their money through long-term investing in ASX and US shares, micro-investing, superannuation, home savings, and spending tools.",
+        "founders": [
+          "Nick"
+        ],
+        "profile_sources": [
+          "https://pearler.com",
+          "https://pearler.com/learn/listen/get-rich-slow-club/6937a0db3d875cc25725be8f"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:13:25.567086+00:00"
+      },
+      "evidence_urls": [
+        "https://pearler.com",
+        "https://pearler.com/learn/listen/get-rich-slow-club/6937a0db3d875cc25725be8f"
+      ]
+    },
+    {
+      "id": "a069f78d-50b2-406b-9e79-3ce02c21a9df",
+      "name": "Prefactor",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Prefactor is an AI Agent Management Platform that helps enterprises deploy AI agents into real business workflows with visibility, governance, and control needed for production scale.",
+        "profile_sources": [
+          "https://prefactor.ai",
+          "https://www.antler.co/blog/antler-australia-12th-residency-eight-new-ai-first-startup-investments"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:13:41.235357+00:00"
+      },
+      "evidence_urls": [
+        "https://prefactor.ai",
+        "https://www.antler.co/blog/antler-australia-12th-residency-eight-new-ai-first-startup-investments"
+      ]
+    },
+    {
+      "id": "67c8f51d-b8ce-4b39-a488-4efef35db7ce",
+      "name": "Pyn",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Philadelphia Youth Network (PYN) is a nonprofit organization connecting young people aged 12-24 in Philadelphia with career development opportunities, including education, hands-on career development experiences, and professional development programs.",
+        "city": "Philadelphia",
+        "country": "US",
+        "profile_sources": [
+          "https://www.pyninc.org/post/pyn-ceo-honored-as-one-of-city-state-s-who-s-who-in-labor",
+          "https://www.pyninc.org/blog"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:14:14.906054+00:00"
+      },
+      "evidence_urls": [
+        "https://www.pyninc.org/post/pyn-ceo-honored-as-one-of-city-state-s-who-s-who-in-labor",
+        "https://www.pyninc.org/blog"
+      ]
+    },
+    {
+      "id": "b37b83bf-a575-47e0-9474-826df53e47d4",
+      "name": "Relevance AI",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Relevance AI is the home of the AI workforce, a platform where anyone can build and recruit teams of AI agents to complete tasks on autopilot - helping businesses scale GTM results without scaling headcount.",
+        "founders": [
+          "Daniel Vassilev",
+          "Jacky Koh",
+          "Daniel Palmer"
+        ],
+        "total_raised_currency_raw": "$24M (Series B)",
+        "total_raised_source_url": "https://relevanceai.com/blog/the-ai-workforce-revolution-24m-series-b-to-accelerate-our-mission",
+        "profile_sources": [
+          "https://relevanceai.com",
+          "https://www.bvp.com/news/meet-the-founders-of-relevance-ai",
+          "https://relevanceai.com/blog/the-ai-workforce-revolution-24m-series-b-to-accelerate-our-mission"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:14:32.216303+00:00"
+      },
+      "evidence_urls": [
+        "https://relevanceai.com",
+        "https://www.bvp.com/news/meet-the-founders-of-relevance-ai",
+        "https://relevanceai.com/blog/the-ai-workforce-revolution-24m-series-b-to-accelerate-our-mission"
+      ]
+    },
+    {
+      "id": "08090213-9550-4292-a24b-fabeb3289710",
+      "name": "SafetyCulture",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "SafetyCulture is a workplace operations platform that gives frontline teams the tools, knowledge, and confidence to work safely, meet higher standards, and improve every day - offering automated workflows, built-in AI, and 10,000+ customizable templates across industries including manufacturing, construction, hospitality, retail, and more.",
+        "founders": [
+          "Luke Anear"
+        ],
+        "total_raised_currency_raw": "$75 million (most recent round)",
+        "total_raised_source_url": "https://www.startupdaily.net/topic/people/safetyculture-founder-luke-anear-returns-as-ceo-to-be-present-in-sydney-hq",
+        "valuation_usd": "2500000000",
+        "valuation_currency_raw": "$2.5 billion",
+        "valuation_as_of": "2024-01-01",
+        "valuation_source_url": "https://www.startupdaily.net/topic/people/safetyculture-founder-luke-anear-returns-as-ceo-to-be-present-in-sydney-hq",
+        "profile_sources": [
+          "https://safetyculture.com",
+          "https://www.startupdaily.net/topic/people/safetyculture-founder-luke-anear-returns-as-ceo-to-be-present-in-sydney-hq",
+          "https://www.afr.com/technology/safetyculture-in-ai-acquisition-spree-to-outpace-software-turmoil-20260401-p5zkr9"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:15:01.770544+00:00"
+      },
+      "evidence_urls": [
+        "https://safetyculture.com",
+        "https://www.startupdaily.net/topic/people/safetyculture-founder-luke-anear-returns-as-ceo-to-be-present-in-sydney-hq",
+        "https://www.afr.com/technology/safetyculture-in-ai-acquisition-spree-to-outpace-software-turmoil-20260401-p5zkr9"
+      ]
+    }
+  ]
+}
