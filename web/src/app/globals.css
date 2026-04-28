@@ -1,26 +1,134 @@
 @import "tailwindcss";
 
+/* Design tokens mirror dashboard/static/styles.css and docs/design-system.md.
+   Single source of truth for colours, surfaces, accents. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --aisw-bg: #0B0F14;
+  --aisw-surface: #121821;
+  --aisw-surface-2: #1B2230;
+  --aisw-surface-3: #232C3D;
+  --aisw-border: #222B3B;
+  --aisw-border-strong: #2C384D;
+  --aisw-text: #E6EDF3;
+  --aisw-text-muted: #8B95A6;
+  --aisw-text-subtle: #5C6675;
+  --aisw-accent: #F4B740;
+  --aisw-accent-hover: #FFD074;
+  --aisw-accent-soft: rgba(244, 183, 64, 0.12);
+  --aisw-success: #3DDC84;
+  --aisw-warning: #F4B740;
+  --aisw-error: #F47171;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--aisw-bg);
+  --color-surface: var(--aisw-surface);
+  --color-surface-2: var(--aisw-surface-2);
+  --color-surface-3: var(--aisw-surface-3);
+  --color-border: var(--aisw-border);
+  --color-border-strong: var(--aisw-border-strong);
+  --color-text: var(--aisw-text);
+  --color-text-muted: var(--aisw-text-muted);
+  --color-text-subtle: var(--aisw-text-subtle);
+  --color-accent: var(--aisw-accent);
+  --color-accent-hover: var(--aisw-accent-hover);
+  --color-accent-soft: var(--aisw-accent-soft);
+  --color-success: var(--aisw-success);
+  --color-warning: var(--aisw-warning);
+  --color-error: var(--aisw-error);
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--aisw-bg);
+  color: var(--aisw-text);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+::selection {
+  background: var(--aisw-accent-soft);
+  color: var(--aisw-accent-hover);
+}
+
+/* MapLibre dark-theme overrides */
+.maplibregl-map {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.maplibregl-popup-content {
+  background: var(--aisw-surface) !important;
+  color: var(--aisw-text) !important;
+  border: 1px solid var(--aisw-border);
+  border-radius: 6px !important;
+  padding: 10px 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.maplibregl-popup-tip {
+  border-top-color: var(--aisw-surface) !important;
+  border-bottom-color: var(--aisw-surface) !important;
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(11, 15, 20, 0.7) !important;
+  color: var(--aisw-text-muted) !important;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: var(--aisw-text-muted) !important;
+}
+
+.maplibregl-ctrl-group {
+  background: var(--aisw-surface) !important;
+  border: 1px solid var(--aisw-border) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.maplibregl-ctrl-group button {
+  background: transparent !important;
+  filter: invert(0.85);
+}
+
+/* Subtle scrollbar in side panels */
+.aisw-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--aisw-border-strong) transparent;
+}
+
+.aisw-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.aisw-scroll::-webkit-scrollbar-thumb {
+  background: var(--aisw-border-strong);
+  border-radius: 999px;
+}
+.aisw-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Slow ambient pulse for the live indicator */
+@keyframes aisw-pulse {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+.aisw-pulse {
+  animation: aisw-pulse 2.4s ease-in-out infinite;
+}
+
+/* Reduced-motion respect */
+@media (prefers-reduced-motion: reduce) {
+  .aisw-pulse {
+    animation: none;
+    opacity: 0.85;
+  }
 }
