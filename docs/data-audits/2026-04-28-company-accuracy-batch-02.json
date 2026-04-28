@@ -1,0 +1,384 @@
+{
+  "generated_at": "2026-04-28T03:00:34.035932+00:00",
+  "dry_run": false,
+  "enrich": true,
+  "company_count": 15,
+  "proposed_update_count": 14,
+  "companies": [
+    {
+      "id": "335d5eb0-1f69-4f49-8f6a-eb4b85ec8d31",
+      "name": "Diraq",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2022,
+        "summary": "Diraq is building utility-scale quantum computers based on modified silicon transistors, enabling millions of qubits on a single chip using existing semiconductor manufacturing infrastructure.",
+        "founders": [
+          "Andrew Dzurak"
+        ],
+        "total_raised_usd": "20000000",
+        "total_raised_currency_raw": "$20M",
+        "total_raised_as_of": "2026-02-02",
+        "total_raised_source_url": "https://thequantuminsider.com/2026/02/02/diraq-secures-20-million-equity-investment-from-nrfc",
+        "headcount_estimate": 70,
+        "headcount_source_url": "https://thequantuminsider.com/2026/02/02/diraq-secures-20-million-equity-investment-from-nrfc",
+        "profile_sources": [
+          "https://diraq.com",
+          "https://www.diraq.com/newsdesk/diraq-leadership-named-to-unescos-inaugural-quantum-100nbsp",
+          "https://thequantuminsider.com/2026/02/02/diraq-secures-20-million-equity-investment-from-nrfc",
+          "https://www.diraq.com/newsdesk/andrew-dzurak-receives-innovation-leadership-award-at-innovationaus-2025nbsp"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:53:42.458587+00:00"
+      },
+      "evidence_urls": [
+        "https://diraq.com",
+        "https://www.diraq.com/newsdesk/diraq-leadership-named-to-unescos-inaugural-quantum-100nbsp",
+        "https://thequantuminsider.com/2026/02/02/diraq-secures-20-million-equity-investment-from-nrfc",
+        "https://www.diraq.com/newsdesk/andrew-dzurak-receives-innovation-leadership-award-at-innovationaus-2025nbsp"
+      ]
+    },
+    {
+      "id": "df0abe07-bc59-4c6c-ae5b-efd58f0e4074",
+      "name": "Employment Hero",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Employment Hero is an AI-powered Employment Operating System offering HR, payroll, recruitment, and benefits for businesses - with intelligent agents and an end-to-end managed employment service called HeroForce.",
+        "founders": [
+          "Ben Thompson",
+          "Dave Tong"
+        ],
+        "valuation_usd": "3000000000",
+        "valuation_currency_raw": "$3 billion",
+        "valuation_source_url": "https://employmenthero.com/authors/ben-thompson",
+        "profile_sources": [
+          "https://employmenthero.com/uk/about-us",
+          "https://employmenthero.com/authors/ben-thompson",
+          "https://www.forbes.com.au/covers/magazine/inside-employment-hero-ben-thompsons-2-billion-payroll-powerhouse"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:54:04.452441+00:00"
+      },
+      "evidence_urls": [
+        "https://employmenthero.com/uk/about-us",
+        "https://employmenthero.com/authors/ben-thompson",
+        "https://www.forbes.com.au/covers/magazine/inside-employment-hero-ben-thompsons-2-billion-payroll-powerhouse"
+      ]
+    },
+    {
+      "id": "1f15c4ad-ae3a-4f24-8a98-d6a6e0c2b031",
+      "name": "Eucalyptus",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Eucalyptus is a global telehealth provider that operates a trusted group of digital healthcare clinics, building a safe, effective, and accessible future for medicine by treating complex, chronic conditions and providing preventative healthcare.",
+        "founders": [
+          "Tim Doyle"
+        ],
+        "valuation_usd": "1600000000",
+        "valuation_currency_raw": "AUD $1.6B",
+        "valuation_as_of": "2026-02-20",
+        "valuation_source_url": "https://www.afr.com/companies/healthcare-and-fitness/a-silicon-valley-lunch-prompted-1-6b-eucalyptus-deal-20260220-p5o3xc",
+        "headcount_estimate": 400,
+        "headcount_source_url": "https://eucalyptus.vc",
+        "profile_sources": [
+          "https://eucalyptus.vc",
+          "https://www.afr.com/companies/healthcare-and-fitness/a-silicon-valley-lunch-prompted-1-6b-eucalyptus-deal-20260220-p5o3xc",
+          "https://www.smartcompany.com.au/opinion/eucalyptus-co-founder-tim-doyle-michael-jordan-of-australian-startups-heres-why"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:54:33.199962+00:00"
+      },
+      "evidence_urls": [
+        "https://eucalyptus.vc",
+        "https://www.afr.com/companies/healthcare-and-fitness/a-silicon-valley-lunch-prompted-1-6b-eucalyptus-deal-20260220-p5o3xc",
+        "https://www.smartcompany.com.au/opinion/eucalyptus-co-founder-tim-doyle-michael-jordan-of-australian-startups-heres-why"
+      ]
+    },
+    {
+      "id": "0463628a-b5ef-40e1-8839-e0034a252a54",
+      "name": "Everbility",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Everbility is an AI-powered documentation platform built for allied health professionals, enabling them to finish documentation - including SOAP notes and comprehensive reports - up to 5x faster through session transcription, custom templates, and an AI-powered editor.",
+        "founders": [
+          "Angela Mariani",
+          "Mani Batra"
+        ],
+        "profile_sources": [
+          "https://everbility.com",
+          "https://www.everbility.com/about-us",
+          "https://www.everbility.com/reviews/moveabout",
+          "https://startmate.com/writing/what-is-a-startup-accelerator-and-do-you-need-one-in-2025"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:55:00.916526+00:00"
+      },
+      "evidence_urls": [
+        "https://everbility.com",
+        "https://www.everbility.com/about-us",
+        "https://www.everbility.com/reviews/moveabout",
+        "https://startmate.com/writing/what-is-a-startup-accelerator-and-do-you-need-one-in-2025"
+      ]
+    },
+    {
+      "id": "a98bd019-2674-414d-b253-eb84438d7331",
+      "name": "Everlab",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Everlab is an AI-powered health platform delivering personalized, preventive care through advanced diagnostics, automation, and deeply integrated clinical workflows - its mission is to build the world's most effective system for preventing disease and extending lifespan.",
+        "founders": [
+          "Marc Hermann",
+          "Sam Kothari",
+          "Dr Steven Lu"
+        ],
+        "total_raised_usd": "10000000",
+        "total_raised_currency_raw": "US$10M (AU$15M)",
+        "total_raised_as_of": "2025-07-21",
+        "total_raised_source_url": "https://www.businesswire.com/news/home/20250721330701/en/Everlab-Raises-US%2410M-Seed-Round-to-Deliver-Scalable-AI-Powered-Preventive-Healthcare",
+        "profile_sources": [
+          "https://www.businesswire.com/news/home/20250721330701/en/Everlab-Raises-US%2410M-Seed-Round-to-Deliver-Scalable-AI-Powered-Preventive-Healthcare",
+          "https://www.forbes.com.au/covers/entrepreneurs/everlab-raised-15-million-to-fight-disease-in-healthy-people"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:55:16.881420+00:00"
+      },
+      "evidence_urls": [
+        "https://www.businesswire.com/news/home/20250721330701/en/Everlab-Raises-US%2410M-Seed-Round-to-Deliver-Scalable-AI-Powered-Preventive-Healthcare",
+        "https://www.forbes.com.au/covers/entrepreneurs/everlab-raised-15-million-to-fight-disease-in-healthy-people"
+      ]
+    },
+    {
+      "id": "fe9e4a62-fa00-4500-9ba0-b1faa1f6f752",
+      "name": "Go1",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Go1 is an AI-powered learning and development platform that helps organizations simplify employee training - providing a single solution for curated content, personalized learning, and workforce upskilling at scale.",
+        "founders": [
+          "Chris Eigeland",
+          "Vu Tran",
+          "Andrew Barnes"
+        ],
+        "valuation_usd": "2000000000",
+        "valuation_currency_raw": "US$2 billion",
+        "valuation_as_of": "2023-05-01",
+        "valuation_source_url": "https://www.forbes.com.au/news/investing/go1-founders-bank-2-5-million-for-new-mri-start-up",
+        "profile_sources": [
+          "https://www.go1.com",
+          "https://www.go1.com/podcast/ep9-chris-eigeland",
+          "https://www.forbes.com.au/news/investing/go1-founders-bank-2-5-million-for-new-mri-start-up"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:55:48.809575+00:00"
+      },
+      "evidence_urls": [
+        "https://www.go1.com",
+        "https://www.go1.com/podcast/ep9-chris-eigeland",
+        "https://www.forbes.com.au/news/investing/go1-founders-bank-2-5-million-for-new-mri-start-up"
+      ]
+    },
+    {
+      "id": "935f789d-1ac6-47a1-b130-7298bc4f8ff1",
+      "name": "Halter",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Halter is a global agtech company transforming cattle farming through virtual fencing technology - its solar-powered, GPS-enabled collars use audio cues and gentle vibrations to contain and herd cattle within virtual boundaries, allowing ranchers to manage herds from a smartphone.",
+        "founders": [
+          "Craig Piggott"
+        ],
+        "total_raised_currency_raw": "$220M (Series E alone)",
+        "valuation_usd": "2000000000",
+        "valuation_currency_raw": "US$2B",
+        "valuation_as_of": "2026-03-24",
+        "valuation_source_url": "https://www.businesswire.com/news/home/20260324036414/en/Halter-Raises-%24220M-in-Series-E-to-Accelerate-Global-Expansion-of-Virtual-Fencing",
+        "profile_sources": [
+          "https://www.businesswire.com/news/home/20260324036414/en/Halter-Raises-%24220M-in-Series-E-to-Accelerate-Global-Expansion-of-Virtual-Fencing",
+          "https://agfundernews.com/halter-to-beef-up-us-expansion-following-100m-raise-led-by-bond-1b-valuation"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:56:20.976582+00:00"
+      },
+      "evidence_urls": [
+        "https://www.businesswire.com/news/home/20260324036414/en/Halter-Raises-%24220M-in-Series-E-to-Accelerate-Global-Expansion-of-Virtual-Fencing",
+        "https://agfundernews.com/halter-to-beef-up-us-expansion-following-100m-raise-led-by-bond-1b-valuation"
+      ]
+    },
+    {
+      "id": "71fd513a-4017-43c7-8c75-f8de04208468",
+      "name": "Harrison.ai",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Harrison.ai is a global healthcare technology company that enhances clinician capacity and patient care through AI automation, offering clinician-led imaging AI solutions across radiology, IVF, and pathology that support earlier, more accurate diagnoses and integrate into clinical workflows.",
+        "founders": [
+          "Dr. Aengus Tran",
+          "Dimitry Tran"
+        ],
+        "total_raised_usd": "240000000",
+        "total_raised_currency_raw": "US$240M+",
+        "total_raised_source_url": "https://harrison.ai/careers",
+        "headcount_estimate": 200,
+        "headcount_source_url": "https://worldmedicalinnovation.org/speaker/dimitry-tran",
+        "profile_sources": [
+          "https://harrison.ai",
+          "https://harrison.ai/careers",
+          "https://harrison.ai/news/harrison-ai-unifies-global-brand-to-accelerate-healthcare-ai-innovation",
+          "https://worldmedicalinnovation.org/speaker/dimitry-tran"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:57:37.008371+00:00"
+      },
+      "evidence_urls": [
+        "https://harrison.ai",
+        "https://harrison.ai/careers",
+        "https://harrison.ai/news/harrison-ai-unifies-global-brand-to-accelerate-healthcare-ai-innovation",
+        "https://worldmedicalinnovation.org/speaker/dimitry-tran"
+      ]
+    },
+    {
+      "id": "468e4970-9417-47e6-9e2d-5db1ce0f91a9",
+      "name": "Heidi Health",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Heidi Health is an AI care partner for modern clinical practice, providing clinicians with tools for documentation, evidence search, and follow-up communications to reduce administrative burden and expand clinical capacity.",
+        "founders": [
+          "Thomas Kelly",
+          "Waleed Mussa"
+        ],
+        "total_raised_usd": "96600000",
+        "total_raised_currency_raw": "$96.6M USD",
+        "total_raised_as_of": "2025-10-06",
+        "total_raised_source_url": "https://www.heidihealth.com/blog/heidi-series-b",
+        "valuation_usd": "465000000",
+        "valuation_currency_raw": "$465 million USD",
+        "valuation_as_of": "2025-10-06",
+        "valuation_source_url": "https://www.heidihealth.com/blog/heidi-series-b",
+        "profile_sources": [
+          "https://www.heidihealth.com/blog/heidi-series-b",
+          "https://techcrunch.com/2025/10/05/heidi-health-raises-65m-series-b-led-by-steve-cohens-point72",
+          "https://www.heidihealth.com",
+          "https://www.heidihealth.com/careers"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:58:06.555143+00:00"
+      },
+      "evidence_urls": [
+        "https://www.heidihealth.com/blog/heidi-series-b",
+        "https://techcrunch.com/2025/10/05/heidi-health-raises-65m-series-b-led-by-steve-cohens-point72",
+        "https://www.heidihealth.com",
+        "https://www.heidihealth.com/careers"
+      ]
+    },
+    {
+      "id": "bac52841-07f2-4fce-886a-90f4efd6da0a",
+      "name": "Hevi",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2020,
+        "summary": "Hevi AI is a radiology AI company, established in 2020, that specializes in transforming medical imaging with deep learning solutions to help physicians interpret radiological scans more rapidly and accurately.",
+        "founders": [
+          "Deniz Alis",
+          "Mert \u00c7elenk",
+          "Mert Yergin",
+          "Erdem Yaman"
+        ],
+        "profile_sources": [
+          "https://hevi.ai",
+          "https://hevi.ai/about"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:58:30.330309+00:00"
+      },
+      "evidence_urls": [
+        "https://hevi.ai",
+        "https://hevi.ai/about"
+      ]
+    },
+    {
+      "id": "f2fc3132-a9fe-4f8a-9be9-42905899da43",
+      "name": "Imitation Machines",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Imitation Machines enables human-to-robot teaching through demonstration and imitation, cutting down the time and coding expertise needed to deploy robotics.",
+        "profile_sources": [
+          "https://www.antler.co/blog/antler-australia-12th-residency-eight-new-ai-first-startup-investments"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:59:31.750762+00:00"
+      },
+      "evidence_urls": [
+        "https://www.antler.co/blog/antler-australia-12th-residency-eight-new-ai-first-startup-investments"
+      ]
+    },
+    {
+      "id": "b5c1b425-40b8-4138-bc35-33f9c6205746",
+      "name": "Immutable",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Immutable is a global leader in gaming on a mission to bring digital ownership to every player and empower developers to build great games that scale, offering an AI-powered growth platform covering player conversion, engagement, attribution, and purpose-built blockchain gaming infrastructure.",
+        "founders": [
+          "Robbie Ferguson",
+          "James Ferguson"
+        ],
+        "valuation_usd": "3800000000",
+        "valuation_currency_raw": "$3.8 billion",
+        "valuation_source_url": "https://www.afr.com/technology/immutable-s-revenues-are-shrouded-in-a-cayman-islands-mystery-20250530-p5m3iy",
+        "profile_sources": [
+          "https://www.immutable.com",
+          "https://www.immutable.com/about-us",
+          "https://www.afr.com/technology/immutable-s-revenues-are-shrouded-in-a-cayman-islands-mystery-20250530-p5m3iy"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T02:59:56.547240+00:00"
+      },
+      "evidence_urls": [
+        "https://www.immutable.com",
+        "https://www.immutable.com/about-us",
+        "https://www.afr.com/technology/immutable-s-revenues-are-shrouded-in-a-cayman-islands-mystery-20250530-p5m3iy"
+      ]
+    },
+    {
+      "id": "8bb84707-97c8-4413-8719-cdd54ee9cce8",
+      "name": "Kismet",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2022,
+        "summary": "Kismet Health is a purpose-built virtual care platform designed for providers, supporting patients across all life stages - from early childhood to older adults - with age-based design, interactive tools, and collaborative care team features to improve access and engagement in telehealth.",
+        "founders": [
+          "Christie Sander",
+          "Cierra"
+        ],
+        "profile_sources": [
+          "https://www.kismethealth.com/articles/kismet-founder-blog-kooth-acquisition",
+          "https://markwoodland.com.au/about"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:00:12.077975+00:00"
+      },
+      "evidence_urls": [
+        "https://www.kismethealth.com/articles/kismet-founder-blog-kooth-acquisition",
+        "https://markwoodland.com.au/about"
+      ]
+    },
+    {
+      "id": "cc95a862-9423-4a71-8166-d8ea9c63cc81",
+      "name": "Leonardo.Ai",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Leonardo.Ai is a creator-first generative AI platform for images, art, and video, offering tools for image generation, video generation, editing, and upscaling across creative and professional use cases.",
+        "founders": [
+          "JJ Fiasson"
+        ],
+        "profile_sources": [
+          "https://leonardo.ai",
+          "https://leonardo.ai/pricing",
+          "https://www.afr.com/technology/trailblazer-jj-fiasson-on-ai-art-and-life-under-canva-20250519-p5m0fm"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:00:34.033239+00:00"
+      },
+      "evidence_urls": [
+        "https://leonardo.ai",
+        "https://leonardo.ai/pricing",
+        "https://www.afr.com/technology/trailblazer-jj-fiasson-on-ai-art-and-life-under-canva-20250519-p5m0fm"
+      ]
+    }
+  ]
+}
