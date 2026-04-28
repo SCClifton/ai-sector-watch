@@ -110,6 +110,20 @@ function MapView() {
             No verified companies returned.
           </div>
         )}
+        {!error &&
+          companies !== null &&
+          companies.length > 0 &&
+          filtered.length === 0 && (
+            <div className="pointer-events-none absolute inset-0 grid place-items-center">
+              <div className="pointer-events-auto rounded-xl border border-border bg-surface/95 px-5 py-4 text-center shadow-2xl backdrop-blur-md">
+                <div className="text-[13px] font-semibold text-text">No companies match</div>
+                <p className="mt-1 max-w-[260px] text-[12px] text-text-muted">
+                  Try clearing a filter, or hit Reset to see all {companies.length} verified
+                  companies.
+                </p>
+              </div>
+            </div>
+          )}
 
         <CompanyDetail company={selected} onClose={() => setSelectedId(null)} />
       </div>

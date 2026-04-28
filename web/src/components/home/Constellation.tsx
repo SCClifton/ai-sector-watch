@@ -148,40 +148,46 @@ export function Constellation({ companies }: Props) {
                   }}
                 />
 
-                {/* Label appears on hover */}
-                {isHover && (
-                  <g pointerEvents="none">
-                    <rect
-                      x={scaled + 10}
-                      y={-18}
-                      width={labelWidth(city.label, count)}
-                      height={36}
-                      rx={6}
-                      fill="rgba(18,24,33,0.96)"
-                      stroke="rgba(244,183,64,0.45)"
-                      strokeWidth={0.8}
-                    />
-                    <text
-                      x={scaled + 20}
-                      y={-2}
-                      fill="#E6EDF3"
-                      fontSize={11}
-                      fontWeight={600}
-                      style={{ letterSpacing: "0.01em" }}
-                    >
-                      {city.label}
-                    </text>
-                    <text
-                      x={scaled + 20}
-                      y={13}
-                      fill="rgba(244,183,64,0.95)"
-                      fontSize={10}
-                      fontWeight={500}
-                    >
-                      {count} {count === 1 ? "company" : "companies"}
-                    </text>
-                  </g>
-                )}
+                {/* Label appears on hover. Flips left when near the right edge. */}
+                {isHover && (() => {
+                  const lw = labelWidth(city.label, count);
+                  const flipLeft = city.x + scaled + 10 + lw > 800 - 12;
+                  const labelX = flipLeft ? -(scaled + 10 + lw) : scaled + 10;
+                  const textX = labelX + 10;
+                  return (
+                    <g pointerEvents="none">
+                      <rect
+                        x={labelX}
+                        y={-18}
+                        width={lw}
+                        height={36}
+                        rx={6}
+                        fill="rgba(18,24,33,0.96)"
+                        stroke="rgba(244,183,64,0.45)"
+                        strokeWidth={0.8}
+                      />
+                      <text
+                        x={textX}
+                        y={-2}
+                        fill="#E6EDF3"
+                        fontSize={11}
+                        fontWeight={600}
+                        style={{ letterSpacing: "0.01em" }}
+                      >
+                        {city.label}
+                      </text>
+                      <text
+                        x={textX}
+                        y={13}
+                        fill="rgba(244,183,64,0.95)"
+                        fontSize={10}
+                        fontWeight={500}
+                      >
+                        {count} {count === 1 ? "company" : "companies"}
+                      </text>
+                    </g>
+                  );
+                })()}
               </g>
             );
           })}
