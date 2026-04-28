@@ -57,6 +57,24 @@ _GROUP_COLOURS: dict[str, str] = {
     "creative": "pink",
 }
 
+# Hex equivalents tuned for the dark-theme background (#0B0F14). The folium
+# named colours above feed `folium.Icon`, which is being phased out for a
+# `DivIcon` circle on the dashboard map. The `DivIcon` HTML needs an actual
+# CSS hex value, and the dashboard sector legend reuses the same map so the
+# legend swatches and map markers stay in sync.
+_GROUP_HEX: dict[str, str] = {
+    "infra": "#4F8DFF",
+    "vertical": "#4ADE80",
+    "robotics": "#FB923C",
+    "science": "#C084FC",
+    "climate": "#34D399",
+    "defence": "#94A3B8",
+    "dev_tools": "#67E8F9",
+    "agents": "#F87171",
+    "creative": "#F472B6",
+}
+_DEFAULT_HEX = "#8B95A6"
+
 
 def _sector(tag: str, label: str, group: str) -> Sector:
     return Sector(tag=tag, label=label, group=group, colour=_GROUP_COLOURS[group])
@@ -120,3 +138,28 @@ def primary_sector_colour(tags: list[str]) -> str:
         if colour:
             return colour
     return "gray"
+
+
+def hex_for_sector(tag: str, *, default: str = _DEFAULT_HEX) -> str:
+    """Return the hex colour for a sector tag, falling back to ``default``."""
+    sector = get_sector(tag)
+    if sector is None:
+        return default
+    return _GROUP_HEX.get(sector.group, default)
+
+
+def primary_sector_hex(tags: list[str], *, default: str = _DEFAULT_HEX) -> str:
+    """Pick a single hex colour for a marker that has multiple sector tags."""
+    for tag in tags:
+        sector = get_sector(tag)
+        if sector is None:
+            continue
+        hex_value = _GROUP_HEX.get(sector.group)
+        if hex_value:
+            return hex_value
+    return default
+
+
+def hex_for_group(group: str, *, default: str = _DEFAULT_HEX) -> str:
+    """Return the hex colour for a sector colour group."""
+    return _GROUP_HEX.get(group, default)

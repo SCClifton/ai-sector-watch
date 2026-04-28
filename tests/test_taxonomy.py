@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 from ai_sector_watch.discovery.taxonomy import (
     SECTOR_GROUPS,
     SECTOR_TAGS,
@@ -9,10 +11,15 @@ from ai_sector_watch.discovery.taxonomy import (
     STAGES,
     colour_for_sector,
     get_sector,
+    hex_for_group,
+    hex_for_sector,
     is_valid_sector,
     is_valid_stage,
     primary_sector_colour,
+    primary_sector_hex,
 )
+
+_HEX_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
 
 def test_all_prd_sectors_present() -> None:
@@ -84,5 +91,34 @@ def test_primary_sector_colour_handles_empty_and_unknown() -> None:
     assert primary_sector_colour([]) == "gray"
     assert primary_sector_colour(["nonsense"]) == "gray"
     assert primary_sector_colour(["nonsense", "agents_and_orchestration"]) == colour_for_sector(
+        "agents_and_orchestration"
+    )
+
+
+def test_hex_for_sector_returns_six_digit_hex() -> None:
+    for tag in SECTOR_TAGS:
+        assert _HEX_RE.match(hex_for_sector(tag)), tag
+
+
+def test_hex_for_sector_unknown_falls_back_to_default() -> None:
+    assert hex_for_sector("not-a-real-sector") == hex_for_sector("not-a-real-sector")
+    assert hex_for_sector("not-a-real-sector", default="#000000") == "#000000"
+
+
+def test_hex_for_group_covers_every_group() -> None:
+    for group in SECTOR_GROUPS:
+        assert _HEX_RE.match(hex_for_group(group)), group
+
+
+def test_primary_sector_hex_uses_first_known_tag() -> None:
+    chosen = primary_sector_hex(["foundation_models", "agents_and_orchestration"])
+    assert chosen == hex_for_sector("foundation_models")
+
+
+def test_primary_sector_hex_handles_empty_and_unknown() -> None:
+    fallback = primary_sector_hex([])
+    assert _HEX_RE.match(fallback)
+    assert primary_sector_hex(["nonsense"]) == fallback
+    assert primary_sector_hex(["nonsense", "agents_and_orchestration"]) == hex_for_sector(
         "agents_and_orchestration"
     )
