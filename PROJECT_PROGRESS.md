@@ -2,6 +2,29 @@
 
 Chronological log of milestones: public features, closed Now/Next issues, live changes, and public breakages. For routine fixes, the PR body is the record.
 
+## 2026-04-29 - Issue #61 / Phase 1-3: Replaced Streamlit with custom Next.js app
+
+**Shipped (claude-code/68-feature-phase-3-azure-app-service-cutove):**
+- Phase 1 #62 / PR #63: Next.js 16 + Tailwind v4 + MapLibre GL spike under web/. Interactive map with sector-coloured clustered markers, click-to-detail panel, URL-driven filter state. Polished home with cursor-tracked aurora, rotating headline city, animated count-up stats, and a real-data SVG constellation of ANZ with a radar scan and pulse rings.
+- Phase 2A #64 / PR #69: Companies directory with sortable table, mobile cards, and per-company detail pages at /companies/[slug]. Filter primitives extracted for reuse across map + companies.
+- Phase 2B #65 / PR #71: News feed with HTML-stripped summaries, mention chips linking to companies, and a "Pipeline cost - last 4 weeks" card driven by ingest_events.
+- Phase 2C #66 / PR #72: Admin review queue at /admin with HMAC-signed session cookies seeded by ADMIN_PASSWORD, server-only mutation routes for promote / reject, and an audit log row in ingest_events for every action.
+- Phase 2D #67 / PR #70: /about methodology page with the architecture SVG, global focus rings + skip link, /map empty state, constellation hover-label flip.
+- Phase 3 #68: New multi-stage Dockerfile producing a Next.js standalone runtime, /api/health endpoint, /_stcore/health rewrite for backward compatibility, deploy.yml retargeted at web/**, rollback path via the `:streamlit-final` GHCR tag.
+
+**Live change:** aimap.cliftonfamily.co now serves the Next.js container. The Streamlit code stays under dashboard/ for one cooling-off release; remove in a follow-up.
+
+**Tested:**
+- `cd web && npm run build` clean (16 routes including /admin, /companies/[slug], /api/health).
+- `cd web && npm run lint` clean.
+- `pytest -q`, `ruff check .`, `black --check .` still pass (no Python touched after Phase 1).
+- Manual smoke: /, /map, /companies, /companies/[slug], /news, /about, /admin/login, /admin queue render. Auth gating verified (wrong password 401s; mutations refuse without a valid session cookie).
+
+**Known limitations:**
+- First real promote / reject in production deferred to operator post-merge.
+- Full Lighthouse axe-core a11y integration deferred (manual pass landed in #67).
+- Weekly digest viewer in /news is a future follow-up (feed + spend summary shipped in #65).
+
 ## 2026-04-28 - Issue #54: Company profile audit and richer fields
 
 **Shipped (codex/54-feature-audit-and-enrich-company-profile):**

@@ -1,14 +1,19 @@
 name: deploy-azure
 
+# Phase 3 cutover: this workflow now builds the Next.js container under web/
+# and deploys it to the same Azure App Service. The Streamlit code under
+# dashboard/ stays in the repo for one cooling-off release but does not
+# trigger a deploy any more.
+#
+# Rollback: re-deploy the tag `:streamlit-final`, which we publish as a
+# one-time backup before the first Next.js push.
+
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - "dashboard/**"
-      - "src/**"
-      - ".streamlit/**"
-      - "pyproject.toml"
+      - "web/**"
       - ".github/workflows/deploy.yml"
       - "Dockerfile"
 
