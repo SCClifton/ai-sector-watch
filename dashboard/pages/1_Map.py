@@ -13,7 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from ai_sector_watch.storage.data_source import get_data_source  # noqa: E402
+from dashboard.components.data_loaders import get_source, load_companies  # noqa: E402
 from dashboard.components.filters import (  # noqa: E402
     apply_filters,
     companies_to_table_rows,
@@ -32,8 +32,8 @@ def main() -> None:
     st.title("Map")
     st.caption("Click a marker for company detail. Markers cluster at low zoom.")
 
-    source = get_data_source()
-    all_companies = source.list_companies()
+    source = get_source()
+    all_companies = load_companies()
 
     if source.backend == "yaml":
         st.info(

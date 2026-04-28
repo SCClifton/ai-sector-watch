@@ -19,6 +19,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from ai_sector_watch.config import get_config  # noqa: E402
 from ai_sector_watch.storage import supabase_db  # noqa: E402
+from dashboard.components.data_loaders import load_companies  # noqa: E402
 from dashboard.components.footer import render_footer  # noqa: E402
 from dashboard.components.theme import render_page_chrome  # noqa: E402
 
@@ -118,12 +119,14 @@ def main() -> None:
             with supabase_db.connection() as conn:
                 supabase_db.set_company_status(conn, str(chosen["id"]), "verified")
                 conn.commit()
+            load_companies.clear()
             st.success(f"{chosen['name']} is now verified and will appear on the map.")
             st.rerun()
         if col2.button("Reject"):
             with supabase_db.connection() as conn:
                 supabase_db.set_company_status(conn, str(chosen["id"]), "rejected")
                 conn.commit()
+            load_companies.clear()
             st.success(f"{chosen['name']} marked as rejected.")
             st.rerun()
 

@@ -11,7 +11,11 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from ai_sector_watch.storage.data_source import get_data_source  # noqa: E402
+from dashboard.components.data_loaders import (  # noqa: E402
+    get_source,
+    load_companies,
+    load_news,
+)
 from dashboard.components.footer import render_footer  # noqa: E402
 from dashboard.components.theme import render_page_chrome  # noqa: E402
 
@@ -25,9 +29,9 @@ def main() -> None:
         "partnerships from the past week's pipeline run."
     )
 
-    source = get_data_source()
-    news = source.recent_news(limit=100)
-    companies = {c.id: c for c in source.list_companies()}
+    source = get_source()
+    news = load_news(limit=100)
+    companies = {c.id: c for c in load_companies()}
 
     if source.backend == "yaml" or not news:
         st.info(
