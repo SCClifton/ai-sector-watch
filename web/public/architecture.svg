@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1120 500">
+  <title id="title">AI Sector Watch architecture</title>
+  <desc id="desc">GitHub Actions fetches public sources, runs the weekly pipeline, writes to Supabase, and the Streamlit dashboard reads verified records.</desc>
+  <defs>
+    <style>
+      .bg { fill: #0B0F14; }
+      .box { fill: #121821; stroke: #2C384D; stroke-width: 1.5; rx: 8; }
+      .source { fill: #1B2230; stroke: #2C384D; stroke-width: 1.5; rx: 8; }
+      .title { fill: #E6EDF3; font: 600 20px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .body { fill: #8B95A6; font: 400 15px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .small { fill: #8B95A6; font: 500 13px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0.06em; }
+      .accent { fill: #F4B740; }
+      .line { fill: none; stroke: #F4B740; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); }
+      .read { fill: none; stroke: #8B95A6; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-muted); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#F4B740" />
+    </marker>
+    <marker id="arrow-muted" markerWidth="10" markerHeight="10" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#8B95A6" />
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1120" height="500" rx="8" />
+
+  <rect class="box" x="420" y="24" width="280" height="82" />
+  <text class="title" x="560" y="60" text-anchor="middle">GitHub Actions cron</text>
+  <text class="body" x="560" y="84" text-anchor="middle">Sunday 18:00 UTC</text>
+
+  <rect class="source" x="48" y="178" width="230" height="112" />
+  <text class="title" x="163" y="218" text-anchor="middle">Public sources</text>
+  <text class="body" x="163" y="246" text-anchor="middle">RSS, arXiv, Hugging Face</text>
+  <text class="body" x="163" y="270" text-anchor="middle">and startup news</text>
+
+  <rect class="box" x="356" y="148" width="408" height="174" />
+  <text class="title" x="560" y="186" text-anchor="middle">weekly_pipeline.py</text>
+  <text class="body" x="398" y="222">1. fetch every source</text>
+  <text class="body" x="398" y="248">2. LLM extracts company mentions</text>
+  <text class="body" x="398" y="274">3. validate, classify, and geocode</text>
+  <text class="body" x="398" y="300">4. upsert pending records, news, and digest</text>
+
+  <rect class="box" x="420" y="378" width="280" height="82" />
+  <text class="title" x="560" y="414" text-anchor="middle">Supabase Postgres</text>
+  <text class="body" x="560" y="438" text-anchor="middle">companies, news, funding, ingest</text>
+
+  <rect class="box" x="812" y="378" width="260" height="82" />
+  <text class="title" x="942" y="414" text-anchor="middle">Streamlit dashboard</text>
+  <text class="body" x="942" y="438" text-anchor="middle">Azure App Service</text>
+
+  <path class="line" d="M560 106 V142" />
+  <path class="line" d="M278 234 H348" />
+  <path class="line" d="M560 322 V370" />
+  <path class="read" d="M700 419 H804" />
+  <text class="small" x="752" y="404" text-anchor="middle">READ</text>
+
+  <circle class="accent" cx="560" cy="146" r="4" />
+  <circle class="accent" cx="352" cy="234" r="4" />
+  <circle class="accent" cx="560" cy="374" r="4" />
+</svg>
