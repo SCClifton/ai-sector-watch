@@ -91,7 +91,7 @@ def build_map(companies: list[Company]) -> folium.Map:
     fmap = folium.Map(
         location=_DEFAULT_CENTER,
         zoom_start=_DEFAULT_ZOOM,
-        tiles="cartodbpositron",
+        tiles="CartoDB Voyager",
         control_scale=True,
     )
     fmap.get_root().header.add_child(folium.Element(f"<style>{_POPUP_CSS}</style>"))
