@@ -6,11 +6,17 @@ Production target: Azure Web App for Containers in subscription `Azure subscript
 
 ## Cutover from Streamlit to Next.js (Phase 3)
 
-The merge of #68 to `main` triggers `deploy.yml`, which builds the new Next.js Dockerfile, pushes to GHCR with `:latest` and `:<sha>` tags, and deploys to the existing App Service. The container honours the `PORT` env var that Azure sets from `WEBSITES_PORT`, so the cutover does not require any port change.
+The merge of the cutover PR to `main` triggers `deploy.yml`, which builds the Next.js Dockerfile, pushes to GHCR with `:latest` and `:<sha>` tags, and deploys to the existing App Service.
 
-### Manual steps before merge (one-time)
+### Port contract (read this first)
 
-These run from your laptop with `az login` already active. They are optional but recommended.
+Azure App Service uses **`WEBSITES_PORT`** (an App Service config setting) to tell its reverse proxy which container port to route inbound traffic to. Azure does **not** inject `WEBSITES_PORT` into the container's env — the container itself must listen on the matching port.
+
+For our App Service, `WEBSITES_PORT=8000` (inherited from the Streamlit era). The Next.js container therefore pins `ENV PORT=8000` in the Dockerfile, and Next.js standalone reads `PORT` to decide where to listen. The two must always match. **If you ever change `WEBSITES_PORT`, update the Dockerfile `ENV PORT` in lockstep.**
+
+The original Phase 3 cutover (PR #73) shipped with `ENV PORT=3000`, which did not match `WEBSITES_PORT=8000`. The container started fine but the reverse proxy could not reach it; we rolled back. Issue #74 / its PR fixed it. Before merging any cutover PR, double-check `grep PORT= Dockerfile` returns the value that matches `az webapp config appsettings list -g ai-sector-watch -n ai-sector-watch --query "[?name=='WEBSITES_PORT']"`.
+
+### Manual steps before merge (one-time, optional but recommended)
 
 ```bash
 RG=ai-sector-watch
@@ -18,8 +24,6 @@ APP=ai-sector-watch
 IMAGE_BASE=ghcr.io/scclifton/ai-sector-watch/ai-sector-watch
 
 # 1. Tag the current Streamlit image as :streamlit-final so we can roll back.
-#    Get the digest of whatever :latest currently points at (this should be
-#    the last green Streamlit deploy).
 docker pull "$IMAGE_BASE:latest"
 docker tag  "$IMAGE_BASE:latest" "$IMAGE_BASE:streamlit-final"
 docker push "$IMAGE_BASE:streamlit-final"
@@ -32,14 +36,6 @@ az webapp config set \
   --resource-group "$RG" \
   --name "$APP" \
   --generic-configurations '{"healthCheckPath": "/api/health"}'
-
-# 3. (Optional) Update WEBSITES_PORT to 3000. Not required: the new
-#    container reads PORT from the env, so leaving WEBSITES_PORT=8000
-#    just makes Next.js bind to 8000.
-az webapp config appsettings set \
-  --resource-group "$RG" \
-  --name "$APP" \
-  --settings WEBSITES_PORT=3000
 ```
 
 ### What happens on merge
@@ -47,8 +43,9 @@ az webapp config appsettings set \
 1. Push to `main` matches `web/**` or `Dockerfile`. `deploy.yml` runs.
 2. The job builds the multi-stage Next.js Dockerfile, pushes `:latest` and `:<sha>` to GHCR, and calls `azure/webapps-deploy@v3` against the same App Service.
 3. App Service pulls the new image and restarts the container.
-4. The container starts `node server.js` listening on `PORT` (`WEBSITES_PORT`'s value, default 3000).
-5. Within ~60s `https://aimap.cliftonfamily.co` should serve the new app.
+4. The container starts `node server.js` listening on `PORT` (8000 in our config).
+5. Azure's reverse proxy routes inbound traffic to port 8000, which the container is listening on.
+6. Within ~60-180s `https://aimap.cliftonfamily.co` should serve the new app.
 
 ### Smoke checks after cutover
 
@@ -63,13 +60,33 @@ curl -I  https://aimap.cliftonfamily.co               # 200, valid cert
 
 ### Rollback
 
-If anything goes wrong, redeploy `:streamlit-final`:
+Two options. Both swap the App Service container in ~60-120s.
+
+**A. By SHA tag (always available — `:<sha>` images never get garbage-collected by GHCR retention):**
 
 ```bash
+# The last green Streamlit deploy was commit f8f2aaefba1d6417b3be7ae32c71d9bf98ea0cb4
+# (Apr 28, "[#58] PR2: visual polish"). Confirmed working as of Apr 29 rollback.
 az webapp config container set \
   --resource-group ai-sector-watch \
   --name ai-sector-watch \
-  --container-image-name ghcr.io/scclifton/ai-sector-watch/ai-sector-watch:streamlit-final
+  --container-image-name ghcr.io/scclifton/ai-sector-watch/ai-sector-watch:f8f2aaefba1d6417b3be7ae32c71d9bf98ea0cb4
+```
+
+**B. By `:streamlit-final` floating tag** (one-time setup before the first cutover, then any future rollback is one short command):
+
+```bash
+# One-time: from any machine with docker installed and GHCR push access.
+IMAGE=ghcr.io/scclifton/ai-sector-watch/ai-sector-watch
+docker pull "$IMAGE:f8f2aaefba1d6417b3be7ae32c71d9bf98ea0cb4"
+docker tag  "$IMAGE:f8f2aaefba1d6417b3be7ae32c71d9bf98ea0cb4" "$IMAGE:streamlit-final"
+docker push "$IMAGE:streamlit-final"
+
+# Then any time:
+az webapp config container set \
+  --resource-group ai-sector-watch \
+  --name ai-sector-watch \
+  --container-image-name "$IMAGE:streamlit-final"
 ```
 
 Or trigger the previous green deploy via `gh workflow run` on a Streamlit-era SHA. Watch logs:

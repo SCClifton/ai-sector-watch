@@ -1,10 +1,11 @@
 # syntax=docker/dockerfile:1.7
 #
-# Phase 3 cutover: this image now serves the Next.js app under web/, not the
+# Phase 3 cutover: this image serves the Next.js app under web/, not the
 # Streamlit dashboard under dashboard/. The Streamlit code stays in the repo
-# for one cooling-off release; the previous image lives at GHCR
-# `ghcr.io/scclifton/ai-sector-watch/ai-sector-watch:streamlit-final` for
-# rollback.
+# for one cooling-off release. For rollback, see docs/deployment.md - the
+# last known-good Streamlit image is in GHCR at the SHA tag for commit
+# f8f2aaefba1d6417b3be7ae32c71d9bf98ea0cb4 (it can also be retagged
+# :streamlit-final from any machine with docker access).
 #
 # Multi-stage:
 #   1. deps   - install npm deps once
@@ -39,7 +40,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
-    PORT=3000 \
+    PORT=8000 \
     HOSTNAME=0.0.0.0
 
 # Run as non-root.
@@ -56,12 +57,16 @@ COPY --from=build --chown=node-app:node-app /app/public ./public
 
 USER node-app
 
-# Azure App Service for Linux maps the inbound port via WEBSITES_PORT, which
-# the platform exposes to the container as PORT. Next.js standalone reads
-# PORT directly. EXPOSE is informational; the actual port is whatever PORT
-# resolves to at runtime (3000 by default; 8000 if WEBSITES_PORT is still
-# set to 8000 from the previous Streamlit container).
-EXPOSE 3000
+# Port contract with Azure App Service for Linux:
+# - WEBSITES_PORT (App Service config) tells Azure's reverse proxy which
+#   port to route inbound traffic to. The Streamlit-era App Service has
+#   WEBSITES_PORT=8000.
+# - Azure does NOT inject WEBSITES_PORT into the container env.
+# - The container must therefore listen on the port WEBSITES_PORT names.
+# We pin PORT=8000 above so Next.js standalone (which reads PORT) listens
+# on the same port Azure routes to. If WEBSITES_PORT is ever changed, this
+# ENV needs to follow.
+EXPOSE 8000
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "server.js"]
