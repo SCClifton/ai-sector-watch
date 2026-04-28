@@ -10,7 +10,7 @@ from folium.plugins import MarkerCluster
 
 from ai_sector_watch.discovery.taxonomy import (
     get_sector,
-    primary_sector_colour,
+    primary_sector_hex,
 )
 from ai_sector_watch.storage.data_source import Company
 
@@ -83,6 +83,55 @@ _POPUP_CSS: str = """
   line-height: 1.45;
   color: var(--aisw-text);
 }
+.aisw-marker-wrap {
+  background: transparent !important;
+  border: 0 !important;
+}
+.aisw-marker {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #0B0F14;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 1px 4px rgba(0, 0, 0, 0.45);
+  transition: transform 120ms ease;
+}
+.aisw-marker:hover {
+  transform: scale(1.25);
+}
+.aisw-cluster-wrap {
+  background: transparent !important;
+  border: 0 !important;
+}
+.aisw-cluster {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F4B740;
+  color: #0B0F14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid rgba(11, 15, 20, 0.85);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+  transition: background 120ms ease;
+}
+.aisw-cluster:hover {
+  background: #FFD074;
+}
+"""
+
+_CLUSTER_ICON_JS: str = """
+function (cluster) {
+  var count = cluster.getChildCount();
+  return L.divIcon({
+    html: '<div class="aisw-cluster"><span>' + count + '</span></div>',
+    className: 'aisw-cluster-wrap',
+    iconSize: L.point(36, 36)
+  });
+}
 """
 
 
@@ -95,17 +144,24 @@ def build_map(companies: list[Company]) -> folium.Map:
         control_scale=True,
     )
     fmap.get_root().header.add_child(folium.Element(f"<style>{_POPUP_CSS}</style>"))
-    cluster = MarkerCluster(name="Companies", show=True).add_to(fmap)
+    cluster = MarkerCluster(
+        name="Companies",
+        show=True,
+        icon_create_function=_CLUSTER_ICON_JS,
+    ).add_to(fmap)
 
-    geocoded = 0
     for company in companies:
         if company.lat is None or company.lon is None:
             continue
-        geocoded += 1
-        colour = primary_sector_colour(company.sector_tags)
+        marker_hex = primary_sector_hex(company.sector_tags)
         folium.Marker(
             location=(company.lat, company.lon),
-            icon=folium.Icon(color=colour, icon="info-sign"),
+            icon=folium.DivIcon(
+                html=f'<div class="aisw-marker" style="background:{marker_hex};"></div>',
+                icon_size=(14, 14),
+                icon_anchor=(7, 7),
+                class_name="aisw-marker-wrap",
+            ),
             popup=folium.Popup(_popup_html(company), max_width=320),
             tooltip=company.name,
         ).add_to(cluster)

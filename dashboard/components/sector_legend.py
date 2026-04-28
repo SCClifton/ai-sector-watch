@@ -7,7 +7,7 @@ from html import escape
 
 import streamlit as st
 
-from ai_sector_watch.discovery.taxonomy import _GROUP_COLOURS, SECTOR_GROUPS, SECTORS
+from ai_sector_watch.discovery.taxonomy import SECTOR_GROUPS, SECTORS, hex_for_group
 
 
 @dataclass(frozen=True)
@@ -29,7 +29,7 @@ def sector_legend_rows(*, max_examples: int = 3) -> tuple[SectorLegendRow, ...]:
             SectorLegendRow(
                 group=group,
                 label=_group_label(group),
-                colour=_GROUP_COLOURS[group],
+                colour=hex_for_group(group),
                 examples=examples,
             )
         )
