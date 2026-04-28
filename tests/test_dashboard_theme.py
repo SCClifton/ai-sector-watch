@@ -60,9 +60,15 @@ def test_sidebar_nav_separates_admin_from_public_pages() -> None:
     assert sum(1 for _, _, is_active in items if is_active) == 1
 
 
-def test_docker_image_includes_streamlit_config() -> None:
+def test_docker_image_builds_next_js_standalone() -> None:
+    """After Phase 3 (#68) the deployed container is the Next.js app under web/."""
     dockerfile = (REPO_ROOT / "Dockerfile").read_text(encoding="utf-8")
     deploy = (REPO_ROOT / ".github" / "workflows" / "deploy.yml").read_text(encoding="utf-8")
 
-    assert "COPY .streamlit ./.streamlit" in dockerfile
-    assert '".streamlit/**"' in deploy
+    # Multi-stage build copies only web/ into the container.
+    assert "FROM node:20-slim" in dockerfile
+    assert "COPY web/" in dockerfile
+    assert 'CMD ["node", "server.js"]' in dockerfile
+    # Workflow triggers on web/, not on the old Streamlit-era paths.
+    assert '"web/**"' in deploy
+    assert '".streamlit/**"' not in deploy
