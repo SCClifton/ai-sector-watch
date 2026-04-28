@@ -15,7 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from ai_sector_watch.storage.data_source import get_data_source  # noqa: E402
+from dashboard.components.data_loaders import get_source, load_companies  # noqa: E402
 from dashboard.components.footer import render_footer  # noqa: E402
 from dashboard.components.theme import render_page_chrome  # noqa: E402
 
@@ -23,8 +23,8 @@ render_page_chrome(title="AI Sector Watch", page_icon="🌏")
 
 
 def main() -> None:
-    source = get_data_source()
-    companies = source.list_companies()
+    source = get_source()
+    companies = load_companies()
 
     st.title("AI Sector Watch")
     st.write(
@@ -54,9 +54,25 @@ def main() -> None:
         "wait in the admin review queue before they appear on the map or company list."
     )
     action_cols = st.columns([1, 1, 1, 2])
-    action_cols[0].link_button("Map", "/Map", type="primary")
-    action_cols[1].link_button("Companies", "/Companies")
-    action_cols[2].link_button("News", "/News")
+    if action_cols[0].button(
+        "Open the map",
+        type="primary",
+        use_container_width=True,
+        icon=":material/map:",
+    ):
+        st.switch_page("pages/1_Map.py")
+    if action_cols[1].button(
+        "Browse companies",
+        use_container_width=True,
+        icon=":material/business:",
+    ):
+        st.switch_page("pages/2_Companies.py")
+    if action_cols[2].button(
+        "Read the news feed",
+        use_container_width=True,
+        icon=":material/article:",
+    ):
+        st.switch_page("pages/3_News.py")
 
     render_footer()
 
