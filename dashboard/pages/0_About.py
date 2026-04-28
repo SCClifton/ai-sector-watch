@@ -17,7 +17,7 @@ from dashboard.components.theme import render_page_chrome  # noqa: E402
 ARCHITECTURE_PATH = REPO_ROOT / "dashboard" / "static" / "architecture.svg"
 GITHUB_REPO_URL = "https://github.com/SCClifton/ai-sector-watch"
 ISSUES_URL = f"{GITHUB_REPO_URL}/issues"
-LINKEDIN_URL = "https://www.linkedin.com/in/samclifton"
+LINKEDIN_URL = "https://www.linkedin.com/in/sam-c-clifton/"
 
 
 def _render_architecture() -> None:
