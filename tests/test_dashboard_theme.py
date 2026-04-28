@@ -72,3 +72,13 @@ def test_docker_image_builds_next_js_standalone() -> None:
     # Workflow triggers on web/, not on the old Streamlit-era paths.
     assert '"web/**"' in deploy
     assert '".streamlit/**"' not in deploy
+
+
+def test_docker_image_listens_on_websites_port() -> None:
+    """The container PORT must match the App Service WEBSITES_PORT (#74)."""
+    dockerfile = (REPO_ROOT / "Dockerfile").read_text(encoding="utf-8")
+    # Azure App Service routes traffic to WEBSITES_PORT, which is currently
+    # 8000 from the Streamlit era. Next.js standalone reads PORT and listens
+    # on it. The two must agree or the reverse proxy times out.
+    assert "PORT=8000" in dockerfile
+    assert "EXPOSE 8000" in dockerfile

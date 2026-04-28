@@ -10,9 +10,9 @@ Chronological log of milestones: public features, closed Now/Next issues, live c
 - Phase 2B #65 / PR #71: News feed with HTML-stripped summaries, mention chips linking to companies, and a "Pipeline cost - last 4 weeks" card driven by ingest_events.
 - Phase 2C #66 / PR #72: Admin review queue at /admin with HMAC-signed session cookies seeded by ADMIN_PASSWORD, server-only mutation routes for promote / reject, and an audit log row in ingest_events for every action.
 - Phase 2D #67 / PR #70: /about methodology page with the architecture SVG, global focus rings + skip link, /map empty state, constellation hover-label flip.
-- Phase 3 #68: New multi-stage Dockerfile producing a Next.js standalone runtime, /api/health endpoint, /_stcore/health rewrite for backward compatibility, deploy.yml retargeted at web/**, rollback path via the `:streamlit-final` GHCR tag.
+- Phase 3 #68: New multi-stage Dockerfile producing a Next.js standalone runtime, /api/health endpoint, /_stcore/health rewrite for backward compatibility, deploy.yml retargeted at web/**. First cutover attempt rolled back due to a port mismatch (Dockerfile ENV PORT=3000 vs Azure WEBSITES_PORT=8000), fixed by #74 which pins ENV PORT=8000 to match the existing Azure config.
 
-**Live change:** aimap.cliftonfamily.co now serves the Next.js container. The Streamlit code stays under dashboard/ for one cooling-off release; remove in a follow-up.
+**Live change:** aimap.cliftonfamily.co now serves the Next.js container after the second cutover (#74). The Streamlit code stays under dashboard/ for one cooling-off release; remove in a follow-up.
 
 **Tested:**
 - `cd web && npm run build` clean (16 routes including /admin, /companies/[slug], /api/health).
