@@ -56,8 +56,13 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text">
+        <a href="#main-content" className="aisw-skip-link">
+          Skip to main content
+        </a>
         <Header />
-        <main className="flex-1 flex flex-col">{children}</main>
+        <main id="main-content" className="flex-1 flex flex-col">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
