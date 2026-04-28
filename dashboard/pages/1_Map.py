@@ -78,7 +78,15 @@ def main() -> None:
             width="stretch",
             hide_index=True,
             column_config={
-                "Website": st.column_config.LinkColumn("Website"),
+                "Name": st.column_config.TextColumn("Name", width="medium"),
+                "Country": st.column_config.TextColumn("Country", width="small"),
+                "City": st.column_config.TextColumn("City", width="small"),
+                "Stage": st.column_config.TextColumn("Stage", width="small"),
+                "Founded": st.column_config.NumberColumn("Founded", width="small", format="%d"),
+                "Sectors": st.column_config.TextColumn("Sectors", width="large"),
+                "Website": st.column_config.LinkColumn(
+                    "Website", width="medium", display_text=r"https?://([^/]+).*"
+                ),
             },
         )
     else:

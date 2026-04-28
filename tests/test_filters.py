@@ -138,7 +138,13 @@ def test_companies_to_table_rows_keeps_missing_founded_year_null() -> None:
     assert rows[0]["Founded"] is None
 
 
-def test_companies_to_table_rows_includes_profile_fields() -> None:
+def test_companies_to_table_rows_excludes_sparse_profile_fields() -> None:
+    """Profile-enrichment fields surface on the per-company detail card only.
+
+    Coverage is sparse, so showing them as table columns produces a wall of
+    blanks. The detail view on the Companies page renders them per company
+    where it actually has data.
+    """
     rows = companies_to_table_rows(
         [
             _make(
@@ -151,10 +157,13 @@ def test_companies_to_table_rows_includes_profile_fields() -> None:
         ]
     )
 
-    assert rows[0]["Founders"] == "Ada Lovelace, Grace Hopper"
-    assert rows[0]["Raised"] == "US$25M"
-    assert rows[0]["Valuation"] == "US$1B"
-    assert rows[0]["Headcount"] == "50-100"
+    for dropped in ("Founders", "Raised", "Valuation", "Headcount", "Verified"):
+        assert dropped not in rows[0]
+
+
+def test_companies_to_table_rows_renders_human_stage_label() -> None:
+    rows = companies_to_table_rows([_make(stage="series_a")])
+    assert rows[0]["Stage"] == "Series A"
 
 
 def test_full_pipeline_against_yaml_source() -> None:
