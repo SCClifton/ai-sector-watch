@@ -10,8 +10,6 @@ import sys
 from pathlib import Path
 
 import streamlit as st
-import streamlit_shadcn_ui as ui
-from streamlit_extras.stylable_container import stylable_container
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
@@ -27,21 +25,14 @@ _INTRO_DISMISSED_KEY = "aisw_intro_dismissed"
 
 
 def _render_intro_hint() -> None:
-    """Render a one-time welcome banner the user can dismiss."""
+    """Render a one-time welcome banner the user can dismiss.
+
+    Uses ``st.container(key=...)`` so the styling lives in
+    ``dashboard/static/styles.css`` against the matching ``.st-key-`` selector.
+    """
     if st.session_state.get(_INTRO_DISMISSED_KEY):
         return
-    with stylable_container(
-        key="aisw_intro_hint",
-        css_styles="""
-        {
-          background: rgba(244, 183, 64, 0.10);
-          border: 1px solid rgba(244, 183, 64, 0.42);
-          border-radius: 8px;
-          padding: 14px 18px;
-          margin-bottom: 1.25rem;
-        }
-        """,
-    ):
+    with st.container(key="aisw_intro_hint"):
         cols = st.columns([20, 1])
         with cols[0]:
             st.markdown(
@@ -73,27 +64,9 @@ def main() -> None:
     au_count = sum(1 for c in companies if c.country == "AU")
     nz_count = sum(1 for c in companies if c.country == "NZ")
     col1, col2, col3 = st.columns(3)
-    with col1:
-        ui.metric_card(
-            title="Tracked companies",
-            content=f"{len(companies):,}",
-            description="Verified across the index",
-            key="aisw_metric_tracked",
-        )
-    with col2:
-        ui.metric_card(
-            title="Australia",
-            content=f"{au_count:,}",
-            description="Sydney, Melbourne, Brisbane, and beyond",
-            key="aisw_metric_au",
-        )
-    with col3:
-        ui.metric_card(
-            title="New Zealand",
-            content=f"{nz_count:,}",
-            description="Auckland, Wellington, Christchurch",
-            key="aisw_metric_nz",
-        )
+    col1.metric("Tracked companies", f"{len(companies):,}")
+    col2.metric("Australia", f"{au_count:,}")
+    col3.metric("New Zealand", f"{nz_count:,}")
 
     st.divider()
 

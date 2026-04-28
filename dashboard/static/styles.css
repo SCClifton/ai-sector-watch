@@ -462,6 +462,15 @@ hr, [data-testid="stDivider"] {
   line-height: 1.6;
 }
 
+/* First-run welcome banner on Home (st.container(key="aisw_intro_hint")). */
+.st-key-aisw_intro_hint {
+  background: rgba(244, 183, 64, 0.10);
+  border: 1px solid rgba(244, 183, 64, 0.42);
+  border-radius: var(--aisw-radius-lg);
+  padding: 14px 18px;
+  margin-bottom: 1.25rem;
+}
+
 /* Streamlit chrome we don't want */
 [data-testid="stDecoration"] { display: none !important; }
 [data-testid="stToolbar"] { display: none !important; }
