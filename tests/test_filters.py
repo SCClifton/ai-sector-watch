@@ -7,7 +7,9 @@ from dashboard.components.filters import (
     FilterState,
     apply_filters,
     companies_to_table_rows,
+    default_filter_values,
     derive_meta,
+    filter_widget_keys,
 )
 
 
@@ -100,6 +102,27 @@ def test_derive_meta_returns_country_set_and_year_bounds() -> None:
     assert meta.countries == ("AU", "NZ")
     assert meta.founded_min == 2018
     assert meta.founded_max == 2024
+
+
+def test_default_filter_values_match_sidebar_reset_contract() -> None:
+    meta = derive_meta(
+        [
+            _make(name="A", country="AU", founded_year=2018),
+            _make(name="B", country="NZ", founded_year=2024),
+        ]
+    )
+    keys = filter_widget_keys(key_prefix="map_filters")
+    defaults = default_filter_values(
+        meta,
+        default_countries=("AU", "NZ"),
+        key_prefix="map_filters",
+    )
+
+    assert defaults[keys["sectors"]] == []
+    assert defaults[keys["stages"]] == []
+    assert defaults[keys["countries"]] == ["AU", "NZ"]
+    assert defaults[keys["founded_year"]] == (2018, 2024)
+    assert defaults[keys["name_query"]] == ""
 
 
 def test_companies_to_table_rows_renders_sector_labels() -> None:

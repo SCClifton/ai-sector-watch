@@ -39,7 +39,7 @@ def main() -> None:
         )
 
     meta = derive_meta(all_companies)
-    state = render_sidebar(meta, default_countries=("AU", "NZ"))
+    state = render_sidebar(meta, default_countries=("AU", "NZ"), key_prefix="company_filters")
     companies = apply_filters(all_companies, state)
 
     cols = st.columns(2)

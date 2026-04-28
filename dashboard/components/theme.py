@@ -26,15 +26,15 @@ _DESCRIPTION: str = (
     "Live ecosystem map of the Australian and New Zealand AI startup landscape, "
     "updated weekly by an automated agent pipeline."
 )
-_NAV_ITEMS: tuple[tuple[str, str], ...] = (
+_PUBLIC_NAV_ITEMS: tuple[tuple[str, str], ...] = (
     ("/", "Overview"),
     ("/About", "About"),
     ("/Map", "Map"),
     ("/Companies", "Companies"),
     ("/News", "News"),
     ("/Digest", "Digest"),
-    ("/Admin", "Admin"),
 )
+_OPERATIONS_NAV_ITEMS: tuple[tuple[str, str], ...] = (("/Admin", "Admin"),)
 
 
 def _inject_styles() -> None:
@@ -114,18 +114,31 @@ def _active_nav_label(title: str) -> str:
 
 def _sidebar_nav_html(*, active_label: str) -> str:
     """Render the project navigation as stable HTML instead of Streamlit's native nav."""
-    items: list[str] = []
-    for href, label in _NAV_ITEMS:
+    public_items: list[str] = []
+    operations_items: list[str] = []
+    for href, label in _PUBLIC_NAV_ITEMS:
         active_attr = ' aria-current="page"' if label == active_label else ""
         class_name = "aisw-sidebar-nav__link"
         if label == active_label:
             class_name += " aisw-sidebar-nav__link--active"
-        items.append(
+        public_items.append(
+            f'<a class="{class_name}" href="{escape(href)}"{active_attr}>' f"{escape(label)}</a>"
+        )
+    for href, label in _OPERATIONS_NAV_ITEMS:
+        active_attr = ' aria-current="page"' if label == active_label else ""
+        class_name = "aisw-sidebar-nav__link aisw-sidebar-nav__link--operations"
+        if label == active_label:
+            class_name += " aisw-sidebar-nav__link--active"
+        operations_items.append(
             f'<a class="{class_name}" href="{escape(href)}"{active_attr}>' f"{escape(label)}</a>"
         )
     return (
         '<nav class="aisw-sidebar-nav" aria-label="Dashboard navigation">'
-        '<div class="aisw-sidebar-nav__eyebrow">Dashboard</div>' + "".join(items) + "</nav>"
+        '<div class="aisw-sidebar-nav__eyebrow">Dashboard</div>'
+        + "".join(public_items)
+        + '<div class="aisw-sidebar-nav__section">Operations</div>'
+        + "".join(operations_items)
+        + "</nav>"
     )
 
 

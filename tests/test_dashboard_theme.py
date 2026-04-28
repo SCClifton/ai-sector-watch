@@ -24,6 +24,15 @@ def test_sidebar_nav_marks_one_current_page() -> None:
     assert "aisw-sidebar-nav__link--active" in html
 
 
+def test_sidebar_nav_separates_admin_from_public_pages() -> None:
+    html = _sidebar_nav_html(active_label="Admin")
+
+    assert "Operations" in html
+    assert 'href="/Admin"' in html
+    assert "aisw-sidebar-nav__link--operations" in html
+    assert html.count('aria-current="page"') == 1
+
+
 def test_docker_image_includes_streamlit_config() -> None:
     dockerfile = (REPO_ROOT / "Dockerfile").read_text(encoding="utf-8")
     deploy = (REPO_ROOT / ".github" / "workflows" / "deploy.yml").read_text(encoding="utf-8")

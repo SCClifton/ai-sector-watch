@@ -17,6 +17,23 @@ Chronological log of milestones: public features, closed Now/Next issues, live c
 **Known limitations:**
 - None known.
 
+## 2026-04-28 - Issue #50: Public dashboard first-run UX
+
+**Shipped (codex/50-feature-polish-public-dashboard-first-ru):**
+- Added explicit Reset controls to the Map and Companies filter sidebars.
+- Separated Admin under an Operations group in the sidebar navigation.
+- Moved Digest pipeline spend metrics behind a lower collapsed expander so saved digests stay primary.
+- Added focused tests for the navigation grouping and filter reset defaults.
+
+**Tested:**
+- `.venv/bin/pytest -q`: pass, 2 skipped live integration tests.
+- `.venv/bin/ruff check .`: clean.
+- `.venv/bin/black --check .`: clean.
+- Local browser smoke on `http://127.0.0.1:8510`: Map and Companies render Reset controls, Digest renders Pipeline spend below the public content, and Admin appears under Operations.
+
+**Known limitations:**
+- None known.
+
 ## 2026-04-27 - Issue #40: Backfill Firecrawl enrichment
 
 **Shipped (codex/40-backfill-firecrawl-enrichment-for-existi):**
