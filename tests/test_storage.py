@@ -61,6 +61,60 @@ def test_get_conn_raises_when_supabase_db_url_unset(monkeypatch) -> None:
         supabase_db._get_db_url()
 
 
+def test_list_companies_for_enrichment_checks_optional_profile_columns(monkeypatch) -> None:
+    checked_columns: list[str] = []
+
+    class FakeCursor:
+        def __enter__(self) -> FakeCursor:
+            return self
+
+        def __exit__(self, exc_type, exc, tb) -> None:
+            return None
+
+        def execute(self, query, params) -> None:
+            self.query = query
+            self.params = params
+
+        def fetchall(self) -> list[dict[str, object]]:
+            return []
+
+    class FakeConn:
+        def cursor(self) -> FakeCursor:
+            return FakeCursor()
+
+    def fake_has_column(conn, column_name: str) -> bool:
+        checked_columns.append(column_name)
+        return False
+
+    monkeypatch.setattr(supabase_db, "companies_has_column", fake_has_column)
+
+    rows = supabase_db.list_companies_for_enrichment(FakeConn(), max_age_years=5, limit=10)
+
+    assert rows == []
+    for column_name in (
+        "evidence_urls",
+        "enriched_at",
+        "founders",
+        "total_raised_usd",
+        "total_raised_currency_raw",
+        "total_raised_as_of",
+        "total_raised_source_url",
+        "valuation_usd",
+        "valuation_currency_raw",
+        "valuation_as_of",
+        "valuation_source_url",
+        "headcount_estimate",
+        "headcount_min",
+        "headcount_max",
+        "headcount_as_of",
+        "headcount_source_url",
+        "profile_confidence",
+        "profile_sources",
+        "profile_verified_at",
+    ):
+        assert column_name in checked_columns
+
+
 # ----- Live integration tests (skipped without SUPABASE_DB_URL) --------------
 
 pytestmark_live = pytest.mark.skipif(
