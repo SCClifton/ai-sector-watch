@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
+from decimal import Decimal
 
 import streamlit as st
 
@@ -202,10 +203,47 @@ def companies_to_table_rows(companies: list[Company]) -> list[dict]:
                 "City": c.city or "",
                 "Stage": c.stage or "",
                 "Founded": c.founded_year,
+                "Raised": _format_usd(c.total_raised_usd),
+                "Valuation": _format_usd(c.valuation_usd),
+                "Headcount": _format_headcount(c),
+                "Founders": ", ".join(c.founders),
                 "Sectors": ", ".join(
                     (get_sector(t).label if get_sector(t) else t) for t in c.sector_tags
                 ),
+                "Verified": c.profile_verified_at.date() if c.profile_verified_at else None,
                 "Website": c.website or "",
             }
         )
     return rows
+
+
+def _format_usd(amount: Decimal | None) -> str:
+    """Return a compact USD amount for table cells."""
+    if amount is None:
+        return ""
+    if amount >= Decimal("1000000000"):
+        billions = amount / Decimal("1000000000")
+        value = f"{billions:.1f}".rstrip("0").rstrip(".")
+        return f"US${value}B"
+    if amount >= Decimal("1000000"):
+        millions = amount / Decimal("1000000")
+        value = f"{millions:.1f}".rstrip("0").rstrip(".")
+        return f"US${value}M"
+    if amount >= Decimal("1000"):
+        thousands = amount / Decimal("1000")
+        value = f"{thousands:.1f}".rstrip("0").rstrip(".")
+        return f"US${value}K"
+    return f"US${amount:,.0f}"
+
+
+def _format_headcount(company: Company) -> str:
+    """Return the best available headcount display string."""
+    if company.headcount_estimate is not None:
+        return str(company.headcount_estimate)
+    if company.headcount_min is not None and company.headcount_max is not None:
+        return f"{company.headcount_min}-{company.headcount_max}"
+    if company.headcount_min is not None:
+        return f"{company.headcount_min}+"
+    if company.headcount_max is not None:
+        return f"up to {company.headcount_max}"
+    return ""

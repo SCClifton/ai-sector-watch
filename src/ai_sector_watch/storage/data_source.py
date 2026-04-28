@@ -60,6 +60,23 @@ class Company:
     summary: str | None
     discovery_status: str
     discovery_source: str | None
+    founders: list[str] = field(default_factory=list)
+    total_raised_usd: Decimal | None = None
+    total_raised_currency_raw: str | None = None
+    total_raised_as_of: date | None = None
+    total_raised_source_url: str | None = None
+    valuation_usd: Decimal | None = None
+    valuation_currency_raw: str | None = None
+    valuation_as_of: date | None = None
+    valuation_source_url: str | None = None
+    headcount_estimate: int | None = None
+    headcount_min: int | None = None
+    headcount_max: int | None = None
+    headcount_as_of: date | None = None
+    headcount_source_url: str | None = None
+    profile_confidence: Decimal | None = None
+    profile_sources: list[str] = field(default_factory=list)
+    profile_verified_at: datetime | None = None
     latest_funding_event: FundingEvent | None = None
 
 
@@ -263,6 +280,23 @@ def _company_from_row(r: dict) -> Company:
         discovery_status=r["discovery_status"],
         discovery_source=r.get("discovery_source"),
         latest_funding_event=latest_funding_event,
+        founders=list(r.get("founders") or []),
+        total_raised_usd=r.get("total_raised_usd"),
+        total_raised_currency_raw=r.get("total_raised_currency_raw"),
+        total_raised_as_of=r.get("total_raised_as_of"),
+        total_raised_source_url=r.get("total_raised_source_url"),
+        valuation_usd=r.get("valuation_usd"),
+        valuation_currency_raw=r.get("valuation_currency_raw"),
+        valuation_as_of=r.get("valuation_as_of"),
+        valuation_source_url=r.get("valuation_source_url"),
+        headcount_estimate=r.get("headcount_estimate"),
+        headcount_min=r.get("headcount_min"),
+        headcount_max=r.get("headcount_max"),
+        headcount_as_of=r.get("headcount_as_of"),
+        headcount_source_url=r.get("headcount_source_url"),
+        profile_confidence=r.get("profile_confidence"),
+        profile_sources=list(r.get("profile_sources") or []),
+        profile_verified_at=r.get("profile_verified_at"),
     )
 
 

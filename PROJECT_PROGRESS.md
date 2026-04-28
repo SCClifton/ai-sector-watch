@@ -2,6 +2,29 @@
 
 Chronological log of milestones: public features, closed Now/Next issues, live changes, and public breakages. For routine fixes, the PR body is the record.
 
+## 2026-04-28 - Issue #54: Company profile audit and richer fields
+
+**Shipped (codex/54-feature-audit-and-enrich-company-profile):**
+- Added richer company profile fields for founders, total raised, valuation,
+  headcount, profile evidence, profile confidence, and verified timestamp.
+- Extended the public Companies page and map popups to show populated richer
+  fields while leaving unknown values blank.
+- Extended Firecrawl profile extraction and enrichment backfill payloads to
+  capture the richer public-source facts.
+- Added a read-only company profile audit script that writes Markdown, CSV, and
+  reviewed-update JSON artifacts.
+- Added a guarded live apply script that requires reviewed JSON, `--apply`, and
+  resolved 1Password environment values before writing Supabase.
+
+**Tested:**
+- `.venv/bin/pytest -q`: pass, 2 skipped live integration tests.
+- `.venv/bin/ruff check .`: clean.
+- `.venv/bin/black --check .`: clean.
+
+**Known limitations:**
+- Full live enrichment remains operator-controlled because each enriched company
+  consumes Firecrawl credits and LLM calls.
+
 ## 2026-04-28 - Issue #49: Azure WebSockets for Streamlit
 
 **Shipped (codex/49-bug-enable-streamlit-websockets-on-azure):**

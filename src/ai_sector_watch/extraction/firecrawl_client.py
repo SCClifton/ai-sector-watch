@@ -63,7 +63,11 @@ ENRICH_PROMPT = (
     "Extract authoritative facts about this company from the supplied source excerpts. "
     "Use only what the excerpts explicitly state. Leave fields null or empty when the "
     "sources do not say. Do not use em dashes in the description; prefer a colon, comma, "
-    "or ' - '. Include evidence_urls containing only URLs from the supplied excerpts that "
+    "or ' - '. For total raised, valuation, and headcount, only populate values that are "
+    "publicly stated in the excerpts and include the supporting source URL. Headcount means "
+    "employees, staff, team members, or people at the company. Do not use customer counts, "
+    "users, devices, vehicles, datasets, or money amounts as headcount. "
+    "Include evidence_urls containing only URLs from the supplied excerpts that "
     "support the extracted facts."
 )
 
@@ -463,6 +467,11 @@ def _derive_confidence(raw: dict[str, Any]) -> float:
             "country",
             "sector_keywords",
             "last_funding_summary",
+            "total_raised_usd",
+            "valuation_usd",
+            "headcount_estimate",
+            "headcount_min",
+            "headcount_max",
         )
         if raw.get(k)
     )
@@ -477,6 +486,8 @@ def _post_process(facts: CompanyFacts) -> CompanyFacts:
     """Sanitise user-facing strings and recompute confidence from populated fields."""
     cleaned_description = _sanitise(facts.description)
     cleaned_summary = _sanitise(facts.last_funding_summary)
+    cleaned_total_raised_raw = _sanitise(facts.total_raised_currency_raw)
+    cleaned_valuation_raw = _sanitise(facts.valuation_currency_raw)
     populated_other = sum(
         1
         for v in (
@@ -484,6 +495,11 @@ def _post_process(facts: CompanyFacts) -> CompanyFacts:
             facts.city,
             facts.country,
             cleaned_summary,
+            facts.total_raised_usd,
+            facts.valuation_usd,
+            facts.headcount_estimate,
+            facts.headcount_min,
+            facts.headcount_max,
         )
         if v
     )
@@ -501,6 +517,8 @@ def _post_process(facts: CompanyFacts) -> CompanyFacts:
         update={
             "description": cleaned_description,
             "last_funding_summary": cleaned_summary,
+            "total_raised_currency_raw": cleaned_total_raised_raw,
+            "valuation_currency_raw": cleaned_valuation_raw,
             "confidence": confidence,
             "evidence_urls": _dedupe_urls(facts.evidence_urls),
         }

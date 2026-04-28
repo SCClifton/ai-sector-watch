@@ -143,6 +143,16 @@ def _has_enrichment_signal(facts: CompanyFacts) -> bool:
         facts.country,
         facts.sector_keywords,
         facts.last_funding_summary,
+        facts.total_raised_usd,
+        facts.total_raised_currency_raw,
+        facts.total_raised_source_url,
+        facts.valuation_usd,
+        facts.valuation_currency_raw,
+        facts.valuation_source_url,
+        facts.headcount_estimate,
+        facts.headcount_min,
+        facts.headcount_max,
+        facts.headcount_source_url,
         facts.evidence_urls,
     )
     return any(not _is_empty(value) for value in values)
@@ -185,6 +195,35 @@ def build_update_payload(
         incoming=facts.country,
         force_overwrite=force_overwrite,
     )
+    _maybe_set(
+        updates,
+        column="founders",
+        existing=company.get("founders"),
+        incoming=facts.founders,
+        force_overwrite=force_overwrite,
+    )
+    for column in (
+        "total_raised_usd",
+        "total_raised_currency_raw",
+        "total_raised_as_of",
+        "total_raised_source_url",
+        "valuation_usd",
+        "valuation_currency_raw",
+        "valuation_as_of",
+        "valuation_source_url",
+        "headcount_estimate",
+        "headcount_min",
+        "headcount_max",
+        "headcount_as_of",
+        "headcount_source_url",
+    ):
+        _maybe_set(
+            updates,
+            column=column,
+            existing=company.get(column),
+            incoming=getattr(facts, column),
+            force_overwrite=force_overwrite,
+        )
 
     if has_fact_signal:
         city_for_geo = str(updates.get("city") or company.get("city") or "").strip()
@@ -197,6 +236,9 @@ def build_update_payload(
 
     if facts.evidence_urls:
         updates["evidence_urls"] = facts.evidence_urls
+        updates["profile_sources"] = facts.evidence_urls
+    if facts.confidence:
+        updates["profile_confidence"] = facts.confidence
     return updates
 
 

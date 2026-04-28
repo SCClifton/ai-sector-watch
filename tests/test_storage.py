@@ -49,6 +49,10 @@ def test_load_schema_sql_contains_core_tables() -> None:
         assert f"CREATE TABLE IF NOT EXISTS {table}" in sql, f"schema is missing {table}"
     assert "discovery_status" in sql
     assert "company_stage" in sql
+    assert "total_raised_usd" in sql
+    assert "valuation_usd" in sql
+    assert "headcount_estimate" in sql
+    assert "profile_verified_at" in sql
 
 
 def test_get_conn_raises_when_supabase_db_url_unset(monkeypatch) -> None:

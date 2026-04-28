@@ -86,6 +86,24 @@ def test_popup_html_includes_latest_funding_event() -> None:
     assert "—" not in html
 
 
+def test_popup_html_includes_profile_amounts_and_headcount() -> None:
+    html = _popup_html(
+        _make_company(
+            total_raised_usd=Decimal("25000000"),
+            valuation_usd=Decimal("1000000000"),
+            headcount_estimate=42,
+        )
+    )
+
+    assert "Total raised:" in html
+    assert "US$25M" in html
+    assert "Valuation:" in html
+    assert "US$1B" in html
+    assert "Headcount:" in html
+    assert "42" in html
+    assert "—" not in html
+
+
 def test_popup_html_handles_missing_optional_fields() -> None:
     bare = _make_company(
         website=None,

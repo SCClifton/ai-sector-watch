@@ -19,6 +19,7 @@ import time
 from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from datetime import UTC, date, datetime
+from decimal import Decimal
 from importlib import resources
 from typing import Any
 
@@ -136,6 +137,23 @@ def upsert_company(
     founded_year: int | None = None,
     summary: str | None = None,
     evidence_urls: list[str] | None = None,
+    founders: list[str] | None = None,
+    total_raised_usd: float | Decimal | None = None,
+    total_raised_currency_raw: str | None = None,
+    total_raised_as_of: date | None = None,
+    total_raised_source_url: str | None = None,
+    valuation_usd: float | Decimal | None = None,
+    valuation_currency_raw: str | None = None,
+    valuation_as_of: date | None = None,
+    valuation_source_url: str | None = None,
+    headcount_estimate: int | None = None,
+    headcount_min: int | None = None,
+    headcount_max: int | None = None,
+    headcount_as_of: date | None = None,
+    headcount_source_url: str | None = None,
+    profile_confidence: float | Decimal | None = None,
+    profile_sources: list[str] | None = None,
+    profile_verified_at: datetime | None = None,
     discovery_status: str = "auto_discovered_pending_review",
     discovery_source: str | None = None,
 ) -> str:
@@ -146,15 +164,25 @@ def upsert_company(
     name_normalised = normalise_name(name)
     sector_tags = sector_tags or []
     evidence_urls = evidence_urls or []
+    founders = founders or []
+    profile_sources = profile_sources or []
     with conn.cursor() as cur:
         cur.execute(
             """
             INSERT INTO companies (
                 name, name_normalised, website, country, city, lat, lon,
                 sector_tags, stage, founded_year, summary, evidence_urls,
+                founders, total_raised_usd, total_raised_currency_raw,
+                total_raised_as_of, total_raised_source_url, valuation_usd,
+                valuation_currency_raw, valuation_as_of, valuation_source_url,
+                headcount_estimate, headcount_min, headcount_max,
+                headcount_as_of, headcount_source_url, profile_confidence,
+                profile_sources, profile_verified_at,
                 discovery_status, discovery_source
             ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s
             )
             ON CONFLICT (name_normalised, COALESCE(country, ''))
             DO UPDATE SET
@@ -173,6 +201,29 @@ def upsert_company(
                     WHEN EXCLUDED.evidence_urls = '{}' THEN companies.evidence_urls
                     ELSE EXCLUDED.evidence_urls
                 END,
+                founders         = CASE
+                    WHEN EXCLUDED.founders = '{}' THEN companies.founders
+                    ELSE EXCLUDED.founders
+                END,
+                total_raised_usd = COALESCE(EXCLUDED.total_raised_usd, companies.total_raised_usd),
+                total_raised_currency_raw = COALESCE(EXCLUDED.total_raised_currency_raw, companies.total_raised_currency_raw),
+                total_raised_as_of = COALESCE(EXCLUDED.total_raised_as_of, companies.total_raised_as_of),
+                total_raised_source_url = COALESCE(EXCLUDED.total_raised_source_url, companies.total_raised_source_url),
+                valuation_usd = COALESCE(EXCLUDED.valuation_usd, companies.valuation_usd),
+                valuation_currency_raw = COALESCE(EXCLUDED.valuation_currency_raw, companies.valuation_currency_raw),
+                valuation_as_of = COALESCE(EXCLUDED.valuation_as_of, companies.valuation_as_of),
+                valuation_source_url = COALESCE(EXCLUDED.valuation_source_url, companies.valuation_source_url),
+                headcount_estimate = COALESCE(EXCLUDED.headcount_estimate, companies.headcount_estimate),
+                headcount_min = COALESCE(EXCLUDED.headcount_min, companies.headcount_min),
+                headcount_max = COALESCE(EXCLUDED.headcount_max, companies.headcount_max),
+                headcount_as_of = COALESCE(EXCLUDED.headcount_as_of, companies.headcount_as_of),
+                headcount_source_url = COALESCE(EXCLUDED.headcount_source_url, companies.headcount_source_url),
+                profile_confidence = COALESCE(EXCLUDED.profile_confidence, companies.profile_confidence),
+                profile_sources = CASE
+                    WHEN EXCLUDED.profile_sources = '{}' THEN companies.profile_sources
+                    ELSE EXCLUDED.profile_sources
+                END,
+                profile_verified_at = COALESCE(EXCLUDED.profile_verified_at, companies.profile_verified_at),
                 -- Only allow status to be promoted/demoted by an explicit
                 -- caller; a re-seed shouldn't downgrade a verified row.
                 discovery_status = CASE
@@ -197,6 +248,23 @@ def upsert_company(
                 founded_year,
                 summary,
                 evidence_urls,
+                founders,
+                total_raised_usd,
+                total_raised_currency_raw,
+                total_raised_as_of,
+                total_raised_source_url,
+                valuation_usd,
+                valuation_currency_raw,
+                valuation_as_of,
+                valuation_source_url,
+                headcount_estimate,
+                headcount_min,
+                headcount_max,
+                headcount_as_of,
+                headcount_source_url,
+                profile_confidence,
+                profile_sources,
+                profile_verified_at,
                 discovery_status,
                 discovery_source,
             ),
@@ -295,7 +363,13 @@ def list_companies_for_enrichment(
     query = sql.SQL("""
         SELECT
             id, name, website, country, city, lat, lon, sector_tags, stage,
-            founded_year, summary, {evidence_urls_select}, {enriched_at_select}
+            founded_year, summary, {evidence_urls_select}, {enriched_at_select},
+            founders, total_raised_usd, total_raised_currency_raw,
+            total_raised_as_of, total_raised_source_url, valuation_usd,
+            valuation_currency_raw, valuation_as_of, valuation_source_url,
+            headcount_estimate, headcount_min, headcount_max, headcount_as_of,
+            headcount_source_url, profile_confidence, profile_sources,
+            profile_verified_at
         FROM companies
         WHERE discovery_status = 'verified'
           AND (
@@ -333,6 +407,23 @@ def update_company_enrichment(
         "founded_year",
         "summary",
         "evidence_urls",
+        "founders",
+        "total_raised_usd",
+        "total_raised_currency_raw",
+        "total_raised_as_of",
+        "total_raised_source_url",
+        "valuation_usd",
+        "valuation_currency_raw",
+        "valuation_as_of",
+        "valuation_source_url",
+        "headcount_estimate",
+        "headcount_min",
+        "headcount_max",
+        "headcount_as_of",
+        "headcount_source_url",
+        "profile_confidence",
+        "profile_sources",
+        "profile_verified_at",
     }
     unknown = set(updates) - allowed_columns
     if unknown:
