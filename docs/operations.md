@@ -73,6 +73,43 @@ Safety gates:
 - The JSON summary at the end reports processed rows, updated rows, recent
   skips, Firecrawl credits used, LLM calls, timestamps, and errors.
 
+## Auditing company profiles
+
+Use this when the live dataset needs a reviewed accuracy pass across every
+company status. The audit script reads Supabase, writes Markdown/CSV/JSON
+artifacts under `docs/data-audits/`, and never writes live rows.
+
+Start with a read-only dry run:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --dry-run
+```
+
+Run a small enriched batch after checking the estimated Firecrawl credits:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --enrich
+```
+
+Resume later batches without overwriting earlier artifacts:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 15 --offset 15 --artifact-suffix batch-02 --enrich
+```
+
+After reviewing the generated JSON, apply approved updates explicitly:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/apply_company_profile_updates.py docs/data-audits/YYYY-MM-DD-company-accuracy.json --apply
+```
+
+Safety gates:
+- `--enrich` requires `--limit` so an operator cannot accidentally run a large
+  paid scrape.
+- The apply script defaults to dry run and writes only with `--apply`.
+- Live apply refuses unresolved `op://` Supabase references.
+- Collaboration opportunities stay in the audit report until reviewed.
+
 ## Cost guardrails
 
 - The pipeline hard-caps Anthropic spend per run via `ANTHROPIC_BUDGET_USD_PER_RUN` (default $2). When the cap is hit mid-run, the orchestrator records a `partial` ingest event and writes a digest of what it managed to do.

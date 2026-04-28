@@ -144,6 +144,15 @@ def _popup_html(c: Company) -> str:
         parts.append(
             f'<div class="aisw-popup__row"><em>Latest funding:</em> {escape(funding_line)}</div>'
         )
+    total_raised = _format_amount_usd(c.total_raised_usd)
+    if total_raised:
+        parts.append(f'<div class="aisw-popup__row"><em>Total raised:</em> {total_raised}</div>')
+    valuation = _format_amount_usd(c.valuation_usd)
+    if valuation:
+        parts.append(f'<div class="aisw-popup__row"><em>Valuation:</em> {valuation}</div>')
+    headcount = _headcount_line(c)
+    if headcount:
+        parts.append(f'<div class="aisw-popup__row"><em>Headcount:</em> {escape(headcount)}</div>')
 
     if sector_labels:
         chips = "".join(
@@ -176,6 +185,10 @@ def _latest_funding_line(c: Company) -> str | None:
 def _format_amount_usd(amount: Decimal | None) -> str | None:
     if amount is None:
         return None
+    if amount >= Decimal("1000000000"):
+        billions = amount / Decimal("1000000000")
+        value = f"{billions:.1f}".rstrip("0").rstrip(".")
+        return f"US${value}B"
     if amount >= Decimal("1000000"):
         millions = amount / Decimal("1000000")
         value = f"{millions:.1f}".rstrip("0").rstrip(".")
@@ -185,6 +198,18 @@ def _format_amount_usd(amount: Decimal | None) -> str | None:
         value = f"{thousands:.1f}".rstrip("0").rstrip(".")
         return f"US${value}K"
     return f"US${amount:,.0f}"
+
+
+def _headcount_line(c: Company) -> str | None:
+    if c.headcount_estimate is not None:
+        return str(c.headcount_estimate)
+    if c.headcount_min is not None and c.headcount_max is not None:
+        return f"{c.headcount_min}-{c.headcount_max}"
+    if c.headcount_min is not None:
+        return f"{c.headcount_min}+"
+    if c.headcount_max is not None:
+        return f"up to {c.headcount_max}"
+    return None
 
 
 def split_geocoded(companies: list[Company]) -> tuple[list[Company], list[Company]]:

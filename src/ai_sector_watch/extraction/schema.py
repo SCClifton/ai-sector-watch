@@ -8,6 +8,7 @@ by the rest of the pipeline.
 from __future__ import annotations
 
 from datetime import date
+from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
@@ -129,6 +130,63 @@ class CompanyFacts(BaseModel):
             "Most recent funding event in one short sentence, if mentioned "
             "(round, lead, amount)."
         ),
+    )
+    total_raised_usd: Decimal | None = Field(
+        None,
+        description="Total capital raised in USD, if a public source states or converts it.",
+        ge=0,
+    )
+    total_raised_currency_raw: str | None = Field(
+        None,
+        description="Original total raised text, for example AUD 20M or US$140M.",
+    )
+    total_raised_as_of: date | None = Field(
+        None,
+        description="Date attached to the total raised fact, if known.",
+    )
+    total_raised_source_url: str | None = Field(
+        None,
+        description="URL supporting the total raised fact.",
+    )
+    valuation_usd: Decimal | None = Field(
+        None,
+        description="Estimated or reported valuation in USD, only when a public source states it.",
+        ge=0,
+    )
+    valuation_currency_raw: str | None = Field(
+        None,
+        description="Original valuation text, for example AUD 1B or US$2.5B.",
+    )
+    valuation_as_of: date | None = Field(
+        None,
+        description="Date attached to the valuation fact, if known.",
+    )
+    valuation_source_url: str | None = Field(
+        None,
+        description="URL supporting the valuation fact.",
+    )
+    headcount_estimate: int | None = Field(
+        None,
+        description="Single headcount estimate if publicly stated.",
+        ge=0,
+    )
+    headcount_min: int | None = Field(
+        None,
+        description="Lower bound when a public source gives a headcount range.",
+        ge=0,
+    )
+    headcount_max: int | None = Field(
+        None,
+        description="Upper bound when a public source gives a headcount range.",
+        ge=0,
+    )
+    headcount_as_of: date | None = Field(
+        None,
+        description="Date attached to the headcount fact, if known.",
+    )
+    headcount_source_url: str | None = Field(
+        None,
+        description="URL supporting the headcount fact.",
     )
     confidence: float = Field(
         0.0,

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from ai_sector_watch.storage.data_source import Company, YamlSource
 from dashboard.components.filters import (
     FilterState,
@@ -134,6 +136,25 @@ def test_companies_to_table_rows_renders_sector_labels() -> None:
 def test_companies_to_table_rows_keeps_missing_founded_year_null() -> None:
     rows = companies_to_table_rows([_make(founded_year=None)])
     assert rows[0]["Founded"] is None
+
+
+def test_companies_to_table_rows_includes_profile_fields() -> None:
+    rows = companies_to_table_rows(
+        [
+            _make(
+                founders=["Ada Lovelace", "Grace Hopper"],
+                total_raised_usd=Decimal("25000000"),
+                valuation_usd=Decimal("1000000000"),
+                headcount_min=50,
+                headcount_max=100,
+            )
+        ]
+    )
+
+    assert rows[0]["Founders"] == "Ada Lovelace, Grace Hopper"
+    assert rows[0]["Raised"] == "US$25M"
+    assert rows[0]["Valuation"] == "US$1B"
+    assert rows[0]["Headcount"] == "50-100"
 
 
 def test_full_pipeline_against_yaml_source() -> None:

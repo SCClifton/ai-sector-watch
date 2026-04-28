@@ -54,6 +54,23 @@ CREATE TABLE IF NOT EXISTS companies (
     summary         TEXT,
     evidence_urls   TEXT[] NOT NULL DEFAULT '{}',
     enriched_at     TIMESTAMPTZ,
+    founders        TEXT[] NOT NULL DEFAULT '{}',
+    total_raised_usd NUMERIC(14, 2),
+    total_raised_currency_raw TEXT,
+    total_raised_as_of DATE,
+    total_raised_source_url TEXT,
+    valuation_usd   NUMERIC(14, 2),
+    valuation_currency_raw TEXT,
+    valuation_as_of DATE,
+    valuation_source_url TEXT,
+    headcount_estimate INTEGER,
+    headcount_min   INTEGER,
+    headcount_max   INTEGER,
+    headcount_as_of DATE,
+    headcount_source_url TEXT,
+    profile_confidence NUMERIC(3, 2),
+    profile_sources TEXT[] NOT NULL DEFAULT '{}',
+    profile_verified_at TIMESTAMPTZ,
     discovery_status discovery_status NOT NULL DEFAULT 'auto_discovered_pending_review',
     discovery_source TEXT,                -- e.g. 'seed', 'startup_daily_au'
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -65,6 +82,25 @@ ALTER TABLE companies
 
 ALTER TABLE companies
     ADD COLUMN IF NOT EXISTS enriched_at TIMESTAMPTZ;
+
+ALTER TABLE companies
+    ADD COLUMN IF NOT EXISTS founders TEXT[] NOT NULL DEFAULT '{}',
+    ADD COLUMN IF NOT EXISTS total_raised_usd NUMERIC(14, 2),
+    ADD COLUMN IF NOT EXISTS total_raised_currency_raw TEXT,
+    ADD COLUMN IF NOT EXISTS total_raised_as_of DATE,
+    ADD COLUMN IF NOT EXISTS total_raised_source_url TEXT,
+    ADD COLUMN IF NOT EXISTS valuation_usd NUMERIC(14, 2),
+    ADD COLUMN IF NOT EXISTS valuation_currency_raw TEXT,
+    ADD COLUMN IF NOT EXISTS valuation_as_of DATE,
+    ADD COLUMN IF NOT EXISTS valuation_source_url TEXT,
+    ADD COLUMN IF NOT EXISTS headcount_estimate INTEGER,
+    ADD COLUMN IF NOT EXISTS headcount_min INTEGER,
+    ADD COLUMN IF NOT EXISTS headcount_max INTEGER,
+    ADD COLUMN IF NOT EXISTS headcount_as_of DATE,
+    ADD COLUMN IF NOT EXISTS headcount_source_url TEXT,
+    ADD COLUMN IF NOT EXISTS profile_confidence NUMERIC(3, 2),
+    ADD COLUMN IF NOT EXISTS profile_sources TEXT[] NOT NULL DEFAULT '{}',
+    ADD COLUMN IF NOT EXISTS profile_verified_at TIMESTAMPTZ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS companies_name_country_unique
     ON companies (name_normalised, COALESCE(country, ''));
