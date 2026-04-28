@@ -28,8 +28,6 @@ dependencies = [
 dashboard = [
     "streamlit>=1.45.0",
     "streamlit-folium>=0.22.0",
-    "streamlit-extras>=0.4.7",
-    "streamlit-shadcn-ui>=0.1.18",
     "folium>=0.17.0",
     "pandas>=2.2.0",
 ]
