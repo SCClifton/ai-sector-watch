@@ -2,6 +2,82 @@
 
 Production target: Azure Web App for Containers in subscription `Azure subscription 1` (Kardinia tenant), region `australiaeast`. Custom domain `aimap.cliftonfamily.co` fronted by Azure-managed TLS.
 
+**As of Phase 3 (issue #68):** the deployed container is the Next.js app under `web/`. The Streamlit code under `dashboard/` stays in the repo for one cooling-off release but is no longer deployed. The previous Streamlit image is preserved in GHCR at the tag `:streamlit-final` for rollback.
+
+## Cutover from Streamlit to Next.js (Phase 3)
+
+The merge of #68 to `main` triggers `deploy.yml`, which builds the new Next.js Dockerfile, pushes to GHCR with `:latest` and `:<sha>` tags, and deploys to the existing App Service. The container honours the `PORT` env var that Azure sets from `WEBSITES_PORT`, so the cutover does not require any port change.
+
+### Manual steps before merge (one-time)
+
+These run from your laptop with `az login` already active. They are optional but recommended.
+
+```bash
+RG=ai-sector-watch
+APP=ai-sector-watch
+IMAGE_BASE=ghcr.io/scclifton/ai-sector-watch/ai-sector-watch
+
+# 1. Tag the current Streamlit image as :streamlit-final so we can roll back.
+#    Get the digest of whatever :latest currently points at (this should be
+#    the last green Streamlit deploy).
+docker pull "$IMAGE_BASE:latest"
+docker tag  "$IMAGE_BASE:latest" "$IMAGE_BASE:streamlit-final"
+docker push "$IMAGE_BASE:streamlit-final"
+
+# 2. (Optional) Update the App Service health-check path to /api/health.
+#    The Next.js Dockerfile also serves /_stcore/health via a rewrite for
+#    backward compatibility, so this can wait if Azure's health check is
+#    still pointed at /_stcore/health.
+az webapp config set \
+  --resource-group "$RG" \
+  --name "$APP" \
+  --generic-configurations '{"healthCheckPath": "/api/health"}'
+
+# 3. (Optional) Update WEBSITES_PORT to 3000. Not required: the new
+#    container reads PORT from the env, so leaving WEBSITES_PORT=8000
+#    just makes Next.js bind to 8000.
+az webapp config appsettings set \
+  --resource-group "$RG" \
+  --name "$APP" \
+  --settings WEBSITES_PORT=3000
+```
+
+### What happens on merge
+
+1. Push to `main` matches `web/**` or `Dockerfile`. `deploy.yml` runs.
+2. The job builds the multi-stage Next.js Dockerfile, pushes `:latest` and `:<sha>` to GHCR, and calls `azure/webapps-deploy@v3` against the same App Service.
+3. App Service pulls the new image and restarts the container.
+4. The container starts `node server.js` listening on `PORT` (`WEBSITES_PORT`'s value, default 3000).
+5. Within ~60s `https://aimap.cliftonfamily.co` should serve the new app.
+
+### Smoke checks after cutover
+
+```bash
+curl -fsS https://aimap.cliftonfamily.co/api/health   # {"ok":true,...}
+curl -fsS https://aimap.cliftonfamily.co/_stcore/health  # ok (compat)
+curl -I  https://aimap.cliftonfamily.co               # 200, valid cert
+# Browser: load /, /map, /companies, /news, /about. Confirm the Next.js
+# header / footer / dark theme. Hit /admin, sign in, confirm the queue
+# loads (no real promote needed).
+```
+
+### Rollback
+
+If anything goes wrong, redeploy `:streamlit-final`:
+
+```bash
+az webapp config container set \
+  --resource-group ai-sector-watch \
+  --name ai-sector-watch \
+  --container-image-name ghcr.io/scclifton/ai-sector-watch/ai-sector-watch:streamlit-final
+```
+
+Or trigger the previous green deploy via `gh workflow run` on a Streamlit-era SHA. Watch logs:
+
+```bash
+az webapp log tail --resource-group ai-sector-watch --name ai-sector-watch
+```
+
 ## One-time setup (Sam)
 
 Run these from your laptop with `az login` already active.
@@ -135,15 +211,14 @@ az webapp config ssl bind \
   --ssl-type SNI
 ```
 
-## Smoke checks
+## Smoke checks (post-cutover)
 
 ```bash
-az webapp config show -g ai-sector-watch -n ai-sector-watch \
-  --query webSocketsEnabled -o tsv                 # expect true
-curl -I https://aimap.cliftonfamily.co               # expect HTTP/2 200, valid cert
-curl -fsS https://aimap.cliftonfamily.co/_stcore/health
-# Browser smoke: open /, /Map, and /Companies. Expect rendered headings, not
-# just the blank Streamlit shell.
+curl -I  https://aimap.cliftonfamily.co               # HTTP/2 200, valid cert
+curl -fsS https://aimap.cliftonfamily.co/api/health   # {"ok":true,...}
+# Browser smoke: open /, /map, /companies, /news, /about. Expect the
+# Next.js header / dark theme. Hit /admin, sign in, confirm the queue
+# loads (no real promote needed).
 gh workflow run weekly.yml -f limit=5
 gh run watch
 ```
