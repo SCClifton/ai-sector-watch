@@ -125,10 +125,71 @@ body {
   animation: aisw-pulse 2.4s ease-in-out infinite;
 }
 
+/* Constellation node pulse rings */
+@keyframes aisw-pulse-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  80% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+.aisw-pulse-ring {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: aisw-pulse-ring 2.6s ease-out infinite;
+}
+
+/* Constellation horizontal scan beam */
+@keyframes aisw-scan {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(820px);
+    opacity: 0;
+  }
+}
+.aisw-scan {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 183, 64, 0.05) 30%,
+    rgba(244, 183, 64, 0.16) 50%,
+    rgba(244, 183, 64, 0.05) 70%,
+    transparent 100%
+  );
+  animation: aisw-scan 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  mix-blend-mode: screen;
+}
+
 /* Reduced-motion respect */
 @media (prefers-reduced-motion: reduce) {
-  .aisw-pulse {
+  .aisw-pulse,
+  .aisw-pulse-ring,
+  .aisw-scan {
     animation: none;
+  }
+  .aisw-pulse {
     opacity: 0.85;
+  }
+  .aisw-pulse-ring {
+    opacity: 0.4;
+  }
+  .aisw-scan {
+    display: none;
   }
 }
