@@ -38,16 +38,21 @@ def _render_spend_metrics(summary: LlmSpendSummary | None) -> None:
     cols[1].metric("avg per run", _format_usd(summary.average_usd))
 
 
+def _render_spend_panel(summary: LlmSpendSummary | None, error: Exception | None) -> None:
+    """Render internal pipeline spend below the public digest content."""
+    with st.expander("Pipeline spend", expanded=False):
+        if error is not None:
+            st.warning("Spend metrics unavailable; showing saved digests.")
+            return
+        _render_spend_metrics(summary)
+
+
 def main() -> None:
     st.title("Weekly digest")
     st.caption("Auto-generated summaries written by the weekly pipeline. Latest first.")
 
     source = get_data_source()
     spend_summary, spend_error = safe_llm_spend_summary(source)
-    if spend_error is not None:
-        st.warning("Spend metrics unavailable; showing saved digests.")
-    else:
-        _render_spend_metrics(spend_summary)
 
     digest_dir = get_config().digest_output_dir
     digest_dir.mkdir(parents=True, exist_ok=True)
@@ -60,6 +65,7 @@ def main() -> None:
             "(Sydney time): a short, sourced summary of the week's ANZ AI "
             "activity."
         )
+        _render_spend_panel(spend_summary, spend_error)
         render_footer()
         return
 
@@ -67,6 +73,7 @@ def main() -> None:
     pick = st.selectbox("Digest", options=options, index=0)
     chosen = next(f for f in files if f.stem == pick)
     st.markdown(chosen.read_text(encoding="utf-8"))
+    _render_spend_panel(spend_summary, spend_error)
 
     render_footer()
 

@@ -42,7 +42,7 @@ def main() -> None:
         )
 
     meta = derive_meta(all_companies)
-    state = render_sidebar(meta, default_countries=("AU", "NZ"))
+    state = render_sidebar(meta, default_countries=("AU", "NZ"), key_prefix="map_filters")
     render_sector_legend()
     companies = apply_filters(all_companies, state)
     on_map, off_map = split_geocoded(companies)

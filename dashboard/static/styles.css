@@ -122,6 +122,17 @@ code, pre, kbd, samp {
   text-transform: uppercase;
 }
 
+.aisw-sidebar-nav__section {
+  margin: 1.1rem 0 0.35rem 0.25rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid var(--aisw-border);
+  color: var(--aisw-text-subtle);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
 .aisw-sidebar-nav__link,
 .aisw-sidebar-nav__link:visited {
   display: block;
@@ -149,6 +160,10 @@ code, pre, kbd, samp {
   background: var(--aisw-accent-soft);
   border-color: rgba(244, 183, 64, 0.42);
   color: var(--aisw-accent-hover) !important;
+}
+
+.aisw-sidebar-nav__link--operations {
+  color: var(--aisw-text-subtle) !important;
 }
 
 /* Headings: editorial hierarchy, deliberate spacing */
