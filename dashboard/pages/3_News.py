@@ -23,11 +23,22 @@ render_page_chrome(title="AI Sector Watch: News", page_icon="📰")
 
 
 def main() -> None:
-    st.title("News")
-    st.caption(
-        "Chronological feed of relevant funding, launches, hires, and "
-        "partnerships from the past week's pipeline run."
-    )
+    title_cols = st.columns([5, 1])
+    with title_cols[0]:
+        st.title("News")
+        st.caption(
+            "Chronological feed of relevant funding, launches, hires, and "
+            "partnerships from the past week's pipeline run."
+        )
+    with title_cols[1], st.popover("Where do these come from", use_container_width=True):
+        st.markdown(
+            "Items are auto-extracted from a curated set of ANZ AI sources "
+            "every Monday morning (Sydney time), then linked to the "
+            "companies they mention.\n\n"
+            "**Headlines** open the original story in a new tab. "
+            "**Mentions** lists the companies the pipeline matched against "
+            "the index. The full source list lives in `docs/sources.md`."
+        )
 
     source = get_source()
     news = load_news(limit=100)

@@ -27,8 +27,19 @@ render_page_chrome(title="AI Sector Watch: Companies", page_icon="🏢")
 
 
 def main() -> None:
-    st.title("Companies")
-    st.caption("Every verified company in the index, filterable from the sidebar.")
+    title_cols = st.columns([5, 1])
+    with title_cols[0]:
+        st.title("Companies")
+        st.caption("Every verified company in the index, filterable from the sidebar.")
+    with title_cols[1], st.popover("How to use this directory", use_container_width=True):
+        st.markdown(
+            "**The table** lists every verified ANZ AI company with the data "
+            "the pipeline has gathered. Sortable by any column.\n\n"
+            "**Pick a company** from the dropdown below the table to see "
+            "the full profile: founders, total raised, valuation, "
+            "headcount, and the sources behind those numbers.\n\n"
+            "**Sidebar filters** narrow what is shown. Use Reset to clear them."
+        )
 
     source = get_source()
     all_companies = load_companies()

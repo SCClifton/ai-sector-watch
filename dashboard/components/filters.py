@@ -149,12 +149,14 @@ def render_sidebar(
             min_value=founded_min,
             max_value=founded_max,
             step=1,
+            help="Companies whose founded year falls outside this range are hidden.",
             key=keys["founded_year"],
         )
 
         name_query = st.text_input(
             "Search name",
             placeholder="e.g. Marqo",
+            help="Case-insensitive substring match against the company name.",
             key=keys["name_query"],
         )
 
