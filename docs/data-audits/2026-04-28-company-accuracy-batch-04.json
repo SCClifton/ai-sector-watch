@@ -1,0 +1,219 @@
+{
+  "generated_at": "2026-04-28T03:26:49.144945+00:00",
+  "dry_run": false,
+  "enrich": true,
+  "company_count": 9,
+  "proposed_update_count": 8,
+  "companies": [
+    {
+      "id": "ee67251c-a087-4ee9-a703-6e6c7abc2134",
+      "name": "Skedulo",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Skedulo is a deskless workforce management platform offering a Deskless Productivity Cloud that enhances scheduling, management, engagement, and communication for deskless workers across industries including healthcare, nonprofit, residential services, and telecommunications.",
+        "city": "San Francisco",
+        "country": "US",
+        "founders": [
+          "Marcel Thomas",
+          "Marcelo Bressan",
+          "Monika Bartoszek-Jaissanbayev",
+          "Paul Mansfield",
+          "Talgat Jaissanbayev",
+          "Yan Osorio",
+          "Matthew Fairhurst"
+        ],
+        "total_raised_usd": "75000000",
+        "total_raised_currency_raw": "USD 75M (Series C)",
+        "total_raised_as_of": "2021-07-07",
+        "total_raised_source_url": "https://www.preqin.com/data/profile/asset/skedulo-holdings--inc-/215570",
+        "headcount_estimate": 185,
+        "headcount_as_of": "2026-03-31",
+        "headcount_source_url": "https://tracxn.com/d/companies/skedulo/__DP6NqBCUzJS3y7NxwU3OlK7pQNO3ulefDtaMSZEanUA",
+        "profile_sources": [
+          "https://www.skedulo.com",
+          "https://www.preqin.com/data/profile/asset/skedulo-holdings--inc-/215570",
+          "https://tracxn.com/d/companies/skedulo/__DP6NqBCUzJS3y7NxwU3OlK7pQNO3ulefDtaMSZEanUA"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:23:23.738989+00:00"
+      },
+      "evidence_urls": [
+        "https://www.skedulo.com",
+        "https://www.preqin.com/data/profile/asset/skedulo-holdings--inc-/215570",
+        "https://tracxn.com/d/companies/skedulo/__DP6NqBCUzJS3y7NxwU3OlK7pQNO3ulefDtaMSZEanUA"
+      ]
+    },
+    {
+      "id": "328185f9-be5f-4d01-b43d-9dd989deb255",
+      "name": "Soul Machines",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Soul Machines is a pioneer in Experiential AI, empowering human-like Digital Workers to accelerate business efficiencies, personal learning and engagement - deploying truly human-like AI Agents into high-ROI roles with intelligent orchestration across the AI stack.",
+        "founders": [
+          "Mark Sagar",
+          "Greg Cross"
+        ],
+        "total_raised_usd": "225000000",
+        "total_raised_currency_raw": "~$225M (venture capital)",
+        "total_raised_as_of": "2025-02-05",
+        "total_raised_source_url": "https://www.nzherald.co.nz/business/ai-casualty-nz-founded-soul-machines-found-to-owe-at-least-196m/premium/DOQNL4WXIZFV5DJ24BPNQGXF3E",
+        "headcount_estimate": 47,
+        "headcount_as_of": "2026-03-31",
+        "headcount_source_url": "https://tracxn.com/d/companies/soulmachines/__aSGtZ7LnWNwOOwbM6pwVOQLgQcbDNv58_T6Dk_i6ywk",
+        "profile_sources": [
+          "https://www.soulmachines.com/about-soul-machines",
+          "https://www.nzherald.co.nz/business/ai-casualty-nz-founded-soul-machines-found-to-owe-at-least-196m/premium/DOQNL4WXIZFV5DJ24BPNQGXF3E",
+          "https://tracxn.com/d/companies/soulmachines/__aSGtZ7LnWNwOOwbM6pwVOQLgQcbDNv58_T6Dk_i6ywk"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:23:56.687323+00:00"
+      },
+      "evidence_urls": [
+        "https://www.soulmachines.com/about-soul-machines",
+        "https://www.nzherald.co.nz/business/ai-casualty-nz-founded-soul-machines-found-to-owe-at-least-196m/premium/DOQNL4WXIZFV5DJ24BPNQGXF3E",
+        "https://tracxn.com/d/companies/soulmachines/__aSGtZ7LnWNwOOwbM6pwVOQLgQcbDNv58_T6Dk_i6ywk"
+      ]
+    },
+    {
+      "id": "acc3b7b3-ef89-4679-b2d5-9eddf1b465a9",
+      "name": "Sourcegraph (origins)",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Sourcegraph is a code intelligence platform that gives humans and agents complete context to understand, oversee, and evolve large and complex codebases.",
+        "profile_sources": [
+          "https://sourcegraph.com"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:24:05.496221+00:00"
+      },
+      "evidence_urls": [
+        "https://sourcegraph.com"
+      ]
+    },
+    {
+      "id": "dc7e840a-b6b8-426f-a00e-57ef5fda3eeb",
+      "name": "SourseAI",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "SourseAI is an AI and machine learning company focused on content recommendations and predictive analytics, serving clients such as telecom operators and MVNOs with a platform that learns complex trends and seasonal patterns to predict business performance across KPIs, products, and audience types.",
+        "founders": [
+          "Tanya Hyams-Young"
+        ],
+        "profile_sources": [
+          "https://frequency.media/sca-invests-in-frequency",
+          "https://www.prnewswire.com/news-releases/lifecycle-launches-nexus-iq-at-mwc-telco-native-ai-turning-event-data-into-revenue-journeys-302701279.html"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:24:27.884356+00:00"
+      },
+      "evidence_urls": [
+        "https://frequency.media/sca-invests-in-frequency",
+        "https://www.prnewswire.com/news-releases/lifecycle-launches-nexus-iq-at-mwc-telco-native-ai-turning-event-data-into-revenue-journeys-302701279.html"
+      ]
+    },
+    {
+      "id": "69577313-6c02-4d76-82f5-80e5887bd887",
+      "name": "Spaceship",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Spaceship is an Australian investing platform offering investment and superannuation accounts, making it easy for everyday Australians to invest in their future through Spaceship Voyager, Spaceship Super, and US investing products.",
+        "founders": [
+          "Paul Bennetts"
+        ],
+        "profile_sources": [
+          "https://www.spaceship.com.au",
+          "https://www.investordaily.com.au/spaceship-cofounder-to-depart-new-boss-confirmed"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:25:26.159372+00:00"
+      },
+      "evidence_urls": [
+        "https://www.spaceship.com.au",
+        "https://www.investordaily.com.au/spaceship-cofounder-to-depart-new-boss-confirmed"
+      ]
+    },
+    {
+      "id": "ddb8da5f-f07c-4664-99c8-c3084b2aab18",
+      "name": "Tracksuit",
+      "discovery_status": "verified",
+      "updates": {
+        "summary": "Tracksuit is a brand-tracking platform for marketers, providing always-on brand measurement and AI-powered insights to help companies track and grow their brand.",
+        "founders": [
+          "Conor Archbold",
+          "Matthew Herbert"
+        ],
+        "total_raised_currency_raw": "AU$38M",
+        "total_raised_source_url": "https://www.bandt.com.au/tracksuit-raises-38m-co-founders-conor-archbold-matthew-herbert-become-ceo-cco",
+        "profile_sources": [
+          "https://gotracksuit.com",
+          "https://www.gotracksuit.com/us/about",
+          "https://www.gotracksuit.com/us/blog/posts/tracksuit-series-b-funding",
+          "https://www.bandt.com.au/tracksuit-raises-38m-co-founders-conor-archbold-matthew-herbert-become-ceo-cco"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:25:55.040270+00:00"
+      },
+      "evidence_urls": [
+        "https://gotracksuit.com",
+        "https://www.gotracksuit.com/us/about",
+        "https://www.gotracksuit.com/us/blog/posts/tracksuit-series-b-funding",
+        "https://www.bandt.com.au/tracksuit-raises-38m-co-founders-conor-archbold-matthew-herbert-become-ceo-cco"
+      ]
+    },
+    {
+      "id": "351c1553-7781-48ba-aa52-50699c4f0076",
+      "name": "Volt",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2019,
+        "summary": "VOLT AI is an AI-powered video analytics platform for physical security, transforming existing IP camera infrastructure into intelligent, proactive safety systems that detect weapons, fights, medical emergencies, and other threats in real-time.",
+        "city": "Bethesda",
+        "country": "US",
+        "founders": [
+          "Egor Olteanu",
+          "Dmitry Sokolowski"
+        ],
+        "profile_sources": [
+          "https://volt.ai/official-information-about-volt-ai",
+          "https://volt.ai"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:26:16.614979+00:00"
+      },
+      "evidence_urls": [
+        "https://volt.ai/official-information-about-volt-ai",
+        "https://volt.ai"
+      ]
+    },
+    {
+      "id": "9744b659-d173-4df6-98c1-79a3eb0f4e02",
+      "name": "Vxt",
+      "discovery_status": "verified",
+      "updates": {
+        "founded_year": 2019,
+        "summary": "VXT is a Christchurch-founded legaltech firm whose software manages calls, texts, and other communications for lawyers - using AI to transcribe and summarise exchanges and plug file notes into practice management software.",
+        "city": "Christchurch",
+        "founders": [
+          "Luke Campbell",
+          "Lucy Turner"
+        ],
+        "total_raised_currency_raw": "NZD $3.1M (seed $600K + pre-Series A $2.5M)",
+        "total_raised_source_url": "https://www.nzherald.co.nz/technology/christchurch-lawtech-firm-vxt-raises-25m-at-45m-valuation-with-silicon-valley-backing/4PY4UNZPF5AWDNFHUE5RRRJT2E",
+        "valuation_currency_raw": "NZD $45m",
+        "valuation_source_url": "https://www.nzherald.co.nz/technology/christchurch-lawtech-firm-vxt-raises-25m-at-45m-valuation-with-silicon-valley-backing/4PY4UNZPF5AWDNFHUE5RRRJT2E",
+        "headcount_estimate": 30,
+        "headcount_source_url": "https://www.vxt.ai/post/vxt-ceo-entrepreneurship-leadership-award-2025",
+        "profile_sources": [
+          "https://www.nzherald.co.nz/technology/christchurch-lawtech-firm-vxt-raises-25m-at-45m-valuation-with-silicon-valley-backing/4PY4UNZPF5AWDNFHUE5RRRJT2E",
+          "https://www.vxt.ai/post/vxt-ceo-entrepreneurship-leadership-award-2025"
+        ],
+        "profile_confidence": 1.0,
+        "profile_verified_at": "2026-04-28T03:26:49.143335+00:00"
+      },
+      "evidence_urls": [
+        "https://www.nzherald.co.nz/technology/christchurch-lawtech-firm-vxt-raises-25m-at-45m-valuation-with-silicon-valley-backing/4PY4UNZPF5AWDNFHUE5RRRJT2E",
+        "https://www.vxt.ai/post/vxt-ceo-entrepreneurship-leadership-award-2025"
+      ]
+    }
+  ]
+}
