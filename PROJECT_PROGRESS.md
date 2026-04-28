@@ -2,6 +2,21 @@
 
 Chronological log of milestones: public features, closed Now/Next issues, live changes, and public breakages. For routine fixes, the PR body is the record.
 
+## 2026-04-28 - Issue #49: Azure WebSockets for Streamlit
+
+**Shipped (codex/49-bug-enable-streamlit-websockets-on-azure):**
+- Documented the required Azure App Service WebSocket setting for the Streamlit browser session.
+- Added deployment smoke checks that verify `webSocketsEnabled` before relying on HTTP health.
+- Enabled WebSockets on the live Azure Web App after the issue was opened.
+
+**Tested:**
+- `az webapp config show -g ai-sector-watch -n ai-sector-watch --query webSocketsEnabled -o tsv`: `true`.
+- `curl -fsS https://aimap.cliftonfamily.co/_stcore/health`: `ok`.
+- Browser smoke: `/`, `/Map`, and `/Companies` render dashboard content.
+
+**Known limitations:**
+- None known.
+
 ## 2026-04-27 - Issue #40: Backfill Firecrawl enrichment
 
 **Shipped (codex/40-backfill-firecrawl-enrichment-for-existi):**
