@@ -18,13 +18,11 @@ interface Props {
   state: FilterState;
   meta: FilterMeta;
   onChange: (next: FilterState) => void;
-  visibleCount: number;
-  totalCount: number;
 }
 
-export function FilterBar({ state, meta, onChange, visibleCount, totalCount }: Props) {
+export function CompaniesFilterBar({ state, meta, onChange }: Props) {
   return (
-    <div className="absolute left-3 right-3 top-3 z-10 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface/95 px-3 py-2 shadow-lg backdrop-blur-md md:right-auto md:max-w-[760px]">
+    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface/60 px-3 py-2.5">
       <SearchInput
         value={state.nameQuery}
         onChange={(nameQuery) => onChange({ ...state, nameQuery })}
@@ -60,13 +58,11 @@ export function FilterBar({ state, meta, onChange, visibleCount, totalCount }: P
         }
       />
 
-      <div className="ml-auto flex items-center gap-2 pl-2">
-        <span className="hidden text-[11px] text-text-muted sm:inline">
-          <span className="font-semibold text-text">{visibleCount}</span>
-          <span> of {totalCount}</span>
-        </span>
-        {isFilterActive(state) && <ResetButton onClick={() => onChange(EMPTY_FILTERS)} />}
-      </div>
+      {isFilterActive(state) && (
+        <div className="ml-auto">
+          <ResetButton onClick={() => onChange(EMPTY_FILTERS)} />
+        </div>
+      )}
     </div>
   );
 }

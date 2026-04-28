@@ -1,17 +1,32 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { StubPage } from "@/components/StubPage";
+import { CompaniesDirectory } from "@/components/companies/CompaniesDirectory";
 
 export const metadata: Metadata = {
   title: "Companies",
+  description: "Every verified ANZ AI startup we track.",
 };
 
 export default function CompaniesPage() {
   return (
-    <StubPage
-      eyebrow="Browse"
-      title="Companies"
-      body="A searchable directory of every verified ANZ AI startup we track, with a detail layout for each profile. Stub for now: the prototype focuses on the map page first."
-    />
+    <Suspense fallback={<DirectoryShell />}>
+      <CompaniesDirectory />
+    </Suspense>
+  );
+}
+
+function DirectoryShell() {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-5 py-10">
+      <div>
+        <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-text-subtle">
+          Browse
+        </div>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-text sm:text-4xl">
+          Companies
+        </h1>
+      </div>
+    </section>
   );
 }
