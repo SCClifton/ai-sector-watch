@@ -105,7 +105,6 @@
       "Bash(sudo:*)",
       "Bash(curl:*)",
       "Bash(wget:*)",
-      "Bash(npm install:*)",
       "Bash(pip install:*)"
     ]
   }
