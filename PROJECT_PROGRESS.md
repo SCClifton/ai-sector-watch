@@ -15,6 +15,15 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-04-30: Dropped Founders From Public Profile
+
+- Removed the founders field from the public companies API and from the
+  click-on-company detail panels on the map and the company profile page.
+- Removed founders from the apply gate so future profile updates that include
+  it are rejected at validation time.
+- Kept the database column intact so the admin queue still shows founders for
+  human review of pending companies. No data loss.
+
 ### 2026-04-30: Rejected 16 Out-Of-Scope Companies
 
 - Removed 16 companies from the public map after a deep-research review found

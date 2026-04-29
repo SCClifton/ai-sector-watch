@@ -41,7 +41,6 @@ ALLOWED_UPDATE_FIELDS = {
     "founded_year",
     "summary",
     "evidence_urls",
-    "founders",
     "total_raised_usd",
     "total_raised_currency_raw",
     "total_raised_as_of",

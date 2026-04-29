@@ -83,13 +83,6 @@ export function CompanyProfile({ company }: Props) {
               </>
             )}
 
-            {company.founders.length > 0 && (
-              <div className="mt-6">
-                <Label>Founders</Label>
-                <p className="mt-2 text-[14px] text-text">{company.founders.join(", ")}</p>
-              </div>
-            )}
-
             {company.funding_events.length > 0 && (
               <div className="mt-6">
                 <Label>Funding history</Label>

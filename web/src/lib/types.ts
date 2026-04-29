@@ -24,7 +24,6 @@ export interface Company {
   stage: Stage | string | null;
   founded_year: number | null;
   summary: string | null;
-  founders: string[];
   total_raised_usd: number | null;
   total_raised_currency_raw: string | null;
   total_raised_as_of: string | null;
