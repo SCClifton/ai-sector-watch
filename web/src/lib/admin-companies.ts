@@ -26,20 +26,21 @@ export async function logAdminAction(
   companyId: string,
   status: DiscoveryStatus,
 ): Promise<void> {
-  // Audit log: ingest_events with kind='admin_action'. payload_hash uses
-  // company_id + status + epoch_ms to ensure idempotent inserts even if the
-  // same action lands twice (the unique index on (kind, payload_hash) will
-  // dedupe).
+  // Audit log: ingest_events with source_slug='admin_ui', kind='admin_action'.
+  // payload_hash bundles company_id + status + epoch_ms to keep each action
+  // distinct in time. The unique index on (source_slug, kind, payload_hash)
+  // dedupes if the same admin action lands twice.
   const payloadHash = `${companyId}:${status}:${Date.now()}`;
   await sql`
-    INSERT INTO ingest_events (kind, payload_hash, fetched_at, metadata)
+    INSERT INTO ingest_events (source_slug, kind, payload_hash, fetched_at, metadata)
     VALUES (
+      'admin_ui',
       'admin_action',
       ${payloadHash},
       NOW(),
-      jsonb_build_object('company_id', ${companyId}, 'status', ${status}, 'actor', 'admin_ui')
+      ${sql.json({ company_id: companyId, status, actor: "admin_ui" })}
     )
-    ON CONFLICT (kind, payload_hash) DO NOTHING
+    ON CONFLICT (source_slug, kind, payload_hash) DO NOTHING
   `;
 }
 
