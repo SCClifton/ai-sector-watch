@@ -93,25 +93,5 @@ def smartcompany_startups() -> RssSource:
     )
 
 
-def airtree_open_source_vc() -> RssSource:
-    return RssSource(
-        "airtree_open_source_vc",
-        "https://www.airtree.vc/open-source-vc/rss.xml",
-        kind="blog",
-    )
-
-
-def blackbird_blog() -> RssSource:
-    return RssSource("blackbird_blog", "https://www.blackbird.vc/blog/feed", kind="blog")
-
-
 def crunchbase_ai() -> RssSource:
     return RssSource("crunchbase_ai", "https://news.crunchbase.com/sections/ai/feed/")
-
-
-def yc_launches() -> RssSource:
-    return RssSource(
-        "yc_launches",
-        "https://www.ycombinator.com/launches/feed.atom",
-        kind="launches",
-    )

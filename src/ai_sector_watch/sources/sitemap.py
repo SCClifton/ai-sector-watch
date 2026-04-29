@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from urllib.parse import urlparse
 from xml.etree import ElementTree
 
 import httpx
@@ -83,6 +84,100 @@ def capital_brief() -> GoogleNewsSitemapSource:
     )
 
 
+class SitemapSource(SourceBase):
+    """Fetch a standard XML sitemap and emit one RawItem per matching URL."""
+
+    def __init__(
+        self,
+        slug: str,
+        url: str,
+        *,
+        kind: str = "news",
+        path_prefixes: tuple[str, ...] = (),
+    ) -> None:
+        super().__init__(slug=slug, kind=kind)
+        self.url = url
+        self.path_prefixes = path_prefixes
+
+    def _http_get(self) -> bytes:
+        with httpx.Client(timeout=DEFAULT_TIMEOUT, headers={"User-Agent": USER_AGENT}) as c:
+            response = c.get(self.url, follow_redirects=True)
+            response.raise_for_status()
+            return response.content
+
+    def fetch(self, *, limit: int | None = None) -> list[RawItem]:
+        """Fetch and parse the sitemap."""
+        body = self._http_get()
+        return parse_sitemap_bytes(
+            body,
+            slug=self.slug,
+            limit=limit,
+            path_prefixes=self.path_prefixes,
+        )
+
+
+def parse_sitemap_bytes(
+    body: bytes,
+    *,
+    slug: str,
+    limit: int | None = None,
+    path_prefixes: tuple[str, ...] = (),
+) -> list[RawItem]:
+    """Parse raw sitemap XML into RawItems."""
+    root = ElementTree.fromstring(body)
+    items: list[RawItem] = []
+    for url_node in root.findall("sm:url", SITEMAP_NS):
+        loc = _node_text(url_node, "sm:loc", SITEMAP_NS)
+        if not loc or not _path_matches(loc, path_prefixes):
+            continue
+        title = _title_from_url(loc)
+        if not title:
+            continue
+        items.append(
+            RawItem(
+                source_slug=slug,
+                url=loc,
+                title=title,
+                summary=None,
+                published_at=_parse_datetime(_node_text(url_node, "sm:lastmod", SITEMAP_NS)),
+                raw={},
+            )
+        )
+        if limit is not None and len(items) >= limit:
+            break
+    return items
+
+
+def airtree_open_source_vc() -> SitemapSource:
+    """Return the Airtree Open Source VC sitemap source."""
+    return SitemapSource(
+        "airtree_open_source_vc",
+        "https://www.airtree.vc/sitemap.xml",
+        kind="blog",
+        path_prefixes=("/open-source-vc/",),
+    )
+
+
+def blackbird_blog() -> SitemapSource:
+    """Return the Blackbird blog sitemap source."""
+    return SitemapSource(
+        "blackbird_blog",
+        "https://www.blackbird.vc/sitemap.xml",
+        kind="blog",
+        path_prefixes=("/blog/",),
+    )
+
+
+def yc_launches() -> SitemapSource:
+    """Return the YC launches sitemap source."""
+    return SitemapSource(
+        "yc_launches",
+        "https://www.ycombinator.com/launches/sitemap",
+        kind="launches",
+        path_prefixes=("/launches/",),
+    )
+
+
 def _node_text(
     node: ElementTree.Element | None, path: str, namespaces: dict[str, str]
 ) -> str | None:
@@ -102,3 +197,20 @@ def _parse_datetime(value: str | None) -> datetime | None:
         return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(UTC)
     except ValueError:
         return None
+
+
+def _path_matches(url: str, prefixes: tuple[str, ...]) -> bool:
+    if not prefixes:
+        return True
+    path = urlparse(url).path
+    return any(path.startswith(prefix) for prefix in prefixes)
+
+
+def _title_from_url(url: str) -> str:
+    slug = urlparse(url).path.rstrip("/").rsplit("/", maxsplit=1)[-1]
+    if not slug:
+        return ""
+    parts = slug.split("-", maxsplit=1)
+    if len(parts) == 2 and len(parts[0]) <= 4 and parts[0].isalnum():
+        slug = parts[1]
+    return slug.replace("-", " ").strip().title()
