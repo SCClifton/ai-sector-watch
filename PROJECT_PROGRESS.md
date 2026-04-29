@@ -15,6 +15,14 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-04-30: Rejected 16 Out-Of-Scope Companies
+
+- Removed 16 companies from the public map after a deep-research review found
+  them defunct, headquartered outside Australia or New Zealand, or not
+  AI-focused.
+- Added `scripts/apply_company_rejections.py` for repeatable, dry-run-by-default
+  rejection apply, with per-row audit captured in `ingest_events`.
+
 ### 2026-04-29: Custom Web Dashboard
 
 - Replaced the initial Streamlit-first public experience with a custom Next.js
