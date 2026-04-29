@@ -44,13 +44,18 @@ export function formatHeadcount(c: Company): string | null {
   return null;
 }
 
+export function formatFundingAmount(event: FundingEvent | null): string | null {
+  if (!event) return null;
+  return formatUsd(event.amount_usd) ?? event.currency_raw;
+}
+
 export function formatLatestFunding(event: FundingEvent | null): string | null {
   if (!event) return null;
   const bits: string[] = [];
   const stageLabel = formatStage(event.stage);
   if (stageLabel) bits.push(stageLabel);
   if (event.announced_on) bits.push(event.announced_on.slice(0, 10));
-  const amount = formatUsd(event.amount_usd);
+  const amount = formatFundingAmount(event);
   if (amount) bits.push(amount);
   return bits.length > 0 ? bits.join(", ") : null;
 }

@@ -44,6 +44,22 @@ function buildFunding(row: Row): FundingEvent | null {
   };
 }
 
+function buildFundingEvents(value: unknown): FundingEvent[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is Row => item !== null && typeof item === "object")
+    .map((item) => ({
+      id: String(item.id),
+      announced_on: toIsoDate(item.announced_on),
+      stage: (item.stage as string | null) ?? null,
+      amount_usd: toNumber(item.amount_usd),
+      currency_raw: (item.currency_raw as string | null) ?? null,
+      lead_investor: (item.lead_investor as string | null) ?? null,
+      investors: toStringArray(item.investors),
+      source_url: (item.source_url as string | null) ?? null,
+    }));
+}
+
 function buildCompany(row: Row): Company {
   return {
     id: String(row.id),
@@ -77,6 +93,7 @@ function buildCompany(row: Row): Company {
     profile_sources: toStringArray(row.profile_sources),
     profile_verified_at: toIsoDate(row.profile_verified_at),
     latest_funding_event: buildFunding(row),
+    funding_events: buildFundingEvents(row.funding_events),
   };
 }
 
@@ -91,7 +108,8 @@ export async function listVerifiedCompanies(): Promise<Company[]> {
         fe.currency_raw AS latest_funding_currency_raw,
         fe.lead_investor AS latest_funding_lead_investor,
         fe.investors AS latest_funding_investors,
-        fe.source_url AS latest_funding_source_url
+        fe.source_url AS latest_funding_source_url,
+        COALESCE(funding.funding_events, '[]'::jsonb) AS funding_events
     FROM companies c
     LEFT JOIN LATERAL (
         SELECT id, announced_on, stage, amount_usd, currency_raw,
@@ -101,6 +119,23 @@ export async function listVerifiedCompanies(): Promise<Company[]> {
         ORDER BY announced_on DESC NULLS LAST, created_at DESC
         LIMIT 1
     ) fe ON TRUE
+    LEFT JOIN LATERAL (
+        SELECT jsonb_agg(
+            jsonb_build_object(
+                'id', id,
+                'announced_on', announced_on,
+                'stage', stage,
+                'amount_usd', amount_usd,
+                'currency_raw', currency_raw,
+                'lead_investor', lead_investor,
+                'investors', investors,
+                'source_url', source_url
+            )
+            ORDER BY announced_on DESC NULLS LAST, created_at DESC
+        ) AS funding_events
+        FROM funding_events
+        WHERE company_id = c.id
+    ) funding ON TRUE
     WHERE c.discovery_status = 'verified'
     ORDER BY c.name
   `;
