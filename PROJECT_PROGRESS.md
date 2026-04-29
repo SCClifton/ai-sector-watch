@@ -554,3 +554,40 @@ Chronological log of milestones: public features, closed Now/Next issues, live c
 - The production GHCR image does not exist yet, so the dashboard URL currently returns `HTTP/2 503`. Issue #6 (deploy.yml: build container, push to GHCR, deploy) closes this. Once that runs, the configured image resolves and the dashboard serves on port 8000.
 - OIDC federated credential and the `AZURE_CLIENT_ID` / `TENANT_ID` / `SUBSCRIPTION_ID` GitHub secrets (deployment.md "OIDC federated credential" section) are deferred to whichever issue wires `deploy.yml` end-to-end.
 - Custom domain `aimap.cliftonfamily.co` and TLS binding are deferred to issue #7 (DNS).
+
+## 2026-04-29 - Cut Through import and funding display
+
+**Shipped:**
+- Added a reviewed Cut Through Quarterly import workflow:
+  `scripts/discover_cut_through_reports.py`,
+  `scripts/extract_cut_through_report.py`, and
+  `scripts/apply_cut_through_import.py`.
+- Generated reviewed artifacts under `docs/data-audits/` for selected Cut
+  Through Quarterly reports and applied the approved payload to Supabase.
+- Added `funding_events` to the public companies API and company profile pages.
+  Detail pages now show latest funding and sourced funding history.
+- Removed `Total raised` and `Headcount` from the public company directory.
+  The directory now focuses on name, stage, founded year, sectors, and
+  location.
+
+**Live data changes:**
+- 19 funding events upserted from reviewed Cut Through artifacts.
+- 12 companies inserted as `auto_discovered_pending_review`.
+- 2 verified companies received reviewed stage updates:
+  Relevance AI to `series_b_plus`, Lyrebird Health to `series_a`.
+- Affected live rows were snapshotted before apply at
+  `docs/data-audits/snapshots/20260429T010852Z-cut-through-import-snapshot.json`.
+
+**Tested:**
+- `pytest -q`: pass, with two live Supabase tests skipped when local
+  `SUPABASE_DB_URL` was unset.
+- `ruff check .`: pass.
+- `black --check .`: pass.
+- `npm run lint`: pass for the web app.
+- `npm run build`: pass for the web app.
+- GitHub Actions `pytest`: pass on `main`.
+- Azure deploy: pass after the web funding-history merge.
+- Live smoke: `https://aimap.cliftonfamily.co/companies` renders without the
+  `Total raised` or `Headcount` columns, and
+  `https://aimap.cliftonfamily.co/companies/relevance-ai` shows founded year,
+  latest funding, and funding history.

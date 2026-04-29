@@ -110,6 +110,56 @@ Safety gates:
 - Live apply refuses unresolved `op://` Supabase references.
 - Collaboration opportunities stay in the audit report until reviewed.
 
+## Importing Cut Through reports
+
+Use this when Cut Through Quarterly reports should be used to improve company
+stage and funding history. This workflow is deliberately separate from the
+weekly pipeline: discovery and extraction write review artifacts first, and
+Supabase changes happen only through an explicit apply step.
+
+Discover available quarterly reports:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/discover_cut_through_reports.py --quarterly-only --output docs/data-audits/YYYY-MM-DD-cut-through-reports.json
+```
+
+Extract one or two selected PDFs into review artifacts:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/extract_cut_through_report.py --report-url https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026 --artifact-suffix 1q-2026
+```
+
+Review the generated Markdown, CSV, and JSON under `docs/data-audits/`. Keep
+rows as `needs_review` until the company and funding event are acceptable for
+the live dataset. For bare `$` report amounts, keep the value in
+`currency_raw` and leave `amount_usd` empty unless the report explicitly states
+the currency.
+
+Dry-run the reviewed payload:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/apply_cut_through_import.py docs/data-audits/YYYY-MM-DD-cut-through-import-reviewed.json
+```
+
+Apply only after review:
+
+```bash
+op run --account my.1password.com --env-file=.env.local -- python scripts/apply_cut_through_import.py docs/data-audits/YYYY-MM-DD-cut-through-import-reviewed.json --apply
+```
+
+Safety gates:
+- Discovery and extraction never write Supabase.
+- Apply defaults to dry run and refuses unresolved `op://` Supabase references.
+- A snapshot of affected company and funding rows is written under
+  `docs/data-audits/snapshots/` before any live write.
+- New companies are inserted only as `auto_discovered_pending_review`.
+- Existing verified companies can receive reviewed funding events and reviewed
+  stage updates.
+- The public app continues to rely on `discovery_status = 'verified'`, so
+  pending companies stay out of the public map and company directory.
+- Keep runs bounded. Start with one or two reports to control Firecrawl and LLM
+  spend.
+
 ## Cost guardrails
 
 - The pipeline hard-caps Anthropic spend per run via `ANTHROPIC_BUDGET_USD_PER_RUN` (default $2). When the cap is hit mid-run, the orchestrator records a `partial` ingest event and writes a digest of what it managed to do.

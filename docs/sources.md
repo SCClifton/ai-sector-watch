@@ -21,6 +21,16 @@ To add a source: create a new module under `src/ai_sector_watch/sources/` that s
 | huggingface_papers | https://huggingface.co/api/daily_papers | API JSON | Medium | Custom JSON fetcher, not RSS |
 | yc_launches | https://www.ycombinator.com/launches/feed.atom | Launches | Low |  |
 
+## Reviewed manual sources
+
+These sources are not part of the weekly automated pipeline. They are operator
+workflows that produce reviewed artifacts first, then require an explicit apply
+step before any Supabase writes.
+
+| Slug | URL | Type | ANZ relevance | Notes |
+|---|---|---|---|---|
+| cut_through_quarterly | https://www.cutthrough.com/insights | Quarterly VC reports | High | Manual reviewed import via `scripts/discover_cut_through_reports.py`, `scripts/extract_cut_through_report.py`, and `scripts/apply_cut_through_import.py`. PDF parsing uses Firecrawl. New companies are inserted only as `auto_discovered_pending_review`; verified rows can receive reviewed stage or funding updates. |
+
 ## Conventions
 
 - One fetch per source per weekly run.
