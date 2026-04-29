@@ -92,13 +92,6 @@ export function CompanyDetail({ company, onClose }: Props) {
           {latestFunding && <Cell label="Latest funding" value={latestFunding} span={2} />}
         </dl>
 
-        {company.founders.length > 0 && (
-          <div className="mt-5">
-            <Label>Founders</Label>
-            <p className="mt-1 text-[13px] text-text">{company.founders.join(", ")}</p>
-          </div>
-        )}
-
         {company.sector_tags.length > 0 && (
           <div className="mt-5">
             <Label>Sectors</Label>
