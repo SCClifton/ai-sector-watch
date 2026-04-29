@@ -26,11 +26,11 @@ This document is the protocol that prevents each one.
 
 ### 0. One worktree per issue (the foundation)
 
-This is the most important rule. Every active issue gets its **own git worktree** — a dedicated directory on disk with its own working tree, sharing the same `.git/` so commits, branches, and refs are unified.
+This is the most important rule. Every active issue gets its **own git worktree**  -  a dedicated directory on disk with its own working tree, sharing the same `.git/` so commits, branches, and refs are unified.
 
 ```
 ~/Documents/Projects/
-├── AI-Sector-Watch/                      # main worktree (Sam's reading/coordination tree)
+├── AI-Sector-Watch/                      # main worktree for reading and coordination
 ├── AI-Sector-Watch-1-supabase/           # one agent on issue #1
 ├── AI-Sector-Watch-2-wire-op-refs/       # another agent on issue #2
 ├── AI-Sector-Watch-4-pipeline/           # another agent on issue #4
@@ -39,7 +39,7 @@ This is the most important rule. Every active issue gets its **own git worktree*
 
 Why per-issue (not per-tool):
 - Maps 1:1 to the unit of work. Easier to reason about.
-- Sam can fan out N parallel agent sessions on N issues.
+- The maintainer can fan out N parallel agent sessions on N issues.
 - The directory disappears when the PR merges (`scripts/finish_issue.sh <#>`), so the filesystem stays clean.
 - A `cd` into the worktree is the entire context switch.
 
@@ -61,7 +61,7 @@ The Project board's **Workflow** single-select field tracks lifecycle:
 
 - `Backlog` - not started
 - `In Progress` - actively being worked on
-- `In Review` - PR is open, waiting on Sam
+- `In Review` - PR is open, waiting on maintainer review
 - `Done` - merged
 
 Move the card on every transition. `In Progress` is the human-readable signal that pairs with the issue assignment.
@@ -136,7 +136,7 @@ The `main` branch has the following rules:
 - **No branch deletion.**
 - **Linear history** required.
 
-Sam can override in genuine emergencies (admin bypass), but should not as a matter of course. If you find yourself wanting to bypass, stop and ask.
+The maintainer can override in genuine emergencies, but should not as a matter of course. If you find yourself wanting to bypass, stop and ask.
 
 ### 6. Live infrastructure coordination
 
@@ -148,13 +148,13 @@ Code changes are tracked by branches and PRs. **Live operations** (Azure provisi
 
 This is a soft signal but it works because there are at most a few AI tools and one human in the loop. If we ever scale beyond that, we'll add a real lock service.
 
-The "stop and ask before" gates in [AGENTS.md §4](../AGENTS.md#4-stop-and-ask-before) still apply on top of this — coordination is *additional* to those, not a replacement.
+The "stop and ask before" gates in [AGENTS.md §4](../AGENTS.md#4-stop-and-ask-before) still apply on top of this  -  coordination is *additional* to those, not a replacement.
 
 ### 7. PR review and merge
 
 - Use the PR template ([.github/pull_request_template.md](../.github/pull_request_template.md)). The "Multi-agent coordination" checklist is mandatory.
-- AIs do not auto-merge. **Sam is the merger.**
-- Sam squash-merges by default to keep `main` history linear and readable.
+- AIs do not auto-merge. **A human maintainer merges.**
+- Squash-merge by default to keep `main` history linear and readable.
 - After merge, the AI runs `scripts/finish_issue.sh <#>` to remove the worktree and delete the local branch, then moves the Project card to `Done`.
 
 ---
@@ -184,7 +184,7 @@ git commit -m "feat(dashboard): add sector legend to map page"
 git push -u origin HEAD
 gh pr create --draft --title "[#8] Add sector colour legend" --body "Closes #8"
 
-# 5. When ready: mark the PR ready, ping Sam, get it merged.
+# 5. When ready: mark the PR ready, ping the maintainer, get it merged.
 
 # 6. Cleanup after merge:
 cd ~/Documents/Projects/AI-Sector-Watch
@@ -241,7 +241,7 @@ git reset --hard HEAD~1             # remove the commit (only if not pushed)
 git cherry-pick <SHA>
 ```
 
-If the commit was already pushed, leave it; ask Sam.
+If the commit was already pushed, leave it; ask the maintainer.
 
 ### "I lost track of where I am"
 
@@ -267,7 +267,7 @@ The default mapping (tweak per task):
 | Idiomatic Python refactor in a known surface | Codex |
 | Adding a Pydantic schema or a fixture-driven test | Codex |
 | Writing or reviewing prose / docs | Either; Claude Code is slightly better at long prose |
-| Anything that creates or rotates a credential | Sam (never the AI) |
+| Anything that creates or rotates a credential | Maintainer (never the AI) |
 
 When in doubt, the issue itself can tag the suggested tool: add a label like `for-claude-code` or `for-codex`. AIs check the label as part of the pre-flight.
 
@@ -278,7 +278,7 @@ When in doubt, the issue itself can tag the suggested tool: add a label like `fo
 The protocol covers code in this repo. It does **not** cover:
 
 - LLM provider conversation history (that's per-tool, not shared).
-- Local development state on Sam's laptop outside the repo.
-- Secrets or 1Password items (only Sam touches these directly; AIs go through `op run`).
+- Local development state outside the repo.
+- Secrets or secret-manager items. AIs use `op run` or the approved wrapper.
 
 If you find yourself wanting a coordination mechanism the protocol doesn't have, propose it as an issue with the `infra` label.

@@ -1,4 +1,4 @@
-"""Companies page — filterable list view of every verified company."""
+"""Companies page  -  filterable list view of every verified company."""
 
 from __future__ import annotations
 
@@ -40,8 +40,6 @@ def _render_company_detail(company: Company) -> None:
             meta_bits.append(f"**Stage:** {company.stage}")
         if company.founded_year:
             meta_bits.append(f"**Founded:** {company.founded_year}")
-        if company.discovery_source:
-            meta_bits.append(f"**Source:** {company.discovery_source}")
         if meta_bits:
             st.write(" | ".join(meta_bits))
         if company.sector_tags:
@@ -64,10 +62,6 @@ def _render_company_detail(company: Company) -> None:
             )
         for label, value in profile_bits:
             st.write(f"**{label}:** {value}")
-        if company.profile_sources:
-            st.write("**Profile sources:**")
-            for source_url in company.profile_sources[:5]:
-                st.markdown(f"- [{source_url}]({source_url})")
         if company.summary:
             st.write(company.summary)
 
@@ -83,7 +77,7 @@ def main() -> None:
             "the pipeline has gathered. Sortable by any column.\n\n"
             "**Pick a company** from the dropdown below the table to see "
             "the full profile: founders, total raised, valuation, "
-            "headcount, and the sources behind those numbers.\n\n"
+            "headcount, and summary.\n\n"
             "**Sidebar filters** narrow what is shown. Use Reset to clear them."
         )
 

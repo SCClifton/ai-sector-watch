@@ -1,62 +1,56 @@
-# Ingestion Sources
+# Source Policy
 
-Single source of truth for the RSS, API, and feed endpoints the weekly pipeline pulls from.
+This project uses public information to discover and enrich candidate companies.
+The public repository documents the policy and source families, not a complete
+operational map of every endpoint, query, or reviewed extract.
 
-To add a source: create a new module under `src/ai_sector_watch/sources/` that subclasses `SourceBase`, append a row to the table below, and register it in `src/ai_sector_watch/pipeline/weekly.py`. Sources outside this list must not be added without updating the PRD.
+## Source Families
 
-## Active sources (v0)
+| Family | Use | Public-safety note |
+|---|---|---|
+| News and startup publications | Identify company announcements and ecosystem activity. | Use feed or sitemap interfaces where available. |
+| Research and model-release signals | Detect AI-native activity connected to ANZ companies. | Filter heavily for relevance before review. |
+| Investor and ecosystem publications | Cross-check funding, stage, and company metadata. | Reviewed imports only. Raw extracts stay local. |
+| Company-owned pages | Confirm website, location, summary, and operating context. | Store concise facts, not copied page text. |
 
-| Slug | URL | Type | ANZ relevance | Notes |
-|---|---|---|---|---|
-| arxiv_cs_ai | https://export.arxiv.org/rss/cs.AI | Papers | Medium | RSS via feedparser |
-| arxiv_cs_lg | https://export.arxiv.org/rss/cs.LG | Papers | Medium | RSS via feedparser |
-| arxiv_cs_ro | https://export.arxiv.org/rss/cs.RO | Papers | Medium | RSS via feedparser |
-| techcrunch_ai | https://techcrunch.com/category/artificial-intelligence/feed/ | News | Low | Global; filter for ANZ mentions |
-| startup_daily_au | https://www.startupdaily.net/feed/ | News | High |  |
-| smartcompany_startups | https://www.smartcompany.com.au/startupsmart/feed/ | News | High |  |
-| capital_brief | https://www.capitalbrief.com/sitemap/news.xml | News sitemap | High | Google News sitemap advertised in robots.txt; native RSS not published as of 2026-04-27 |
-| airtree_open_source_vc | https://www.airtree.vc/open-source-vc/rss.xml | Blog | High |  |
-| blackbird_blog | https://www.blackbird.vc/blog/feed | Blog | High |  |
-| crunchbase_ai | https://news.crunchbase.com/sections/ai/feed/ | News | Medium |  |
-| huggingface_papers | https://huggingface.co/api/daily_papers | API JSON | Medium | Custom JSON fetcher, not RSS |
-| yc_launches | https://www.ycombinator.com/launches/feed.atom | Launches | Low |  |
+## Inclusion Rules
 
-## Reviewed manual sources
+- Only use sources that are publicly accessible and permitted by their access
+  terms.
+- Prefer feeds, APIs, and sitemaps over HTML scraping.
+- Respect `robots.txt` and rate limits.
+- Store source-derived facts in concise form. Do not commit copied articles,
+  reports, pages, or full extraction payloads.
+- Keep raw review artifacts under ignored local paths.
+- New sources must be reviewed in a PR before they are used in production.
 
-These sources are not part of the weekly automated pipeline. They are operator
-workflows that produce reviewed artifacts first, then require an explicit apply
-step before any Supabase writes.
+## Pipeline Rules
 
-| Slug | URL | Type | ANZ relevance | Notes |
-|---|---|---|---|---|
-| cut_through_quarterly | https://www.cutthrough.com/insights | Quarterly VC reports | High | Manual reviewed import via `scripts/discover_cut_through_reports.py`, `scripts/extract_cut_through_report.py`, and `scripts/apply_cut_through_import.py`. PDF parsing uses Firecrawl. New companies are inserted only as `auto_discovered_pending_review`; verified rows can receive reviewed stage or funding updates. |
+- One fetch per active source per weekly run.
+- Each fetched item is keyed by a stable hash so reruns are idempotent.
+- Per-source failures are logged and skipped without failing the whole run.
+- New candidates are inserted as `auto_discovered_pending_review`.
+- Public surfaces must read only `discovery_status = 'verified'`.
 
-## Conventions
+## Adding A Source
 
-- One fetch per source per weekly run.
-- `httpx` with a 30s timeout and a polite `User-Agent`: `ai-sector-watch/0.1 (+aimap.cliftonfamily.co)`.
-- Idempotent: store a hash of each item; skip if seen.
-- Per-source failures must not abort the run; log and continue.
-- Never bypass `robots.txt`; never scrape HTML when an RSS or API feed exists.
+1. Add or update the relevant source implementation under
+   `src/ai_sector_watch/sources/`.
+2. Register it in `default_sources()` in
+   `src/ai_sector_watch/pipeline/weekly.py`.
+3. Add a fixture-driven test under `tests/`.
+4. Update this policy if the new source changes the source family, review
+   process, or public-safety constraints.
 
-## Enrichment
+## Reviewed Imports
 
-Discovery sources tell the pipeline that a company exists; enrichment fills in
-authoritative fields directly from the company's own website. Enrichment runs
-after LLM validation and before classification, only when a website URL is
-known for the candidate.
+Manual imports are separate from the weekly pipeline. They must write local
+review artifacts first and require an explicit apply step before any database
+write.
 
-| Provider | URL | Trigger | Cost | Notes |
-|---|---|---|---|---|
-| Firecrawl | https://www.firecrawl.dev/ | Per new ANZ candidate with a known website | ~8 credits per enrichment | Implementation: `src/ai_sector_watch/extraction/firecrawl_client.py`. Uses `/map` to find company pages, basic markdown scrapes for homepage/about/team pages, `/search` for recent coverage, then `ClaudeClient.structured_call` with the `CompanyFacts` schema. Firecrawl JSON mode is not used in the pipeline path. |
+Rules for reviewed imports:
 
-Skipped when:
-
-- The candidate already exists in the DB (idempotent).
-- No website is known (LLM validator did not return one).
-- The per-run credit cap (`FIRECRAWL_BUDGET_CREDITS_PER_RUN`, default 200) is reached.
-
-Successful enrichment responses are cached on disk under
-`data/local/firecrawl_cache/` so reruns do not re-spend credits. The cache key
-includes the `CompanyFacts` JSON-Schema hash so a schema change forces a fresh
-enrichment.
+- Extraction does not write to Supabase.
+- Apply commands default to dry run.
+- Snapshots and raw review artifacts stay local and ignored.
+- New companies remain pending until promoted by a reviewer.

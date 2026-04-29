@@ -21,7 +21,7 @@ def _load_env_once() -> None:
 
     `.env.local` exists for two purposes: (1) hold non-secret config the same
     way `.env.template` does, and (2) document op:// references that get
-    resolved at process start by `op run --account my.1password.com --env-file=.env.local -- <cmd>`.
+    resolved at process start by `op run --env-file=.env.local -- <cmd>`.
 
     If a Python process imports `ai_sector_watch.config` *without* having
     been invoked via `op run`, the values are still raw `op://` strings.

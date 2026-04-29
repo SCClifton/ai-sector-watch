@@ -6,7 +6,7 @@ filters to report cards, and emits structured report metadata that can be
 handed to `scripts/extract_cut_through_report.py`.
 
 Usage:
-    op run --account my.1password.com --env-file=.env.local -- python scripts/discover_cut_through_reports.py --quarter 1 --year 2026
+    op run --env-file=.env.local -- python scripts/discover_cut_through_reports.py --quarter 1 --year 2026
     python scripts/discover_cut_through_reports.py --http-fallback --output docs/data-audits/cut-through-reports.json
 """
 
@@ -106,8 +106,7 @@ class FirecrawlInsightsScraper:
             api_key = os.environ.get("FIRECRAWL_API_KEY")
             if not api_key:
                 raise RuntimeError(
-                    "FIRECRAWL_API_KEY not set; run via op run --account my.1password.com "
-                    "--env-file=.env.local -- ..."
+                    "FIRECRAWL_API_KEY not set; run via " "op run --env-file=.env.local -- ..."
                 )
             self._client = Firecrawl(api_key=api_key)
         return self._client

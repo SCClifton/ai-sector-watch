@@ -6,8 +6,8 @@ Firecrawl enrichment path to collect public-source facts, then writes three
 operator artifacts: Markdown summary, CSV findings, and proposed update JSON.
 
 Usage:
-    op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --dry-run
-    op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --enrich --limit 5
+    op run --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --dry-run
+    op run --env-file=.env.local -- python scripts/audit_company_profiles.py --enrich --limit 5
 """
 
 from __future__ import annotations

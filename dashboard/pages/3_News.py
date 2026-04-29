@@ -1,4 +1,4 @@
-"""News page — chronological feed of relevant news linked to companies."""
+"""News page  -  chronological feed of relevant news linked to companies."""
 
 from __future__ import annotations
 

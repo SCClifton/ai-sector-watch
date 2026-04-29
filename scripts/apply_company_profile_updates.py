@@ -3,11 +3,11 @@
 
 The input is the JSON artifact emitted by `scripts/audit_company_profiles.py`.
 By default this script validates and prints a dry-run summary. Live writes
-require `--apply` and resolved 1Password environment values.
+require `--apply` and resolved secret-manager environment values.
 
 Usage:
     python scripts/apply_company_profile_updates.py docs/data-audits/2026-04-28-company-accuracy.json
-    op run --account my.1password.com --env-file=.env.local -- python scripts/apply_company_profile_updates.py docs/data-audits/2026-04-28-company-accuracy.json --apply
+    op run --env-file=.env.local -- python scripts/apply_company_profile_updates.py docs/data-audits/2026-04-28-company-accuracy.json --apply
 """
 
 from __future__ import annotations

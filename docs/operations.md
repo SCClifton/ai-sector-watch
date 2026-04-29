@@ -1,189 +1,138 @@
 # Operations
 
-## Weekly cron
+This is the public-safe operations guide. Keep credentials, raw extracts,
+review artifacts, account identifiers, and incident details out of this file.
 
-`.github/workflows/weekly.yml` runs the ingestion pipeline every Sunday at 18:00 UTC (Monday morning Sydney). It also accepts `workflow_dispatch` so you can run on demand from the Actions UI or via `gh workflow run weekly.yml`.
+## Weekly Pipeline
+
+`.github/workflows/weekly.yml` runs the ingestion pipeline on a weekly schedule
+and also supports manual dispatch.
 
 The workflow:
-1. Installs the package with the `dev` extra (no Streamlit needed for the cron).
-2. Runs `scripts/verify_setup.py --apply-schema` (idempotent: makes sure tables exist).
-3. Runs `scripts/run_weekly_pipeline.py --limit 25`.
-4. Commits any new digests under `data/digests/` back to `main`.
-5. Uploads the JSON summary as an artifact (kept for 30 days).
 
-Required GitHub repo secrets:
-- `ANTHROPIC_API_KEY`
-- `SUPABASE_DB_URL`
-- `ADMIN_PASSWORD` (only for the deploy workflow)
-- `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` (deploy workflow OIDC)
+1. Installs the Python package.
+2. Verifies setup and applies idempotent schema changes.
+3. Runs `scripts/run_weekly_pipeline.py` with a bounded item limit.
+4. Commits generated public digests under `data/digests/`.
+5. Uploads the pipeline summary as a short-lived workflow artifact.
 
-For v0 these are mirrored from 1Password into repo secrets manually. For v1 we'll switch to `1password/load-secrets-action@v2`.
+Required production secrets are configured in GitHub Actions. Do not document
+secret values, account IDs, tenant IDs, or private vault paths in this repo.
 
-## Manual run
+## Manual Run
 
-Local:
+Local dry run:
 
 ```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
+op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5 --dry-run
 ```
 
-Production (via gh):
+Local write run:
+
+```bash
+op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
+```
+
+Production dispatch:
 
 ```bash
 gh workflow run weekly.yml -f limit=10
-```
-
-Watch a run:
-
-```bash
 gh run watch
 ```
 
-## Backfilling enrichment
+Use small limits first. Do not run unbounded source, enrichment, or LLM jobs
+from a development environment.
 
-Use this when existing verified companies need to be refreshed through the
-current Firecrawl multi-source enrichment path. The script reads verified
-companies from Supabase, processes the newest founded years first, skips rows
-with `enriched_at` inside the recent window, and preserves human-curated fields
-unless `--force-overwrite` is passed.
+## Review Artifacts
 
-Start with a dry run capped at 5 companies:
+Company audits, enrichment reviews, manual import extracts, and pre-write
+snapshots are local operator artifacts. They may contain copied source text,
+contact details, evidence URLs, and intermediate model output.
+
+Rules:
+
+- Write review artifacts under `docs/data-audits/` or another ignored local
+  path.
+- Do not commit generated audit CSV, JSON, Markdown, snapshots, or copied
+  source material.
+- Commit only code, tests, public-safe summaries, and final public digests.
+
+## Company Profile Audits
+
+Use profile audits when the live dataset needs a reviewed accuracy pass. The
+audit script reads from Supabase and writes local artifacts only.
+
+Start with a dry run:
 
 ```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 5 --dry-run
+op run --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --dry-run
 ```
 
-Then run a small live batch:
+Run a small enriched batch only after checking estimated cost:
 
 ```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 5
+op run --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --enrich
 ```
 
-Defaults:
-- `--max-age-years 10`: includes companies founded in the last 10 years plus
-  unknown founded years.
-- `--skip-if-newer-than-days 30`: rerunning the same batch inside 30 days is a
-  no-op for company rows.
-- `--limit` is unlimited by default, but use `--limit 5` first to inspect cost
-  and output before a larger run.
-
-Safety gates:
-- Do not use `--force-overwrite` for more than 10 companies without Sam's review.
-- Do not backfill more than 100 companies in one live run without Sam's review.
-- The JSON summary at the end reports processed rows, updated rows, recent
-  skips, Firecrawl credits used, LLM calls, timestamps, and errors.
-
-## Auditing company profiles
-
-Use this when the live dataset needs a reviewed accuracy pass across every
-company status. The audit script reads Supabase, writes Markdown/CSV/JSON
-artifacts under `docs/data-audits/`, and never writes live rows.
-
-Start with a read-only dry run:
+Apply approved updates explicitly:
 
 ```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --dry-run
-```
-
-Run a small enriched batch after checking the estimated Firecrawl credits:
-
-```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 5 --enrich
-```
-
-Resume later batches without overwriting earlier artifacts:
-
-```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/audit_company_profiles.py --limit 15 --offset 15 --artifact-suffix batch-02 --enrich
-```
-
-After reviewing the generated JSON, apply approved updates explicitly:
-
-```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/apply_company_profile_updates.py docs/data-audits/YYYY-MM-DD-company-accuracy.json --apply
+op run --env-file=.env.local -- python scripts/apply_company_profile_updates.py docs/data-audits/YYYY-MM-DD-company-accuracy.json --apply
 ```
 
 Safety gates:
-- `--enrich` requires `--limit` so an operator cannot accidentally run a large
-  paid scrape.
-- The apply script defaults to dry run and writes only with `--apply`.
-- Live apply refuses unresolved `op://` Supabase references.
-- Collaboration opportunities stay in the audit report until reviewed.
 
-## Importing Cut Through reports
+- `--enrich` requires `--limit`.
+- Apply scripts default to dry run.
+- Live apply refuses unresolved secret references.
+- Large live batches need human review before running.
 
-Use this when Cut Through Quarterly reports should be used to improve company
-stage and funding history. This workflow is deliberately separate from the
-weekly pipeline: discovery and extraction write review artifacts first, and
-Supabase changes happen only through an explicit apply step.
+## Reviewed Imports
 
-Discover available quarterly reports:
+Manual source imports improve company metadata and funding history. They are
+deliberately separate from the weekly pipeline.
 
-```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/discover_cut_through_reports.py --quarterly-only --output docs/data-audits/YYYY-MM-DD-cut-through-reports.json
-```
+Typical flow:
 
-Extract one or two selected PDFs into review artifacts:
+1. Discover candidate source material into a local ignored artifact.
+2. Extract selected material into local Markdown, CSV, and JSON.
+3. Review rows and keep uncertain entries marked for review.
+4. Dry-run the reviewed payload.
+5. Apply only after review.
 
-```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/extract_cut_through_report.py --report-url https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026 --artifact-suffix 1q-2026
-```
+Rules:
 
-Review the generated Markdown, CSV, and JSON under `docs/data-audits/`. Keep
-rows as `needs_review` until the company and funding event are acceptable for
-the live dataset. For bare `$` report amounts, keep the value in
-`currency_raw` and leave `amount_usd` empty unless the report explicitly states
-the currency.
-
-Dry-run the reviewed payload:
-
-```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/apply_cut_through_import.py docs/data-audits/YYYY-MM-DD-cut-through-import-reviewed.json
-```
-
-Apply only after review:
-
-```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/apply_cut_through_import.py docs/data-audits/YYYY-MM-DD-cut-through-import-reviewed.json --apply
-```
-
-Safety gates:
 - Discovery and extraction never write Supabase.
-- Apply defaults to dry run and refuses unresolved `op://` Supabase references.
-- A snapshot of affected company and funding rows is written under
-  `docs/data-audits/snapshots/` before any live write.
+- Apply defaults to dry run.
+- Affected-row snapshots stay local and ignored.
 - New companies are inserted only as `auto_discovered_pending_review`.
-- Existing verified companies can receive reviewed funding events and reviewed
-  stage updates.
-- The public app continues to rely on `discovery_status = 'verified'`, so
-  pending companies stay out of the public map and company directory.
-- Keep runs bounded. Start with one or two reports to control Firecrawl and LLM
-  spend.
+- Existing verified companies may receive reviewed metadata updates.
+- Public pages continue to rely on `discovery_status = 'verified'`.
 
-## Cost guardrails
+## Cost Guardrails
 
-- The pipeline hard-caps Anthropic spend per run via `ANTHROPIC_BUDGET_USD_PER_RUN` (default $2). When the cap is hit mid-run, the orchestrator records a `partial` ingest event and writes a digest of what it managed to do.
-- Successful LLM responses are cached on disk under `data/local/claude_cache/` keyed by `(model, system, prompt, schema_class)`. CI runs see a cold cache; local development reruns are free after the first call.
-- Firecrawl enrichment is hard-capped per run via `FIRECRAWL_BUDGET_CREDITS_PER_RUN` (default 200 credits, ~25 candidates at 8 credits each). Each enrichment pre-flights the full 8-credit estimate before dispatching. When the cap is hit, enrichment short-circuits to an empty `CompanyFacts` and the rest of the run continues.
-- Successful Firecrawl enrichment responses are cached on disk under `data/local/firecrawl_cache/` keyed by `(website, company_name, json_schema_hash)`. The schema hash means a `CompanyFacts` schema change forces a fresh enrichment on the next run.
-- The pipeline JSON summary (`scripts/run_weekly_pipeline.py`) reports `firecrawl_credits_used`, `firecrawl_calls`, and `firecrawl_cache_hits` alongside Anthropic spend so spend is observable from cron logs.
+- Anthropic spend is capped per run by `ANTHROPIC_BUDGET_USD_PER_RUN`.
+- Enrichment spend is capped per run by `FIRECRAWL_BUDGET_CREDITS_PER_RUN`.
+- Successful local responses are cached under `data/local/`.
+- Pipeline summaries report LLM spend and enrichment usage.
+
+Do not raise caps or run large live batches without review.
 
 ## Rollback
 
 If a weekly run writes bad data:
-- The data is in Supabase, not the repo. To revert a single run, find its `ingest_events` row by date and use the linked `news_items` to identify writes.
-- For a full reset, drop and reapply the schema:
-  ```sql
-  DROP TABLE IF EXISTS news_items, funding_events, companies, ingest_events CASCADE;
-  DROP TYPE IF EXISTS discovery_status, company_stage, news_kind;
-  ```
-  Then re-run `python scripts/seed_companies.py`.
 
-## On-call
+1. Find the relevant `ingest_events` row by timestamp.
+2. Use linked records to identify affected writes.
+3. Prefer targeted correction over a full reset.
 
-This is a single-operator project. Sam owns it. There is no on-call rotation.
+For a full development reset, drop and reapply the schema, then reseed from
+reviewed seed data. Do not run destructive production operations without human
+approval.
 
-## Known operational quirks
+## Known Operational Notes
 
-- Supabase pooler connections occasionally fail on the first attempt. The DB client retries 6 times with exponential backoff; you'll see warnings in the logs but the run should still succeed.
-- Streamlit on Azure Web App for Containers needs `--server.headless true --server.address 0.0.0.0` and the right port (matches `WEBSITES_PORT` config). See `docs/deployment.md`.
+- Database pooler connections can fail on the first attempt. The DB client
+  retries with exponential backoff.
+- The production dashboard is the Next.js app under `web/`.
+- The legacy Streamlit app remains in `dashboard/` during the migration window.

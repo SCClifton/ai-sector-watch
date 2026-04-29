@@ -1,7 +1,7 @@
 // GET /api/health
 // Lightweight liveness probe for Azure App Service health checks and uptime
 // monitoring. Returns 200 with a small JSON payload. Does NOT touch the
-// database — keep it fast and dependency-free.
+// database  -  keep it fast and dependency-free.
 
 import { NextResponse } from "next/server";
 

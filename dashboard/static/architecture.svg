@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1120 500">
   <title id="title">AI Sector Watch architecture</title>
-  <desc id="desc">GitHub Actions fetches public sources, runs the weekly pipeline, writes to Supabase, and the Streamlit dashboard reads verified records.</desc>
+  <desc id="desc">A scheduled pipeline reviews public signals, sends candidates to review, writes verified records to Supabase, and serves the public dashboard.</desc>
   <defs>
     <style>
       .bg { fill: #0B0F14; }
@@ -24,28 +24,28 @@
   <rect class="bg" width="1120" height="500" rx="8" />
 
   <rect class="box" x="420" y="24" width="280" height="82" />
-  <text class="title" x="560" y="60" text-anchor="middle">GitHub Actions cron</text>
-  <text class="body" x="560" y="84" text-anchor="middle">Sunday 18:00 UTC</text>
+  <text class="title" x="560" y="60" text-anchor="middle">Scheduled pipeline</text>
+  <text class="body" x="560" y="84" text-anchor="middle">weekly review cadence</text>
 
   <rect class="source" x="48" y="178" width="230" height="112" />
-  <text class="title" x="163" y="218" text-anchor="middle">Public sources</text>
-  <text class="body" x="163" y="246" text-anchor="middle">RSS, arXiv, Hugging Face</text>
-  <text class="body" x="163" y="270" text-anchor="middle">and startup news</text>
+  <text class="title" x="163" y="218" text-anchor="middle">Public signals</text>
+  <text class="body" x="163" y="246" text-anchor="middle">news, research, company</text>
+  <text class="body" x="163" y="270" text-anchor="middle">and ecosystem activity</text>
 
   <rect class="box" x="356" y="148" width="408" height="174" />
   <text class="title" x="560" y="186" text-anchor="middle">weekly_pipeline.py</text>
-  <text class="body" x="398" y="222">1. fetch every source</text>
-  <text class="body" x="398" y="248">2. LLM extracts company mentions</text>
-  <text class="body" x="398" y="274">3. validate, classify, and geocode</text>
-  <text class="body" x="398" y="300">4. upsert pending records, news, and digest</text>
+  <text class="body" x="398" y="222">1. review candidate activity</text>
+  <text class="body" x="398" y="248">2. validate ANZ relevance</text>
+  <text class="body" x="398" y="274">3. classify candidate records</text>
+  <text class="body" x="398" y="300">4. send new records to review</text>
 
   <rect class="box" x="420" y="378" width="280" height="82" />
   <text class="title" x="560" y="414" text-anchor="middle">Supabase Postgres</text>
   <text class="body" x="560" y="438" text-anchor="middle">companies, news, funding, ingest</text>
 
   <rect class="box" x="812" y="378" width="260" height="82" />
-  <text class="title" x="942" y="414" text-anchor="middle">Streamlit dashboard</text>
-  <text class="body" x="942" y="438" text-anchor="middle">Azure App Service</text>
+  <text class="title" x="942" y="414" text-anchor="middle">Public dashboard</text>
+  <text class="body" x="942" y="438" text-anchor="middle">verified records only</text>
 
   <path class="line" d="M560 106 V142" />
   <path class="line" d="M278 234 H348" />

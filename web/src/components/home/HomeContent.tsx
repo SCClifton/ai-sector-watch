@@ -33,7 +33,7 @@ export function HomeContent() {
         if (!cancelled) setCompanies(data.companies);
       })
       .catch(() => {
-        // Silent fallback: stats show "—".
+        // Silent fallback: stats show " - ".
       });
     return () => {
       cancelled = true;
