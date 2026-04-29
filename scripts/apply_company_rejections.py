@@ -19,7 +19,6 @@ import logging
 import os
 import sys
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -44,8 +43,10 @@ class RejectSummary:
     candidates_seen: int = 0
     rejected: int = 0
     skipped_non_rejection: int = 0
+    not_found: int = 0
     errors: list[str] = field(default_factory=list)
     rejected_ids: list[str] = field(default_factory=list)
+    not_found_ids: list[str] = field(default_factory=list)
 
 
 def _load_payload(path: Path) -> dict[str, Any]:
@@ -104,7 +105,15 @@ def run_apply(*, input_path: Path, apply: bool) -> RejectSummary:
         supabase_db.apply_schema(conn)
         for company in candidates:
             company_id = str(company["id"])
-            supabase_db.set_company_status(conn, company_id, "rejected")
+            rowcount = supabase_db.set_company_status(conn, company_id, "rejected")
+            if rowcount == 0:
+                summary.not_found += 1
+                summary.not_found_ids.append(company_id)
+                summary.errors.append(
+                    f"company id {company_id} ({company.get('name')!r}) not found; "
+                    "no row updated and no audit row written"
+                )
+                continue
             supabase_db.insert_ingest_event(
                 conn,
                 source_slug=ADMIN_SOURCE,
@@ -114,7 +123,6 @@ def run_apply(*, input_path: Path, apply: bool) -> RejectSummary:
                     "name": company.get("name"),
                     "notes": company.get("notes"),
                     "evidence_urls": company.get("evidence_urls", []),
-                    "applied_at": datetime.now(UTC).isoformat(),
                 },
             )
             summary.rejected += 1
