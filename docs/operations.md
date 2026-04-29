@@ -43,6 +43,32 @@ gh run watch
 Use small limits first. Do not run unbounded source, enrichment, or LLM jobs
 from a development environment.
 
+## GitHub Actions Secret Check
+
+If `weekly.yml` fails in `Verify setup` with empty `ANTHROPIC_API_KEY` or
+`SUPABASE_DB_URL`, check the failed job log first:
+
+```bash
+gh run view <run-id> --log-failed
+gh secret list
+```
+
+If the secret names exist but the workflow still receives empty values, repair
+the existing Actions secrets from the approved local secret source:
+
+```bash
+op run --env-file=.env.local -- sh -c 'printf %s "$ANTHROPIC_API_KEY" | gh secret set ANTHROPIC_API_KEY'
+op run --env-file=.env.local -- sh -c 'printf %s "$SUPABASE_DB_URL" | gh secret set SUPABASE_DB_URL'
+```
+
+Run this only after maintainer approval. It updates shared repository settings.
+Then dispatch a bounded check:
+
+```bash
+gh workflow run weekly.yml -f limit=1
+gh run watch --exit-status
+```
+
 ## Review Artifacts
 
 Company audits, enrichment reviews, manual import extracts, and pre-write

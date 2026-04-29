@@ -23,8 +23,12 @@ from ai_sector_watch.sources.huggingface_papers import (
 )
 from ai_sector_watch.sources.rss import RssSource, parse_feed_bytes
 from ai_sector_watch.sources.sitemap import (
+    airtree_open_source_vc,
+    blackbird_blog,
     capital_brief,
     parse_google_news_sitemap_bytes,
+    parse_sitemap_bytes,
+    yc_launches,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -113,6 +117,57 @@ def test_capital_brief_factory_uses_news_sitemap() -> None:
     assert source.slug == "capital_brief"
     assert source.kind == "news"
     assert source.url == "https://www.capitalbrief.com/sitemap/news.xml"
+
+
+def test_parse_sitemap_bytes_extracts_matching_urls() -> None:
+    body = b"""<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <url>
+        <loc>https://www.blackbird.vc/blog/investment-notes-nextwork</loc>
+        <lastmod>2026-04-29</lastmod>
+      </url>
+      <url>
+        <loc>https://www.blackbird.vc/team/example-person</loc>
+        <lastmod>2026-04-29</lastmod>
+      </url>
+    </urlset>
+    """
+
+    items = parse_sitemap_bytes(
+        body,
+        slug="blackbird_blog",
+        path_prefixes=("/blog/",),
+    )
+
+    assert len(items) == 1
+    assert items[0].title == "Investment Notes Nextwork"
+    assert items[0].url == "https://www.blackbird.vc/blog/investment-notes-nextwork"
+    assert items[0].source_slug == "blackbird_blog"
+    assert items[0].published_at is not None
+
+
+def test_parse_sitemap_bytes_drops_yc_launch_codes_from_titles() -> None:
+    body = b"""<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <url>
+        <loc>https://www.ycombinator.com/launches/Q8P-zolvo-ai-that-automates-servicing</loc>
+      </url>
+    </urlset>
+    """
+
+    items = parse_sitemap_bytes(body, slug="yc_launches")
+
+    assert len(items) == 1
+    assert items[0].title == "Zolvo Ai That Automates Servicing"
+
+
+def test_stale_feed_factories_use_current_sitemaps() -> None:
+    sources = [airtree_open_source_vc(), blackbird_blog(), yc_launches()]
+    assert [(s.slug, s.kind, s.url) for s in sources] == [
+        ("airtree_open_source_vc", "blog", "https://www.airtree.vc/sitemap.xml"),
+        ("blackbird_blog", "blog", "https://www.blackbird.vc/sitemap.xml"),
+        ("yc_launches", "launches", "https://www.ycombinator.com/launches/sitemap"),
+    ]
 
 
 def test_arxiv_factories_have_distinct_slugs() -> None:
