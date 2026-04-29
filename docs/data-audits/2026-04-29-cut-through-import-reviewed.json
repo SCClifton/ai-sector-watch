@@ -1,0 +1,968 @@
+{
+  "schema_version": "cut_through_import.v1",
+  "generated_at": "2026-04-29T01:07:32.981950+00:00",
+  "dry_run": false,
+  "review_policy": {
+    "funding_events": "Selected high-confidence AI funding rows, plus existing verified AI Sector Watch companies with explicit report funding evidence.",
+    "company_candidates": "New companies are inserted only as auto_discovered_pending_review. Existing verified companies receive only explicit stage updates.",
+    "skipped": "Low-confidence rows, non-AI rows, broad software rows, and 2Q 2024 zero-confidence funding rows were left out of this apply payload."
+  },
+  "reports": [
+    {
+      "title": "Cut Through Quarterly 1Q 2026",
+      "publication_date": "2026-04-28",
+      "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026",
+      "pdf_url": "https://drive.google.com/file/d/1imi3x0m7rMDpIzt7S0bBHEfSagZTQvZ-/view",
+      "pdf_download_url": "https://drive.google.com/uc?export=download&id=1imi3x0m7rMDpIzt7S0bBHEfSagZTQvZ-",
+      "quarter": 1,
+      "year": 2026,
+      "summary": "Australian venture capital funding report for 3Q 2025"
+    },
+    {
+      "title": "Cut Through Quarterly 1Q 2025",
+      "publication_date": "2025-04-15",
+      "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2025",
+      "pdf_url": "https://drive.google.com/file/d/1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf/view",
+      "pdf_download_url": "https://drive.google.com/uc?export=download&id=1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf",
+      "quarter": 1,
+      "year": 2025,
+      "summary": null
+    },
+    {
+      "title": "Cut Through Quarterly 2Q 2025",
+      "publication_date": "2025-07-08",
+      "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+      "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+      "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+      "quarter": 2,
+      "year": 2025,
+      "summary": null
+    },
+    {
+      "title": "Cut Through Quarterly 3Q 2025",
+      "publication_date": "2025-10-14",
+      "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+      "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+      "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+      "quarter": 3,
+      "year": 2025,
+      "summary": null
+    },
+    {
+      "title": "Cut Through Quarterly 3Q 2024",
+      "publication_date": "2024-10-09",
+      "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+      "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+      "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+      "quarter": 3,
+      "year": 2024,
+      "summary": null
+    }
+  ],
+  "extraction": {
+    "source_artifacts": [
+      "2026-04-29-cut-through-import.json",
+      "2026-04-29-cut-through-import-1q-2025.json",
+      "2026-04-29-cut-through-import-2q-2025.json",
+      "2026-04-29-cut-through-import-3q-2025.json",
+      "2026-04-29-cut-through-import-3q-2024.json"
+    ],
+    "review_notes": []
+  },
+  "funding_events": [
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Advanced Navigation",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2026-03-31",
+      "date_precision": "quarter",
+      "stage": "series_b_plus",
+      "amount_usd": null,
+      "currency_raw": "$158M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 1Q 2026",
+        "publication_date": "2026-04-28",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026",
+        "pdf_url": "https://drive.google.com/file/d/1imi3x0m7rMDpIzt7S0bBHEfSagZTQvZ-/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1imi3x0m7rMDpIzt7S0bBHEfSagZTQvZ-",
+        "page_number": 11,
+        "source_quote": "Hardware, robotics & sensors $158M Series C ... Advanced Navigation - Builds AI-enabled navigation and autonomous systems for defence and industrial applications."
+      },
+      "confidence": 0.0,
+      "notes": "Series C. Bare $ sign used - currency not explicitly stated as USD. Valuation cited as A$1.5B (new unicorn). AI-enabled navigation and autonomous systems for defence and industrial applications."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Neara",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2026-03-31",
+      "date_precision": "quarter",
+      "stage": "series_b_plus",
+      "amount_usd": null,
+      "currency_raw": "$100M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 1Q 2026",
+        "publication_date": "2026-04-28",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026",
+        "pdf_url": "https://drive.google.com/file/d/1imi3x0m7rMDpIzt7S0bBHEfSagZTQvZ-/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1imi3x0m7rMDpIzt7S0bBHEfSagZTQvZ-",
+        "page_number": 11,
+        "source_quote": "AI models & data infrastructure $100M Strategic ... Neara - Provides critical infrastructure modelling software used by utilities to simulate, predict and manage grid resilience."
+      },
+      "confidence": 0.0,
+      "notes": "Strategic round. Bare $ sign - currency not explicitly stated as USD. Valuation cited as A$1.1B (new unicorn). Software for infrastructure modelling; AI-enabled product."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Lorikeet",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-03-31",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$14M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 1Q 2025",
+        "publication_date": "2025-04-15",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf",
+        "page_number": 23,
+        "source_quote": "Lorikeet | AI / Big Data | $14M | Series A"
+      },
+      "confidence": 0.95,
+      "notes": "Listed in largest deals table under AI / Big Data sector."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Springboards AI",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-03-31",
+      "date_precision": "quarter",
+      "stage": "seed",
+      "amount_usd": null,
+      "currency_raw": "$5M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 1Q 2025",
+        "publication_date": "2025-04-15",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf",
+        "page_number": 23,
+        "source_quote": "Springboards AI | AI / Big Data | $5M | Seed"
+      },
+      "confidence": 0.95,
+      "notes": "Listed in largest deals table under AI / Big Data sector."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Harrison.ai",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-03-31",
+      "date_precision": "quarter",
+      "stage": "series_b_plus",
+      "amount_usd": "112000000",
+      "currency_raw": "US$112m",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 1Q 2025",
+        "publication_date": "2025-04-15",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-1q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1Bp4owdfmRWz2is_h_1fm5S9Mh0io-WHf",
+        "page_number": 9,
+        "source_quote": "Dimitry Tran, co-founder of Harrison.ai, outline how the Australian clinical AI startup is accelerating its US expansion after completing a US$112m Series C capital raise."
+      },
+      "confidence": 0.95,
+      "notes": "Explicitly stated as Series C and US$112m. Amount in USD confirmed by 'US$112m' text. Stage mapped to series_b_plus as Series C."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Relevance AI",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-06-30",
+      "date_precision": "quarter",
+      "stage": "series_b_plus",
+      "amount_usd": null,
+      "currency_raw": "$37M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Relevance AI Artificial Intelligence / Big Data $37M Series B"
+      },
+      "confidence": 0.95,
+      "notes": "Listed in largest deals table as Series B. Sector: Artificial Intelligence / Big Data."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Gridsight",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-06-30",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$8M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Gridsight Artificial Intelligence / Big Data $8M Series A"
+      },
+      "confidence": 0.95,
+      "notes": "Listed in largest deals table. Sector: Artificial Intelligence / Big Data."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Springboards AI",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-06-30",
+      "date_precision": "quarter",
+      "stage": "seed",
+      "amount_usd": null,
+      "currency_raw": "$5M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Springboards AI Artificial Intelligence / Big Data $5M Seed"
+      },
+      "confidence": 0.95,
+      "notes": "Listed in largest deals table. Sector: Artificial Intelligence / Big Data."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Unleash Live",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-06-30",
+      "date_precision": "quarter",
+      "stage": "series_b_plus",
+      "amount_usd": null,
+      "currency_raw": "$17M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Unleash Live Artificial Intelligence / Big Data $17M Series B"
+      },
+      "confidence": 0.95,
+      "notes": "Listed in largest deals table. Sector: Artificial Intelligence / Big Data."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Lyrebird Health",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-06-30",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$12M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Lyrebird Health Healthtech $12M Series A"
+      },
+      "confidence": 0.88,
+      "notes": "Lyrebird Health is an AI-enabled clinical documentation / healthtech company. Featured as a visual callout in the report."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Lorikeet",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-09-30",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$54M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Lorikeet AI / Big Data $54M Series A"
+      },
+      "confidence": 0.92,
+      "notes": "Listed in largest deals table as AI/Big Data, Series A. Bare $ used - no explicit AUD/USD marker."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Brainfish",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-09-30",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$10M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Brainfish AI / Big Data $10M Pre-Series A"
+      },
+      "confidence": 0.9,
+      "notes": "Listed as 'Pre-Series A' in the table; mapped to series_a as closest available stage. Bare $ - no explicit currency."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Firmus Technologies",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-09-30",
+      "date_precision": "quarter",
+      "stage": null,
+      "amount_usd": null,
+      "currency_raw": "$330M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Firmus Technologies Hardware / Robotics / IOT $330M Unknown ... It's no surprise the newest Australian unicorn, Firmus, came from within the AI stack."
+      },
+      "confidence": 0.92,
+      "notes": "Stage listed as Unknown. Described as Australia's newest unicorn and explicitly noted as 'from within the AI stack' / AI infrastructure. Bare $ - no explicit currency."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Andromeda Robotics",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-09-30",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$23M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Andromeda Robotics Hardware / Robotics / IOT $23M Series A"
+      },
+      "confidence": 0.85,
+      "notes": "Robotics company; AI relevance flagged for manual review. Cover page also references 'Andromeda - Announced a Series A round in Q3 2025'. Bare $ - no explicit currency."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Optain",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2025-09-30",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$26M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Optain (Previously Eyetelligence) Biotech / MedTech $26M Series A"
+      },
+      "confidence": 0.8,
+      "notes": "Previously known as Eyetelligence - name implies AI/computer-vision eye diagnostics; flagged for manual review. Bare $ - no explicit currency. Reviewed alias: report row uses Optain (Previously Eyetelligence)."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Redactive AI",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2024-09-30",
+      "date_precision": "quarter",
+      "stage": "seed",
+      "amount_usd": null,
+      "currency_raw": "$12M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2024",
+        "publication_date": "2024-10-09",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+        "page_number": 22,
+        "source_quote": "Redactive AI Artificial Intelligence / Big Data $12M Seed"
+      },
+      "confidence": 0.95,
+      "notes": "Explicitly listed in 30 Largest Deals of Q3 2024 table. Also mentioned on p.15 as a notable large Seed deal widening average/median gap."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Kismet",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2024-09-30",
+      "date_precision": "quarter",
+      "stage": "seed",
+      "amount_usd": null,
+      "currency_raw": "$32.5M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2024",
+        "publication_date": "2024-10-09",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+        "page_number": 15,
+        "source_quote": "The most significant outlier deals were at the Seed stage in Q3, with Kismet announcing a topped-up Seed round of $32.5M"
+      },
+      "confidence": 0.9,
+      "notes": "Topped-up Seed round of $32.5M - fifth-largest Seed round on record per report. Sector not specified; included for manual AI-relevance review. Reviewed because Kismet is already a verified AI Sector Watch company."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Rich Data Corporation",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2024-09-30",
+      "date_precision": "quarter",
+      "stage": "series_b_plus",
+      "amount_usd": null,
+      "currency_raw": "$9M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2024",
+        "publication_date": "2024-10-09",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+        "page_number": 22,
+        "source_quote": "Rich Data Corporation Fintech $9M Series B"
+      },
+      "confidence": 0.9,
+      "notes": "Series B; Fintech. Rich Data Corporation is a known AI-driven credit decisioning platform."
+    },
+    {
+      "reviewed_action": "upsert",
+      "company_name": "Tactiq",
+      "country": "AU",
+      "is_ai_related": true,
+      "announced_on": "2024-09-30",
+      "date_precision": "quarter",
+      "stage": "series_a",
+      "amount_usd": null,
+      "currency_raw": "$11M",
+      "lead_investor": null,
+      "investors": [],
+      "source_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2024",
+        "publication_date": "2024-10-09",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+        "page_number": 22,
+        "source_quote": "Tactiq Design / Publishing / Collaboration $11M Series A"
+      },
+      "confidence": 0.9,
+      "notes": "Series A; AI-powered meeting transcription/notes tool. Vanta supporter page also references Tactiq as a customer."
+    }
+  ],
+  "company_candidates": [
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Lorikeet",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "agents_and_orchestration",
+        "ai_infrastructure"
+      ],
+      "stage": "series_a",
+      "founded_year": null,
+      "summary": "AI/Big Data company that raised a Series A of $54M in Q3 2025.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Lorikeet AI / Big Data $54M Series A"
+      },
+      "confidence": 0.92,
+      "notes": "Listed in largest deals table. AI-first company."
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Springboards AI",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "agents_and_orchestration"
+      ],
+      "stage": "seed",
+      "founded_year": null,
+      "summary": "AI company; raised Seed round of $5M in Q2 2025.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Springboards AI Artificial Intelligence / Big Data $5M Seed"
+      },
+      "confidence": 0.9,
+      "notes": null
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "TrueState",
+      "country": "AU",
+      "website": "https://truestate.io",
+      "city": null,
+      "sector_tags": [
+        "agents_and_orchestration",
+        "ai_infrastructure"
+      ],
+      "stage": "seed",
+      "founded_year": null,
+      "summary": "AI-first data platform replacing manual data work with intelligent automation. Uses agents and copilots for dashboards, models and analytics. Founded by ex-McKinsey and CSIRO engineers.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 26,
+        "source_quote": "TrueState is the AI-first data platform replacing slow, manual data work with intelligent automation. Built for speed and scale, TrueState combines agents and copilots to help overstretched data teams deliver dashboards, models, automations and insights in days, not months."
+      },
+      "confidence": 0.85,
+      "notes": "Listed as AI Partner/supporter of the report. No funding round disclosed; included as company candidate for AI Sector Watch. Stage is an estimate only - not stated in report."
+    },
+    {
+      "reviewed_action": "update_verified_fields",
+      "company_name": "Relevance AI",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "Artificial Intelligence / Big Data",
+        "Enterprise Software"
+      ],
+      "stage": "series_b_plus",
+      "founded_year": null,
+      "summary": "AI platform company; raised Series B of $37M in Q2 2025.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Relevance AI Artificial Intelligence / Big Data $37M Series B"
+      },
+      "confidence": 0.95,
+      "notes": null
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Gridsight",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "ai_for_climate_energy",
+        "ai_infrastructure"
+      ],
+      "stage": "series_a",
+      "founded_year": null,
+      "summary": "AI/Big Data company; raised Series A of $8M in Q2 2025.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Gridsight Artificial Intelligence / Big Data $8M Series A"
+      },
+      "confidence": 0.9,
+      "notes": null
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Unleash Live",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "ai_infrastructure",
+        "edge_and_on_device"
+      ],
+      "stage": "series_b_plus",
+      "founded_year": null,
+      "summary": "AI/Big Data company; raised Series B of $17M in Q2 2025.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 21,
+        "source_quote": "Unleash Live Artificial Intelligence / Big Data $17M Series B"
+      },
+      "confidence": 0.9,
+      "notes": null
+    },
+    {
+      "reviewed_action": "update_verified_fields",
+      "company_name": "Lyrebird Health",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "Healthtech",
+        "Artificial Intelligence"
+      ],
+      "stage": "series_a",
+      "founded_year": null,
+      "summary": "AI-enabled healthtech company; raised Series A of $12M in Q2 2025. Featured as a visual callout in report.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 2Q 2025",
+        "publication_date": "2025-07-08",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-2q-2025",
+        "pdf_url": "https://drive.google.com/file/d/1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1WoA9E5eD5eScLthmUbJ5ELPPsJ3aeXve",
+        "page_number": 18,
+        "source_quote": "Lyrebird Health - Announced a Series A round in Q2 2025"
+      },
+      "confidence": 0.88,
+      "notes": null
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Brainfish",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "agents_and_orchestration",
+        "vertical_sales_marketing"
+      ],
+      "stage": "series_a",
+      "founded_year": null,
+      "summary": "AI/Big Data company that raised a Pre-Series A round of $10M in Q3 2025.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Brainfish AI / Big Data $10M Pre-Series A"
+      },
+      "confidence": 0.9,
+      "notes": "Listed as Pre-Series A in report."
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Firmus Technologies",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "ai_infrastructure",
+        "ai_for_climate_energy"
+      ],
+      "stage": "mature",
+      "founded_year": null,
+      "summary": "Australia's newest unicorn following a $330M raise in Q3 2025. Described as operating 'within the AI stack', specifically AI infrastructure, data centres and energy optimisation.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "It's no surprise the newest Australian unicorn, Firmus, came from within the AI stack. There are lots of startups building SaaS 2.0 at the app layer, but our real opportunity is deeper in the infrastructure layer, in data centres and energy optimisation."
+      },
+      "confidence": 0.92,
+      "notes": "Stage in table listed as Unknown; classified mature given unicorn status. Explicit AI-stack reference."
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Andromeda Robotics",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "robotics_household",
+        "robotics_industrial"
+      ],
+      "stage": "series_a",
+      "founded_year": null,
+      "summary": "Robotics/hardware company that raised a $23M Series A in Q3 2025.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Andromeda Robotics Hardware / Robotics / IOT $23M Series A"
+      },
+      "confidence": 0.85,
+      "notes": "AI relevance requires manual review - robotics may incorporate AI/ML."
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Optain",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "vertical_healthcare",
+        "ai_for_science_biology"
+      ],
+      "stage": "series_a",
+      "founded_year": null,
+      "summary": "MedTech company previously known as Eyetelligence that raised a $26M Series A in Q3 2025. Prior name implies AI-based eye diagnostics.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2025",
+        "publication_date": "2025-10-14",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2025",
+        "pdf_url": "https://drive.google.com/file/d/19699C7qFeLOKmG-ToDMD6SEAstCabylL/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=19699C7qFeLOKmG-ToDMD6SEAstCabylL",
+        "page_number": 20,
+        "source_quote": "Optain (Previously Eyetelligence) Biotech / MedTech $26M Series A"
+      },
+      "confidence": 0.8,
+      "notes": "Former name 'Eyetelligence' strongly implies AI/computer-vision diagnostics; AI relevance flagged for manual review."
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Redactive AI",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "ai_infrastructure",
+        "vertical_security"
+      ],
+      "stage": "seed",
+      "founded_year": null,
+      "summary": "AI/Big Data company that raised a notable $12M Seed round in Q3 2024, one of the largest Seed deals of the quarter.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2024",
+        "publication_date": "2024-10-09",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+        "page_number": 22,
+        "source_quote": "Redactive AI Artificial Intelligence / Big Data $12M Seed"
+      },
+      "confidence": 0.95,
+      "notes": "AI-first company explicitly in the AI/Big Data sector. Seed round large enough to widen average/median deal size gap."
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Rich Data Corporation",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "vertical_finance"
+      ],
+      "stage": "series_b_plus",
+      "founded_year": null,
+      "summary": "Fintech company raised $9M Series B in Q3 2024. Known AI-driven credit decisioning platform.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2024",
+        "publication_date": "2024-10-09",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+        "page_number": 22,
+        "source_quote": "Rich Data Corporation Fintech $9M Series B"
+      },
+      "confidence": 0.9,
+      "notes": "AI-enabled lending/credit risk platform; classified under Fintech in report but AI-first by nature."
+    },
+    {
+      "reviewed_action": "insert_pending",
+      "company_name": "Tactiq",
+      "country": "AU",
+      "website": null,
+      "city": null,
+      "sector_tags": [
+        "agents_and_orchestration"
+      ],
+      "stage": "series_a",
+      "founded_year": null,
+      "summary": "AI meeting transcription and notes platform. Raised $11M Series A in Q3 2024.",
+      "evidence_urls": [
+        "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view"
+      ],
+      "discovery_source": "cut_through_report",
+      "provenance": {
+        "report_title": "Cut Through Quarterly 3Q 2024",
+        "publication_date": "2024-10-09",
+        "report_url": "https://www.cutthrough.com/insights/cut-through-quarterly-3q-2024",
+        "pdf_url": "https://drive.google.com/file/d/1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1/view",
+        "pdf_download_url": "https://drive.google.com/uc?export=download&id=1-e8dCR2GQocg_IVa9qA2wcBD3gfV8up1",
+        "page_number": 22,
+        "source_quote": "Tactiq Design / Publishing / Collaboration $11M Series A"
+      },
+      "confidence": 0.9,
+      "notes": "AI-first product; also referenced as a Vanta customer in the supporter pages."
+    }
+  ]
+}
