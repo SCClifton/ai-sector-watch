@@ -121,26 +121,6 @@ export function CompanyDetail({ company, onClose }: Props) {
             <p className="mt-1 text-[13px] leading-relaxed text-text">{company.summary}</p>
           </div>
         )}
-
-        {company.profile_sources.length > 0 && (
-          <div className="mt-5 border-t border-border pt-4">
-            <Label>Sources</Label>
-            <ul className="mt-1.5 space-y-1">
-              {company.profile_sources.slice(0, 5).map((src) => (
-                <li key={src} className="truncate">
-                  <a
-                    href={src}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[12px] text-text-muted hover:text-accent"
-                  >
-                    {prettyHostname(src)}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </aside>
   );
@@ -169,12 +149,4 @@ function Label({ children }: { children: React.ReactNode }) {
       {children}
     </dt>
   );
-}
-
-function prettyHostname(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
 }

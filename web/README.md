@@ -1,56 +1,47 @@
-# web/ - Next.js + MapLibre dashboard prototype
+# Web Dashboard
 
-Spike for [#62](https://github.com/SCClifton/ai-sector-watch/issues/62). High-fidelity prototype of a custom dashboard to replace the Streamlit app at `aimap.cliftonfamily.co`. **Not deployed.** The live Streamlit dashboard under `dashboard/` is untouched by this work.
+Next.js dashboard for AI Sector Watch. This is the production public app served
+at https://aimap.cliftonfamily.co.
 
 ## Stack
 
-- Next.js 16 (app router) + TypeScript + Tailwind v4
-- MapLibre GL JS for the map, supercluster for client-side clustering
-- `postgres` (postgres-js) reading the live Supabase DB server-side via `SUPABASE_DB_URL`
+- Next.js 16 app router
+- TypeScript
+- Tailwind CSS v4
+- MapLibre GL JS
+- Supabase Postgres via server-side `postgres`
 
-## Run it
-
-The Supabase connection string lives in the worktree-level `.env.local` as a 1Password secret reference (`op://...`). `web/.env.local` is symlinked to the worktree-level file. Wrap commands with `op run` like everywhere else in this repo:
+## Run Locally
 
 ```bash
-cd web
 npm install
-op run --account my.1password.com --env-file=.env.local -- npm run dev
+npm run dev
 ```
 
-Open http://localhost:3000.
+Open `http://localhost:3000`.
 
-If you only need the build/lint check (no DB access needed):
+Live data requires `SUPABASE_DB_URL` in the environment. Without it, routes that
+read live data may return server-side errors or empty states.
+
+## Checks
 
 ```bash
 npm run build
 npm run lint
 ```
 
-## What's implemented
+## Main Routes
 
-- `/map` - full-bleed MapLibre map, sector-coloured clustered markers, hover tooltip, click-to-detail panel, URL-driven filter state (sector, stage, country, founded year, name)
-- `/api/companies` - server route mirroring `SupabaseSource.list_companies` from `src/ai_sector_watch/storage/data_source.py`
+- `/` - public overview
+- `/map` - interactive company map
+- `/companies` - searchable company directory
+- `/news` - recent public activity
+- `/about` - scope and methodology
+- `/admin` - password-gated review queue
 
-## What's stubbed
+## Notes
 
-- `/`, `/companies`, `/news`, `/about` - render the shell with a "coming in Phase 2" body
-- No writes (no Admin queue)
-- No authentication
-- No tests
-
-## What's deferred to later phases
-
-- Phase 2: feature parity (Companies search + detail, News, Digest, Admin queue with auth, mobile responsive)
-- Phase 3: Dockerfile + CI workflow + Azure App Service cutover
-
-## Read-spec (do not edit)
-
-The TS code mirrors behaviour from these Python files; treat them as the source of truth:
-
-- `src/ai_sector_watch/storage/data_source.py` - `SupabaseSource.list_companies` SQL
-- `src/ai_sector_watch/discovery/taxonomy.py` - sector tags, labels, colour groups
-- `dashboard/components/filters.py` - `apply_filters` filter semantics
-- `dashboard/components/map_view.py` - popup design tokens
-- `dashboard/static/styles.css` - global design tokens (`--aisw-*`)
-- `docs/design-system.md` - the design system rationale
+- Public pages must show only verified companies.
+- Admin mutations must stay server-side and authenticated.
+- Do not expose raw review artifacts, source extracts, or private operational
+  details in UI copy.

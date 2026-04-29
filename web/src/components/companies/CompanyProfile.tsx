@@ -122,41 +122,10 @@ export function CompanyProfile({ company }: Props) {
                             {event.announced_on.slice(0, 10)}
                           </span>
                         )}
-                        {event.source_url && (
-                          <a
-                            href={event.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-accent hover:text-accent-hover"
-                          >
-                            Source
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
                       </div>
                     </li>
                   ))}
                 </ol>
-              </div>
-            )}
-
-            {company.profile_sources.length > 0 && (
-              <div className="mt-6">
-                <Label>Sources</Label>
-                <ul className="mt-2 space-y-1">
-                  {company.profile_sources.map((src) => (
-                    <li key={src}>
-                      <a
-                        href={src}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[13px] text-text-muted transition-colors hover:text-accent"
-                      >
-                        {prettyHostname(src)}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
           </section>
@@ -175,13 +144,6 @@ export function CompanyProfile({ company }: Props) {
                 </li>
               ))}
             </ul>
-
-            {company.discovery_source && (
-              <div className="mt-6 rounded-md border border-border bg-bg/40 px-3 py-2 text-[12px] text-text-muted">
-                <Label>Discovery</Label>
-                <div className="mt-1 text-text">{company.discovery_source}</div>
-              </div>
-            )}
           </aside>
         </div>
       </div>
@@ -224,12 +186,4 @@ function Label({ children }: { children: React.ReactNode }) {
       {children}
     </div>
   );
-}
-
-function prettyHostname(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
 }

@@ -1,4 +1,4 @@
-// GET /api/news?limit=100 — recent news items.
+// GET /api/news?limit=100  -  recent news items.
 
 import { NextResponse } from "next/server";
 

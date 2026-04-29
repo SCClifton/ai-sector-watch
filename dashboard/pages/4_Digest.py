@@ -1,4 +1,4 @@
-"""Digest page — weekly markdown digests written by the pipeline."""
+"""Digest page  -  weekly markdown digests written by the pipeline."""
 
 from __future__ import annotations
 

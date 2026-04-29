@@ -17,7 +17,6 @@ from dashboard.components.theme import render_page_chrome  # noqa: E402
 ARCHITECTURE_PATH = REPO_ROOT / "dashboard" / "static" / "architecture.svg"
 GITHUB_REPO_URL = "https://github.com/SCClifton/ai-sector-watch"
 ISSUES_URL = f"{GITHUB_REPO_URL}/issues"
-LINKEDIN_URL = "https://www.linkedin.com/in/sam-c-clifton/"
 
 
 def _render_architecture() -> None:
@@ -31,19 +30,19 @@ def _render_architecture() -> None:
                            GitHub Actions cron
                                    |
                                    v
-RSS / arXiv / HF papers --> weekly_pipeline.py
-                              1. fetch every source
-                              2. LLM extracts company mentions
-                              3. validate + classify candidates
-                              4. geocode against ANZ city table
-                              5. upsert pending + news + digest
+public signals --> weekly_pipeline.py
+                   1. review candidate activity
+                   2. validate ANZ relevance
+                   3. classify candidate records
+                   4. send new records to review
+                   5. publish verified records
                                    |
                                    v
                             Supabase Postgres
                                    |
                                   read
                                    v
-                          Streamlit on Azure App Service
+                          public dashboard
         """,
         language="text",
     )
@@ -59,8 +58,8 @@ def main() -> None:
     st.header("What this is")
     st.write(
         "AI Sector Watch is a public map of the Australian and New Zealand AI startup "
-        "landscape. It combines a verified company index with a weekly agent pipeline "
-        "that scans public sources for new activity."
+        "landscape. It combines a verified company index with a weekly review workflow "
+        "for new activity."
     )
 
     st.header("What's tracked")
@@ -69,37 +68,35 @@ def main() -> None:
     tracked_cols[1].metric("Sectors", "21")
     tracked_cols[2].metric("Cadence", "Weekly")
     st.write(
-        "The index tracks AI-native and AI-enabled companies across the fixed taxonomy "
-        "documented in the repository. Inputs include startup news, RSS feeds, arXiv, "
-        "Hugging Face papers, and related public signals."
+        "The index tracks AI-native and AI-enabled companies across a fixed sector "
+        "taxonomy. Candidate records are checked before they appear publicly."
     )
 
     st.header("How discovery works")
     st.write(
-        "A scheduled GitHub Actions job fetches each source, then an LLM extracts company "
-        "mentions from every item. New ANZ candidates are validated, classified against "
-        "the sector taxonomy, geocoded with a static city table, and written to Supabase "
-        "as pending review. The public dashboard reads only verified companies."
+        "A scheduled pipeline reviews public signals, extracts candidate company mentions, "
+        "validates ANZ relevance, classifies records against the sector taxonomy, and sends "
+        "new candidates to a private review queue. The public dashboard reads only verified "
+        "companies."
     )
     _render_architecture()
 
     st.header("Data quality and disclaimers")
     st.write(
-        "The data is auto-extracted from public sources and manually reviewed before "
+        "The data is assembled from public information and reviewed before "
         "publication. It can still contain errors, omissions, stale links, or imperfect "
         "sector tags. For corrections, open an issue in the project tracker."
     )
     st.link_button("Report a correction", ISSUES_URL)
 
-    st.header("Built by")
+    st.header("Project")
     st.write(
-        "Built by Sam Clifton as an open research and engineering project. The repository "
-        "is the primary record: source code, workflow files, schema, taxonomy, and operating "
-        "notes are all public."
+        "AI Sector Watch is an independent open research and engineering project. The "
+        "repository contains the public source code, schema, taxonomy, and public-safe "
+        "operating notes."
     )
-    link_cols = st.columns([1, 1, 3])
+    link_cols = st.columns([1, 3])
     link_cols[0].link_button("GitHub repository", GITHUB_REPO_URL, type="primary")
-    link_cols[1].link_button("LinkedIn", LINKEDIN_URL)
 
     render_footer()
 

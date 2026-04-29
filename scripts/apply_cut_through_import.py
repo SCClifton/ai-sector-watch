@@ -3,11 +3,11 @@
 
 The input is the JSON artifact emitted by
 `scripts/extract_cut_through_report.py`. Dry-run mode validates and summarizes.
-Live writes require `--apply` and resolved 1Password environment values.
+Live writes require `--apply` and resolved secret-manager environment values.
 
 Usage:
     python scripts/apply_cut_through_import.py docs/data-audits/2026-04-29-cut-through-import.json
-    op run --account my.1password.com --env-file=.env.local -- python scripts/apply_cut_through_import.py docs/data-audits/2026-04-29-cut-through-import.json --apply
+    op run --env-file=.env.local -- python scripts/apply_cut_through_import.py docs/data-audits/2026-04-29-cut-through-import.json --apply
 """
 
 from __future__ import annotations

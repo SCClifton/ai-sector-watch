@@ -2,9 +2,9 @@
 """Run the weekly ingestion pipeline.
 
 Usage:
-    op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py
-    op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py --dry-run
-    op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
+    op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py
+    op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --dry-run
+    op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
 
 Dry-run mode skips Supabase writes but still exercises source fetches and the
 LLM extraction step (subject to the budget cap).

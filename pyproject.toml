@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Live, public-facing ecosystem map of the Australian and New Zealand AI startup landscape, updated weekly by an automated agent pipeline."
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-authors = [{ name = "Sam Clifton" }]
+authors = [{ name = "AI Sector Watch maintainers" }]
 license = { text = "MIT" }
 
 dependencies = [

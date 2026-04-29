@@ -13,7 +13,7 @@ interface CityNode {
   y: number; // viewBox y in 0-420
 }
 
-// Hand-tuned positions for visual balance — close to actual relative geography.
+// Hand-tuned positions for visual balance  -  close to actual relative geography.
 const CITIES: CityNode[] = [
   { key: "Perth", label: "Perth", country: "AU", x: 60, y: 220 },
   { key: "Adelaide", label: "Adelaide", country: "AU", x: 280, y: 260 },
@@ -29,7 +29,7 @@ const CITIES: CityNode[] = [
 
 const CITY_BY_KEY = new Map(CITIES.map((c) => [c.key, c]));
 
-// Constellation lines — visually pleasing, not geographically rigorous.
+// Constellation lines  -  visually pleasing, not geographically rigorous.
 const EDGES: [string, string][] = [
   ["Perth", "Adelaide"],
   ["Adelaide", "Melbourne"],
@@ -65,7 +65,7 @@ export function Constellation({ companies }: Props) {
         }}
       />
 
-      {/* Slow horizontal scan beam — the "high-tech" moment. */}
+      {/* Slow horizontal scan beam  -  the "high-tech" moment. */}
       <div aria-hidden className="aisw-scan pointer-events-none absolute inset-y-0 w-[180px]" />
 
       <svg

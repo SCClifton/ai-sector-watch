@@ -1,4 +1,4 @@
-// Lazy postgres-js client. Server-only — never import this from a client component.
+// Lazy postgres-js client. Server-only  -  never import this from a client component.
 //
 // Reads SUPABASE_DB_URL, the same env var the Python pipeline and Streamlit dashboard
 // use (see src/ai_sector_watch/storage/supabase_db.py). The value is supplied via
@@ -21,8 +21,7 @@ function makeClient(): Sql {
   const url = process.env.SUPABASE_DB_URL;
   if (!url) {
     throw new Error(
-      "SUPABASE_DB_URL is not set. Run with `op run --account my.1password.com " +
-        "--env-file=.env.local -- npm run dev`.",
+      "SUPABASE_DB_URL is not set. Export it or run with `op run --env-file=.env.local -- npm run dev`.",
     );
   }
   return postgres(url, {

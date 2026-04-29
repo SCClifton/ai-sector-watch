@@ -6,8 +6,8 @@ through the Firecrawl multi-source path, and writes only enrichment-backed
 fields. Human-curated fields are preserved unless --force-overwrite is passed.
 
 Usage:
-    op run --account my.1password.com --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 5 --dry-run
-    op run --account my.1password.com --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 20
+    op run --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 5 --dry-run
+    op run --env-file=.env.local -- python scripts/backfill_enrichment.py --limit 20
 """
 
 from __future__ import annotations
@@ -261,10 +261,12 @@ def _guard_review_limits(
     errors: list[str] = []
     if force_overwrite and companies_to_enrich > FORCE_OVERWRITE_REVIEW_LIMIT:
         errors.append(
-            "--force-overwrite would touch more than 10 companies; ask Sam before running it"
+            "--force-overwrite would touch more than 10 companies; ask the maintainer before running it"
         )
     if not dry_run and companies_to_enrich > MAX_COMPANIES_PER_RUN_WITHOUT_REVIEW:
-        errors.append("run would backfill more than 100 companies; ask Sam before running it")
+        errors.append(
+            "run would backfill more than 100 companies; ask the maintainer before running it"
+        )
     return errors
 
 

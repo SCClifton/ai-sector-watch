@@ -191,8 +191,7 @@ class FirecrawlClient:
             api_key = os.environ.get("FIRECRAWL_API_KEY")
             if not api_key:
                 raise RuntimeError(
-                    "FIRECRAWL_API_KEY not set; run via op run --account my.1password.com "
-                    "--env-file=.env.local -- ..."
+                    "FIRECRAWL_API_KEY not set; run via " "op run --env-file=.env.local -- ..."
                 )
             self._client = Firecrawl(api_key=api_key)
         return self._client

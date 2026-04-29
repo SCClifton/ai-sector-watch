@@ -194,19 +194,18 @@ cat <<EOF
 cd into the worktree:
   cd $WT_DIR
 
-Cache 1Password auth ONCE for this shell session (one Touch ID tap, then
-~30 minutes of free op access; without this, every op call re-prompts):
-  eval \$(op signin --account my.1password.com)
+Cache secret-manager auth ONCE for this shell session if your setup requires it:
+  eval \$(op signin)
 
 Make your first commit, then open a Draft PR:
   gh pr create --draft --title "[#$ISSUE] $TITLE" --body "Closes #$ISSUE"
 
-Run secret-bearing commands with the explicit 1Password account:
-  op run --account my.1password.com --env-file=.env.local -- <your command>
+Run secret-bearing commands with the approved secret-manager wrapper:
+  op run --env-file=.env.local -- <your command>
 
 $PROJECT_CARD_NOTE
 
-When ready for review, mark the PR as ready and ping Sam.
+When ready for review, mark the PR as ready and ping the maintainer.
 
 When the PR merges, clean up the worktree:
   git worktree remove $WT_DIR

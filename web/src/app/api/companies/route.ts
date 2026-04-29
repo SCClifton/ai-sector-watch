@@ -1,4 +1,4 @@
-// GET /api/companies — verified companies (mirrors SupabaseSource.list_companies).
+// GET /api/companies  -  verified companies (mirrors SupabaseSource.list_companies).
 
 import { NextResponse } from "next/server";
 

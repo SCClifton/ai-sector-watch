@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Github, Linkedin, MessageCircle } from "lucide-react";
+import { ArrowUpRight, Github, MessageCircle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About",
@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 
 const GITHUB_URL = "https://github.com/SCClifton/ai-sector-watch";
 const ISSUES_URL = `${GITHUB_URL}/issues`;
-const LINKEDIN_URL = "https://www.linkedin.com/in/sam-c-clifton/";
 
 export default function AboutPage() {
   return (
@@ -29,8 +28,8 @@ export default function AboutPage() {
       <Section title="What this is">
         <p>
           AI Sector Watch is a public map of the Australian and New Zealand AI startup
-          landscape. It combines a verified company index with a weekly agent pipeline that
-          scans public sources for new activity.
+          landscape. It combines a verified company index with a weekly review workflow for
+          new activity.
         </p>
       </Section>
 
@@ -41,23 +40,22 @@ export default function AboutPage() {
           <Stat label="Cadence" value="Weekly" />
         </div>
         <p className="mt-5">
-          The index tracks AI-native and AI-enabled companies across the fixed taxonomy
-          documented in the repository. Inputs include startup news, RSS feeds, arXiv,
-          Hugging Face papers, and related public signals.
+          The index tracks AI-native and AI-enabled companies across a fixed sector
+          taxonomy. Candidate records are checked before they appear publicly.
         </p>
       </Section>
 
       <Section title="How discovery works">
         <p>
-          A scheduled GitHub Actions job fetches each source, then an LLM extracts company
-          mentions from every item. New ANZ candidates are validated, classified against the
-          sector taxonomy, geocoded with a static city table, and written to Supabase as
-          pending review. The public dashboard reads only verified companies.
+          A scheduled pipeline reviews public signals, extracts candidate company mentions,
+          validates ANZ relevance, classifies records against the sector taxonomy, and sends
+          new candidates to a private review queue. The public dashboard reads only verified
+          companies.
         </p>
         <div className="mt-5 overflow-hidden rounded-xl border border-border bg-surface/50 p-4">
           <Image
             src="/architecture.svg"
-            alt="AI Sector Watch architecture: GitHub Actions cron triggers the weekly pipeline, which fetches public sources, runs LLM extraction, validates and classifies candidates, geocodes them against the ANZ city table, and upserts to Supabase Postgres. The dashboard reads verified records."
+            alt="AI Sector Watch architecture: a scheduled pipeline reviews public signals, sends candidates through validation and review, writes verified records to Supabase, and serves the dashboard."
             width={1120}
             height={500}
             className="w-full"
@@ -68,7 +66,7 @@ export default function AboutPage() {
 
       <Section title="Data quality and disclaimers">
         <p>
-          The data is auto-extracted from public sources and manually reviewed before
+          The data is assembled from public information and reviewed before
           publication. It can still contain errors, omissions, stale links, or imperfect
           sector tags. For corrections, open an issue in the project tracker.
         </p>
@@ -88,9 +86,9 @@ export default function AboutPage() {
 
       <Section title="Built by">
         <p>
-          Built by Sam Clifton as an open research and engineering project. The repository
-          is the primary record: source code, workflow files, schema, taxonomy, and
-          operating notes are all public.
+          AI Sector Watch is an independent open research and engineering project. The
+          repository contains the public source code, schema, taxonomy, and public-safe
+          operating notes.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link
@@ -101,15 +99,6 @@ export default function AboutPage() {
           >
             <Github className="h-3.5 w-3.5" />
             GitHub repository
-          </Link>
-          <Link
-            href={LINKEDIN_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-border-strong bg-surface px-4 py-2 text-[13px] font-medium text-text transition-colors hover:border-accent hover:text-accent"
-          >
-            <Linkedin className="h-3.5 w-3.5" />
-            LinkedIn
           </Link>
         </div>
       </Section>

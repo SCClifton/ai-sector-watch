@@ -1,4 +1,4 @@
-"""Map page — interactive folium map of ANZ AI companies + filters + table."""
+"""Map page  -  interactive folium map of ANZ AI companies + filters + table."""
 
 from __future__ import annotations
 

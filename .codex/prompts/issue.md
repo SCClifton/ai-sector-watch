@@ -55,7 +55,7 @@ Verify you are in the right place once: `cd <WT> && git rev-parse --show-topleve
 
 Follow `AGENTS.md` strictly. Hard rules from §3 and §4:
 
-- No secrets in the diff. `.env.local` is the only secrets file and it is gitignored. For commands that need secrets: `op run --account my.1password.com --env-file=.env.local -- <cmd>`.
+- No secrets in the diff. `.env.local` is the only secrets file and it is gitignored. For commands that need secrets: `op run --env-file=.env.local -- <cmd>`.
 - LLM dev runs cap at $1; the runtime cap is $2 via `ANTHROPIC_BUDGET_USD_PER_RUN`. Do not bypass.
 - Type hints everywhere. `ruff check .` and `black --check .` must pass.
 - No em dashes in user-facing copy (digest markdown, dashboard, popup HTML). Docstrings can use them.
@@ -67,7 +67,7 @@ Stop and ask before any of these:
 - Adding a data source not already in `docs/sources.md`.
 - A test or dev run that would spend more than $1 of LLM quota.
 - Pushing when the local commit has not been reviewed.
-- Provisioning Azure, changing DNS, creating a 1Password item, creating a Supabase project.
+- Provisioning Azure, changing DNS, creating a secret-manager item, creating a Supabase project.
 - Force-pushing or rewriting history on `main`.
 
 After your code change runs green locally:

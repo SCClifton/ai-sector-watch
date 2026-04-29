@@ -31,6 +31,8 @@ htmlcov/
 
 # Local data caches (Supabase is the source of truth)
 data/local/
+docs/data-audits/*
+!docs/data-audits/README.md
 *.sqlite
 *.sqlite3
 *.db

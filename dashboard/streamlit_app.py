@@ -1,7 +1,7 @@
 """Entry point for the AI Sector Watch Streamlit dashboard.
 
 Run locally:
-    op run --account my.1password.com --env-file=.env.local -- streamlit run dashboard/streamlit_app.py
+    op run --env-file=.env.local -- streamlit run dashboard/streamlit_app.py
 """
 
 from __future__ import annotations

@@ -10,10 +10,10 @@ Operating manual for any human or AI agent working in this repo. Read this befor
 
 A live, public-facing ecosystem map of the Australian and New Zealand AI startup landscape, updated weekly by an automated agent pipeline.
 
-- **Public dashboard:** Streamlit + streamlit-folium, hosted on Azure App Service at `aimap.cliftonfamily.co`.
+- **Public dashboard:** Next.js, hosted at `aimap.cliftonfamily.co`. The legacy Streamlit dashboard remains under `dashboard/` during migration.
 - **Storage:** Supabase Postgres. The dashboard reads live; the pipeline writes.
 - **Pipeline:** Python 3.12 + Anthropic SDK + feedparser. Runs weekly via GitHub Actions cron.
-- **Discovery flow:** every news item is read by an LLM that extracts company mentions. New ANZ candidates are validated, classified against a fixed sector taxonomy, geocoded against a static city table, and written as `auto_discovered_pending_review`. Verified companies appear on the public map; pending ones never do.
+- **Discovery flow:** public signals are processed by an automated pipeline. New ANZ candidates are validated, classified against a fixed sector taxonomy, geocoded against a static city table, and written as `auto_discovered_pending_review`. Verified companies appear on the public map; pending ones never do.
 
 For the architecture diagram and the full repo layout, see [README.md](README.md).
 
@@ -38,7 +38,7 @@ If two sources of truth disagree, fix the disagreement in the same commit. Don't
 
 These are hard rules. If a task seems to require breaking one, stop and ask.
 
-1. **Never commit secrets.** `.env.local` is gitignored. Only `.env.template` (which holds `op://` references, not values) is in the repo. Run secret-bearing commands via `op run --account my.1password.com --env-file=.env.local -- <cmd>`.
+1. **Never commit secrets.** `.env.local` is gitignored. Only `.env.template` is in the repo. Run secret-bearing commands via `op run --env-file=.env.local -- <cmd>` or an equivalent secret-manager wrapper.
 2. **Public map only shows verified companies.** `discovery_status = 'verified'` is the gate. Auto-discovered candidates wait in the admin queue at `/Admin`.
 3. **Idempotent operations.** Every upsert keys on a stable hash (URL hash for news, normalised name + country for companies, payload hash for ingest events). Reruns must be safe.
 4. **UTC at storage boundaries.** Local time is for human-facing surfaces only.
@@ -55,7 +55,7 @@ These are hard rules. If a task seems to require breaking one, stop and ask.
 - Pushing to GitHub when the local commit hasn't been reviewed.
 - Provisioning any Azure resource.
 - Pointing or changing a DNS record.
-- Creating a new 1Password item or a new Supabase project.
+- Creating a new secret-manager item or a new Supabase project.
 - Force-pushing or rewriting history on `main`.
 
 ## 5. Repo conventions
@@ -98,7 +98,7 @@ These are hard rules. If a task seems to require breaking one, stop and ask.
 
 1. Append a YAML block to [`data/seed/companies.yaml`](data/seed/companies.yaml). Schema is documented at the top of the file.
 2. `python scripts/seed_companies.py --dry-run` to validate.
-3. `op run --account my.1password.com --env-file=.env.local -- python scripts/seed_companies.py` to apply (idempotent).
+3. `op run --env-file=.env.local -- python scripts/seed_companies.py` to apply (idempotent).
 
 ### Add a sector tag
 
@@ -122,7 +122,7 @@ black --check .
 ### Trigger the weekly pipeline manually
 
 ```bash
-op run --account my.1password.com --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
+op run --env-file=.env.local -- python scripts/run_weekly_pipeline.py --limit 5
 # or
 gh workflow run weekly.yml -f limit=5
 ```
@@ -133,7 +133,7 @@ Multiple AI tools (Claude Code, Codex, future agents) work in this repo concurre
 
 ### One worktree per issue
 
-The repo lives in `~/Documents/Projects/AI-Sector-Watch/` (the "main worktree", on `main`, used by Sam for reading and coordinating). Every active issue gets a sibling directory:
+Keep a main worktree on `main` for reading and coordination. Every active issue gets a sibling worktree:
 
 ```
 ~/Documents/Projects/
@@ -160,14 +160,14 @@ If the script ever fails, the manual fallback is documented in [docs/multi-agent
 
 ### Agent slash command (optional)
 
-A tool-neutral runbook for the full pre-flight → work → Draft PR loop lives at `.claude/commands/issue.md` (Claude Code) and `.codex/prompts/issue.md` (Codex). Bodies are identical apart from the default tool name. Invoke as `/issue <free-form narration>` — pass an issue number to skip drafting, or describe a new task to have it drafted via the right `.github/ISSUE_TEMPLATE/`. To wire up another agent (Gemini, etc.), copy either body into that agent's prompts directory and change the default tool name in the meta paragraph.
+A tool-neutral runbook for the full pre-flight -> work -> Draft PR loop lives at `.claude/commands/issue.md` (Claude Code) and `.codex/prompts/issue.md` (Codex). Bodies are identical apart from the default tool name. Invoke as `/issue <free-form narration>`  -  pass an issue number to skip drafting, or describe a new task to have it drafted via the right `.github/ISSUE_TEMPLATE/`. To wire up another agent (Gemini, etc.), copy either body into that agent's prompts directory and change the default tool name in the meta paragraph.
 
 ### Branch and merge rules
 
 - **No direct commits to `main`.** Branch protection enforces this.
 - **PR must pass CI** (`pytest.yml`) before merge.
-- **One human merger** (Sam). AIs do not auto-merge.
-- **No force-push to `main`.** Branch protection rejects it. If history rewrite is unavoidable, ask Sam.
+- **One human merger.** AIs do not auto-merge.
+- **No force-push to `main`.** Branch protection rejects it. If history rewrite is unavoidable, ask the maintainer.
 - Rebase on `main` before opening a PR for review.
 - After merge, run `scripts/finish_issue.sh <#>` to remove the worktree and delete the local branch.
 
@@ -181,6 +181,6 @@ Whoever opens their PR first owns the file conflict resolution. The second PR re
 
 ## 8. Tone for AI agents
 
-Sam is an experienced operator with a deep tech and ML background. Write terse and sharp. Default to action; explain only when the action is non-obvious. Don't apologise. Don't editorialise. Don't add filler. State results and decisions directly.
+The maintainer is an experienced operator with a deep tech and ML background. Write terse and sharp. Default to action; explain only when the action is non-obvious. Don't apologise. Don't editorialise. Don't add filler. State results and decisions directly.
 
 When in doubt: read the file, fix the bug, write the test, ship the diff.

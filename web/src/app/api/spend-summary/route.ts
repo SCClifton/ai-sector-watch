@@ -1,4 +1,4 @@
-// GET /api/spend-summary — last 4 weeks of weekly_run LLM cost.
+// GET /api/spend-summary  -  last 4 weeks of weekly_run LLM cost.
 
 import { NextResponse } from "next/server";
 
