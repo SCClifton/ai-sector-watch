@@ -186,6 +186,12 @@ CREATE TABLE IF NOT EXISTS ingest_events (
 CREATE INDEX IF NOT EXISTS ingest_events_fetched_idx
     ON ingest_events (fetched_at DESC);
 
+-- Structured per-event detail. Used by the admin UI's audit log
+-- (kind='admin_action') to capture which company was acted on, the
+-- resulting status, and the actor. Pipeline writers may also use it.
+ALTER TABLE ingest_events
+    ADD COLUMN IF NOT EXISTS metadata JSONB;
+
 -- =========================================================================
 -- updated_at trigger for companies
 -- =========================================================================
