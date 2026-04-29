@@ -15,6 +15,16 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-04-30: Deep-Research Profile Refresh
+
+- Applied a manual deep-research verification pass across 39 verified
+  companies, writing richer summaries, current funding (with as-of dates and
+  source URLs), updated headcount, founded years, stages, and cities.
+- Each updated row carries a stamped `profile_verified_at` and a confidence
+  score so downstream surfaces can show provenance.
+- Companies flagged as defunct, non-ANZ, or non-AI were captured in a separate
+  triage artifact and will be rejected via a follow-up change.
+
 ### 2026-04-29: Custom Web Dashboard
 
 - Replaced the initial Streamlit-first public experience with a custom Next.js
