@@ -45,6 +45,7 @@ export interface Company {
   profile_sources: string[];
   profile_verified_at: string | null;
   latest_funding_event: FundingEvent | null;
+  funding_events: FundingEvent[];
 }
 
 export interface NewsItem {

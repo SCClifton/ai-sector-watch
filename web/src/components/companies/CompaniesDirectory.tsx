@@ -13,13 +13,14 @@ import {
   paramsToFilters,
 } from "@/lib/filters";
 import { primarySectorHex, sectorLabel } from "@/lib/taxonomy";
-import { formatHeadcount, formatStage, formatUsd } from "@/lib/format";
+import { formatStage } from "@/lib/format";
 import { slugFor } from "@/lib/slug";
 import { cn } from "@/lib/cn";
 import type { Company } from "@/lib/types";
 
-type SortKey = "name" | "founded" | "raised" | "headcount";
+type SortKey = "name" | "founded";
 type SortDir = "asc" | "desc";
+const SORT_KEYS: SortKey[] = ["name", "founded"];
 
 export function CompaniesDirectory() {
   const router = useRouter();
@@ -48,7 +49,10 @@ export function CompaniesDirectory() {
     () => paramsToFilters(new URLSearchParams(searchParams.toString())),
     [searchParams],
   );
-  const sortKey = (searchParams.get("sort") as SortKey) || "name";
+  const requestedSort = searchParams.get("sort");
+  const sortKey = SORT_KEYS.includes(requestedSort as SortKey)
+    ? (requestedSort as SortKey)
+    : "name";
   const sortDir = (searchParams.get("dir") as SortDir) || "asc";
 
   const filtered = useMemo(
@@ -140,8 +144,6 @@ export function CompaniesDirectory() {
                   <SortableTh label="Name" active={sortKey} dir={sortDir} field="name" onSort={onSort} />
                   <th className="px-4 py-2 font-medium">Stage</th>
                   <SortableTh label="Founded" active={sortKey} dir={sortDir} field="founded" onSort={onSort} />
-                  <SortableTh label="Total raised" active={sortKey} dir={sortDir} field="raised" onSort={onSort} />
-                  <SortableTh label="Headcount" active={sortKey} dir={sortDir} field="headcount" onSort={onSort} />
                   <th className="px-4 py-2 font-medium">Sectors</th>
                   <th className="px-4 py-2 font-medium">Location</th>
                 </tr>
@@ -185,12 +187,6 @@ export function CompaniesDirectory() {
                       <td className="px-4 py-3 text-text-muted">{formatStage(c.stage) ?? "-"}</td>
                       <td className="px-4 py-3 text-text-muted tabular-nums">
                         {c.founded_year ?? "-"}
-                      </td>
-                      <td className="px-4 py-3 tabular-nums text-text">
-                        {formatUsd(c.total_raised_usd) ?? "-"}
-                      </td>
-                      <td className="px-4 py-3 text-text-muted tabular-nums">
-                        {formatHeadcount(c) ?? "-"}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-1">
@@ -237,10 +233,6 @@ export function CompaniesDirectory() {
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-text-muted tabular-nums">
                       {formatStage(c.stage) && <span>{formatStage(c.stage)}</span>}
                       {c.founded_year !== null && <span>Founded {c.founded_year}</span>}
-                      {formatUsd(c.total_raised_usd) && (
-                        <span className="text-text">{formatUsd(c.total_raised_usd)}</span>
-                      )}
-                      {formatHeadcount(c) && <span>{formatHeadcount(c)} people</span>}
                     </div>
                     <div className="mt-3 flex flex-wrap gap-1">
                       {c.sector_tags.slice(0, 3).map((tag) => (
@@ -314,22 +306,9 @@ function sortCompanies(items: Company[], key: SortKey, dir: SortDir): Company[] 
     case "founded":
       sorted.sort((a, b) => mult * cmpNullable(a.founded_year, b.founded_year));
       break;
-    case "raised":
-      sorted.sort((a, b) => mult * cmpNullable(a.total_raised_usd, b.total_raised_usd));
-      break;
-    case "headcount":
-      sorted.sort((a, b) => mult * cmpNullable(headcountForSort(a), headcountForSort(b)));
-      break;
     case "name":
     default:
       sorted.sort((a, b) => mult * a.name.localeCompare(b.name));
   }
   return sorted;
-}
-
-function headcountForSort(c: Company): number | null {
-  if (c.headcount_estimate !== null) return c.headcount_estimate;
-  if (c.headcount_max !== null) return c.headcount_max;
-  if (c.headcount_min !== null) return c.headcount_min;
-  return null;
 }

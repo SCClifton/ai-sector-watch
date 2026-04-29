@@ -4,7 +4,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import type { Company } from "@/lib/types";
 import { primarySectorHex, sectorLabel } from "@/lib/taxonomy";
 import {
-  formatHeadcount,
+  formatFundingAmount,
   formatLatestFunding,
   formatLocation,
   formatStage,
@@ -20,9 +20,7 @@ export function CompanyProfile({ company }: Props) {
   const location = formatLocation(company);
   const stage = formatStage(company.stage);
   const latestFunding = formatLatestFunding(company.latest_funding_event);
-  const totalRaised = formatUsd(company.total_raised_usd);
   const valuation = formatUsd(company.valuation_usd);
-  const headcount = formatHeadcount(company);
 
   return (
     <article className="mx-auto w-full max-w-[900px] px-5 py-10">
@@ -63,9 +61,7 @@ export function CompanyProfile({ company }: Props) {
           <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             <Stat label="Stage" value={stage} />
             <Stat label="Founded" value={company.founded_year !== null ? String(company.founded_year) : null} />
-            <Stat label="Total raised" value={totalRaised} highlight />
             <Stat label="Valuation" value={valuation} highlight />
-            <Stat label="Headcount" value={headcount} />
             <Stat label="Verified" value={company.profile_verified_at?.slice(0, 10) ?? null} />
             {latestFunding && (
               <div className="col-span-2">
@@ -91,6 +87,56 @@ export function CompanyProfile({ company }: Props) {
               <div className="mt-6">
                 <Label>Founders</Label>
                 <p className="mt-2 text-[14px] text-text">{company.founders.join(", ")}</p>
+              </div>
+            )}
+
+            {company.funding_events.length > 0 && (
+              <div className="mt-6">
+                <Label>Funding history</Label>
+                <ol className="mt-3 divide-y divide-border rounded-lg border border-border bg-bg/30">
+                  {company.funding_events.map((event) => (
+                    <li
+                      key={event.id}
+                      className="grid gap-2 px-3 py-3 sm:grid-cols-[minmax(0,1fr)_auto]"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                          <span className="text-[14px] font-semibold text-text">
+                            {formatFundingAmount(event) ?? "Amount undisclosed"}
+                          </span>
+                          {formatStage(event.stage) && (
+                            <span className="text-[12px] text-text-muted">
+                              {formatStage(event.stage)}
+                            </span>
+                          )}
+                        </div>
+                        {(event.lead_investor || event.investors.length > 0) && (
+                          <p className="mt-1 text-[12px] text-text-muted">
+                            {[event.lead_investor, ...event.investors].filter(Boolean).join(", ")}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 text-[12px] text-text-muted sm:justify-end">
+                        {event.announced_on && (
+                          <span className="font-mono tabular-nums">
+                            {event.announced_on.slice(0, 10)}
+                          </span>
+                        )}
+                        {event.source_url && (
+                          <a
+                            href={event.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-accent hover:text-accent-hover"
+                          >
+                            Source
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
               </div>
             )}
 
