@@ -313,28 +313,35 @@ function SortableTh({
 
 function sortCompanies(items: Company[], key: SortKey, dir: SortDir): Company[] {
   const mult = dir === "asc" ? 1 : -1;
-  const cmpNullable = (a: number | null, b: number | null): number => {
-    if (a === null && b === null) return 0;
-    if (a === null) return 1; // nulls last
+
+  // Compare two numbers, always keeping nulls at the end regardless of
+  // direction. Returns null when both sides are null so the caller can fall
+  // back to a stable secondary key.
+  const cmpNullsLast = (a: number | null, b: number | null): number | null => {
+    if (a === null && b === null) return null;
+    if (a === null) return 1;
     if (b === null) return -1;
-    return a - b;
+    return mult * (a - b);
   };
 
   const sorted = [...items];
   switch (key) {
     case "founded":
-      sorted.sort((a, b) => mult * cmpNullable(a.founded_year, b.founded_year));
+      sorted.sort((a, b) => {
+        const cmp = cmpNullsLast(a.founded_year, b.founded_year);
+        return cmp ?? a.name.localeCompare(b.name);
+      });
       break;
     case "verified":
       sorted.sort((a, b) => {
-        const cmp = cmpNullable(verifiedAtMs(a), verifiedAtMs(b));
-        return cmp !== 0 ? mult * cmp : a.name.localeCompare(b.name);
+        const cmp = cmpNullsLast(verifiedAtMs(a), verifiedAtMs(b));
+        return cmp ?? a.name.localeCompare(b.name);
       });
       break;
     case "funded":
       sorted.sort((a, b) => {
-        const cmp = cmpNullable(fundedAtMs(a), fundedAtMs(b));
-        return cmp !== 0 ? mult * cmp : a.name.localeCompare(b.name);
+        const cmp = cmpNullsLast(fundedAtMs(a), fundedAtMs(b));
+        return cmp ?? a.name.localeCompare(b.name);
       });
       break;
     case "name":
