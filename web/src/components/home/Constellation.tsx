@@ -195,14 +195,16 @@ export function Constellation({ companies }: Props) {
       </svg>
 
       {/* Footer strip */}
-      <div className="relative flex items-center justify-between gap-3 border-t border-border bg-bg/70 px-4 py-2.5 text-[11px] text-text-muted">
-        <div className="flex items-center gap-2">
+      <div className="relative flex flex-col gap-2 border-t border-border bg-bg/70 px-4 py-2.5 text-[11px] text-text-muted sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <div className="flex min-w-0 items-center gap-2">
           <span className="aisw-pulse inline-block h-1.5 w-1.5 rounded-full bg-success" />
-          Live, refreshed weekly from {Object.values(counts).reduce((a, b) => a + b, 0)} verified records
+          <span className="min-w-0">
+            Live, refreshed weekly from {Object.values(counts).reduce((a, b) => a + b, 0)} verified records
+          </span>
         </div>
         <Link
           href="/map"
-          className="inline-flex items-center gap-1 font-medium text-accent transition-colors hover:text-accent-hover"
+          className="inline-flex min-h-10 items-center gap-1 font-medium text-accent transition-colors hover:text-accent-hover"
         >
           Explore the full map
           <svg

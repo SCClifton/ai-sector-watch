@@ -43,7 +43,7 @@ export function CompanyDetail({ company, onClose }: Props) {
     <aside
       role="dialog"
       aria-label={`${company.name} details`}
-      className="aisw-scroll absolute right-3 top-3 bottom-3 z-10 w-[360px] max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-xl border border-border bg-surface/95 shadow-2xl backdrop-blur-md"
+      className="aisw-scroll absolute inset-x-3 bottom-20 z-20 max-h-[62dvh] overflow-y-auto rounded-xl border border-border bg-surface/95 shadow-2xl backdrop-blur-md md:inset-x-auto md:bottom-3 md:right-3 md:top-3 md:max-h-none md:w-[360px] md:max-w-[calc(100vw-1.5rem)]"
     >
       <div
         className="h-1 w-full rounded-t-xl"
@@ -76,7 +76,7 @@ export function CompanyDetail({ company, onClose }: Props) {
           type="button"
           onClick={onClose}
           aria-label="Close details"
-          className="rounded-md p-1 text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-md text-text-muted transition-colors hover:bg-surface-2 hover:text-text md:h-auto md:w-auto md:p-1"
         >
           <X className="h-4 w-4" />
         </button>

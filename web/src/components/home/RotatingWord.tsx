@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 
 interface Props {
   words: string[];
@@ -30,8 +30,8 @@ export function RotatingWord({ words, intervalMs = 2400 }: Props) {
 
   return (
     <span
-      className="relative inline-block align-baseline"
-      style={{ minWidth: `${longest}ch` }}
+      className="relative inline-block align-baseline sm:min-w-[var(--rotating-word-width)]"
+      style={{ "--rotating-word-width": `${longest}ch` } as CSSProperties}
       aria-live="polite"
     >
       {words.map((word, i) => (

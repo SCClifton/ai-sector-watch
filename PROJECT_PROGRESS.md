@@ -15,6 +15,16 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-04-30: Mobile Public Dashboard Optimisation
+
+- Added mobile-first navigation and responsive filter sheets for the public
+  map and company directory while preserving the desktop dashboard layout.
+- Made the map route app-like on phones: no global footer, touch-sized map
+  controls, mobile search, a bottom action bar, and a bottom company detail
+  sheet.
+- Tightened mobile layouts for the home page, company profiles, news, about,
+  and footer so shared links render cleanly on narrow screens.
+
 ### 2026-04-30: Surface Freshness On The Map And Directory
 
 - Recently verified and newly funded companies now read at a glance on every
