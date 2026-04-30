@@ -58,13 +58,13 @@ export function HomeContent() {
           ANZ AI startup ecosystem
         </div>
 
-        <h1 className="mt-4 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-text sm:text-[64px] sm:leading-[1.02]">
-          A live map of AI companies
-          <br className="hidden sm:block" /> building from{" "}
+        <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight text-text sm:text-balance sm:text-[64px] sm:leading-[1.02]">
+          A live map of AI
+          <br className="sm:hidden" /> companies
+          <br /> building from{" "}
           <span className="text-accent">
-            <RotatingWord words={CITY_ROTATION} />
+            <RotatingWord words={CITY_ROTATION} suffix="." suffixClassName="text-text" />
           </span>
-          .
         </h1>
 
         <p className="mt-6 max-w-2xl text-balance text-lg leading-relaxed text-text-muted">
