@@ -7,6 +7,7 @@ import {
   type FilterState,
   isFilterActive,
 } from "@/lib/filters";
+import { FRESHNESS_OPTIONS, type FreshnessFlag } from "@/lib/freshness";
 import {
   MultiSelect,
   ResetButton,
@@ -49,6 +50,15 @@ export function FilterBar({ state, meta, onChange, visibleCount, totalCount }: P
         options={meta.countries.map((c) => ({ value: c, label: c }))}
         selected={state.countries}
         onChange={(countries) => onChange({ ...state, countries })}
+      />
+
+      <MultiSelect
+        label="Freshness"
+        options={FRESHNESS_OPTIONS}
+        selected={state.freshness}
+        onChange={(values) =>
+          onChange({ ...state, freshness: values as FreshnessFlag[] })
+        }
       />
 
       <YearRange

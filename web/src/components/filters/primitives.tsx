@@ -127,6 +127,88 @@ export function MultiSelect({
   );
 }
 
+export function SingleSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: Option[];
+  onChange: (next: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const esc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("keydown", esc);
+    };
+  }, [open]);
+
+  const current = options.find((o) => o.value === value);
+  const summary = current ? `${label}: ${current.label}` : label;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((s) => !s)}
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[13px] font-medium transition-colors",
+          "border-border bg-surface-2 text-text-muted hover:border-border-strong hover:text-text",
+        )}
+      >
+        {summary}
+        <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
+      </button>
+
+      {open && options.length > 0 && (
+        <div className="aisw-scroll absolute right-0 top-full z-20 mt-1 max-h-[280px] w-[220px] overflow-y-auto rounded-md border border-border bg-surface shadow-2xl">
+          <ul role="listbox" className="py-1">
+            {options.map((opt) => {
+              const checked = opt.value === value;
+              return (
+                <li key={opt.value}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={checked}
+                    onClick={() => {
+                      onChange(opt.value);
+                      setOpen(false);
+                    }}
+                    className={cn(
+                      "flex w-full items-center justify-between gap-3 px-3 py-1.5 text-left text-[13px] transition-colors",
+                      checked
+                        ? "text-accent hover:bg-accent-soft"
+                        : "text-text hover:bg-surface-2",
+                    )}
+                  >
+                    <span className="truncate">{opt.label}</span>
+                    {checked && <Check className="h-3.5 w-3.5 shrink-0" />}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function YearRange({
   meta,
   min,

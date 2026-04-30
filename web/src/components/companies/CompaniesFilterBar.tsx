@@ -7,20 +7,45 @@ import {
   type FilterState,
   isFilterActive,
 } from "@/lib/filters";
+import { FRESHNESS_OPTIONS, type FreshnessFlag } from "@/lib/freshness";
 import {
   MultiSelect,
   ResetButton,
   SearchInput,
+  SingleSelect,
   YearRange,
 } from "@/components/filters/primitives";
+
+type DirectorySortKey = "name" | "founded" | "verified" | "funded";
+type SortDir = "asc" | "desc";
+
+const SORT_OPTIONS: { value: string; label: string }[] = [
+  { value: "name:asc", label: "Name A to Z" },
+  { value: "name:desc", label: "Name Z to A" },
+  { value: "founded:desc", label: "Newest founded" },
+  { value: "founded:asc", label: "Oldest founded" },
+  { value: "verified:desc", label: "Recently verified" },
+  { value: "funded:desc", label: "Recently funded" },
+];
 
 interface Props {
   state: FilterState;
   meta: FilterMeta;
   onChange: (next: FilterState) => void;
+  sortKey: DirectorySortKey;
+  sortDir: SortDir;
+  onSortChange: (key: DirectorySortKey, dir: SortDir) => void;
 }
 
-export function CompaniesFilterBar({ state, meta, onChange }: Props) {
+export function CompaniesFilterBar({
+  state,
+  meta,
+  onChange,
+  sortKey,
+  sortDir,
+  onSortChange,
+}: Props) {
+  const sortValue = `${sortKey}:${sortDir}`;
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface/60 px-3 py-2.5">
       <SearchInput
@@ -49,6 +74,15 @@ export function CompaniesFilterBar({ state, meta, onChange }: Props) {
         onChange={(countries) => onChange({ ...state, countries })}
       />
 
+      <MultiSelect
+        label="Freshness"
+        options={FRESHNESS_OPTIONS}
+        selected={state.freshness}
+        onChange={(values) =>
+          onChange({ ...state, freshness: values as FreshnessFlag[] })
+        }
+      />
+
       <YearRange
         meta={meta}
         min={state.foundedMin}
@@ -56,6 +90,16 @@ export function CompaniesFilterBar({ state, meta, onChange }: Props) {
         onChange={(foundedMin, foundedMax) =>
           onChange({ ...state, foundedMin, foundedMax })
         }
+      />
+
+      <SingleSelect
+        label="Sort"
+        value={sortValue}
+        options={SORT_OPTIONS}
+        onChange={(value) => {
+          const [key, dir] = value.split(":") as [DirectorySortKey, SortDir];
+          onSortChange(key, dir);
+        }}
       />
 
       {isFilterActive(state) && (

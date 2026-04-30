@@ -12,6 +12,7 @@ import {
   formatStage,
   formatUsd,
 } from "@/lib/format";
+import { FreshnessBadges } from "@/components/companies/FreshnessBadges";
 
 interface Props {
   company: Company | null;
@@ -66,8 +67,9 @@ export function CompanyDetail({ company, onClose }: Props) {
               company.name
             )}
           </h2>
+          <FreshnessBadges company={company} variant="chip" className="mt-1.5 flex flex-wrap gap-1" />
           {location && (
-            <p className="mt-0.5 text-[12px] text-text-muted">{location}</p>
+            <p className="mt-1 text-[12px] text-text-muted">{location}</p>
           )}
         </div>
         <button
