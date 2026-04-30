@@ -6,21 +6,23 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink } from "lucide-react";
 
 import { CompaniesFilterBar } from "./CompaniesFilterBar";
+import { FreshnessBadges } from "./FreshnessBadges";
 import {
   applyFilters,
   deriveMeta,
   filtersToParams,
   paramsToFilters,
 } from "@/lib/filters";
+import { fundedAtMs, verifiedAtMs } from "@/lib/freshness";
 import { primarySectorHex, sectorLabel } from "@/lib/taxonomy";
 import { formatStage } from "@/lib/format";
 import { slugFor } from "@/lib/slug";
 import { cn } from "@/lib/cn";
 import type { Company } from "@/lib/types";
 
-type SortKey = "name" | "founded";
+type SortKey = "name" | "founded" | "verified" | "funded";
 type SortDir = "asc" | "desc";
-const SORT_KEYS: SortKey[] = ["name", "founded"];
+const SORT_KEYS: SortKey[] = ["name", "founded", "verified", "funded"];
 
 export function CompaniesDirectory() {
   const router = useRouter();
@@ -53,7 +55,13 @@ export function CompaniesDirectory() {
   const sortKey = SORT_KEYS.includes(requestedSort as SortKey)
     ? (requestedSort as SortKey)
     : "name";
-  const sortDir = (searchParams.get("dir") as SortDir) || "asc";
+  const requestedDir = searchParams.get("dir");
+  const sortDir: SortDir =
+    requestedDir === "asc" || requestedDir === "desc"
+      ? requestedDir
+      : sortKey === "verified" || sortKey === "funded"
+        ? "desc"
+        : "asc";
 
   const filtered = useMemo(
     () => applyFilters(companies ?? [], filterState),
@@ -67,8 +75,10 @@ export function CompaniesDirectory() {
       const next = filtersToParams(overrides.state ?? filterState);
       const finalSort = overrides.sort ?? sortKey;
       const finalDir = overrides.dir ?? sortDir;
+      const defaultDir: SortDir =
+        finalSort === "verified" || finalSort === "funded" ? "desc" : "asc";
       if (finalSort !== "name") next.set("sort", finalSort);
-      if (finalDir !== "asc") next.set("dir", finalDir);
+      if (finalDir !== defaultDir) next.set("dir", finalDir);
       const qs = next.toString();
       router.replace(qs ? `/companies?${qs}` : "/companies", { scroll: false });
     },
@@ -77,7 +87,9 @@ export function CompaniesDirectory() {
 
   const onSort = useCallback(
     (key: SortKey) => {
-      const nextDir: SortDir = sortKey === key ? (sortDir === "asc" ? "desc" : "asc") : "asc";
+      const defaultDir: SortDir = key === "verified" || key === "funded" ? "desc" : "asc";
+      const nextDir: SortDir =
+        sortKey === key ? (sortDir === "asc" ? "desc" : "asc") : defaultDir;
       updateUrl({ sort: key, dir: nextDir });
     },
     [sortKey, sortDir, updateUrl],
@@ -113,6 +125,9 @@ export function CompaniesDirectory() {
           state={filterState}
           meta={meta}
           onChange={(next) => updateUrl({ state: next })}
+          sortKey={sortKey}
+          sortDir={sortDir}
+          onSortChange={(key, dir) => updateUrl({ sort: key, dir })}
         />
       </div>
 
@@ -170,6 +185,7 @@ export function CompaniesDirectory() {
                           >
                             {c.name}
                           </Link>
+                          <FreshnessBadges company={c} />
                           {c.website && (
                             <a
                               href={c.website}
@@ -225,7 +241,10 @@ export function CompaniesDirectory() {
                   <div className="h-1 w-full" style={{ background: accent }} aria-hidden />
                   <Link href={`/companies/${slug}`} className="block px-4 py-4">
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-[15px] font-semibold text-text">{c.name}</h3>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <h3 className="text-[15px] font-semibold text-text">{c.name}</h3>
+                        <FreshnessBadges company={c} />
+                      </div>
                       <span className="text-[11px] text-text-subtle whitespace-nowrap">
                         {[c.city, c.country].filter(Boolean).join(", ")}
                       </span>
@@ -305,6 +324,18 @@ function sortCompanies(items: Company[], key: SortKey, dir: SortDir): Company[] 
   switch (key) {
     case "founded":
       sorted.sort((a, b) => mult * cmpNullable(a.founded_year, b.founded_year));
+      break;
+    case "verified":
+      sorted.sort((a, b) => {
+        const cmp = cmpNullable(verifiedAtMs(a), verifiedAtMs(b));
+        return cmp !== 0 ? mult * cmp : a.name.localeCompare(b.name);
+      });
+      break;
+    case "funded":
+      sorted.sort((a, b) => {
+        const cmp = cmpNullable(fundedAtMs(a), fundedAtMs(b));
+        return cmp !== 0 ? mult * cmp : a.name.localeCompare(b.name);
+      });
       break;
     case "name":
     default:

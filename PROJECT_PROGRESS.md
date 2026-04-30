@@ -15,6 +15,17 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-04-30: Surface Freshness On The Map And Directory
+
+- Recently verified and newly funded companies now read at a glance on every
+  public surface: badges in the directory list, the company profile, and the
+  map detail panel; an outline ring on the corresponding map markers.
+- Added a Freshness filter chip and matching sort options ("Recently verified",
+  "Recently funded") to the companies directory. A unified sort dropdown
+  replaces the previous header-only column sort.
+- Uses existing fields only (`profile_verified_at`, `total_raised_as_of`); no
+  schema or API change. Thresholds: 30 days for verified, 90 days for funded.
+
 ### 2026-04-30: Verification Tooling Committed
 
 - Added the deep-research verification toolkit to the repo so future re-runs
