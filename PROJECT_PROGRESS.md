@@ -15,6 +15,18 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-04-30: Verification Tooling Committed
+
+- Added the deep-research verification toolkit to the repo so future re-runs
+  do not depend on local stash state: a sector-by-sector prompt template,
+  a per-group prompt generator, a response parser tolerant of Gemini and
+  ChatGPT output styles, and a verified-companies dump helper.
+- Hardened the parser so string `profile_confidence` labels (e.g. `"high"`,
+  `"medium"`, `"low"`) are normalised to floats automatically. Removes the
+  manual JSON-edit step that has been needed each apply cycle.
+- Added fixture-driven tests for both the generator and the parser; full
+  `pytest`, `ruff` and `black` pass.
+
 ### 2026-04-30: Re-Run Verification For Four Missed Companies
 
 - Filled coverage gap from the original deep-research pass (the first-listed
