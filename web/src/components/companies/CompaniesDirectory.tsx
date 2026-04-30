@@ -85,7 +85,7 @@ export function CompaniesDirectory() {
   );
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-5 py-10">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-8 sm:px-5 sm:py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-text-subtle">
@@ -229,14 +229,16 @@ export function CompaniesDirectory() {
                 <li key={c.id} className="overflow-hidden rounded-xl border border-border bg-surface">
                   <div className="h-1 w-full" style={{ background: accent }} aria-hidden />
                   <Link href={`/companies/${slug}`} className="block px-4 py-4">
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-1.5">
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <h3 className="text-[15px] font-semibold text-text">{c.name}</h3>
                         <FreshnessBadges company={c} />
                       </div>
-                      <span className="text-[11px] text-text-subtle whitespace-nowrap">
-                        {[c.city, c.country].filter(Boolean).join(", ")}
-                      </span>
+                      {[c.city, c.country].filter(Boolean).length > 0 && (
+                        <span className="break-words text-[11px] text-text-subtle">
+                          {[c.city, c.country].filter(Boolean).join(", ")}
+                        </span>
+                      )}
                     </div>
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-text-muted tabular-nums">
                       {formatStage(c.stage) && <span>{formatStage(c.stage)}</span>}

@@ -131,13 +131,20 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
       <div ref={containerRef} className="h-full w-full" />
       <style>{`
         .aisw-marker {
-          width: 14px;
-          height: 14px;
+          width: 40px;
+          height: 40px;
           border-radius: 999px;
-          border: 2px solid #0B0F14;
+          border: 13px solid #0B0F14;
           box-shadow: 0 0 0 1px rgba(255,255,255,0.2), 0 4px 10px rgba(0,0,0,0.4);
           cursor: pointer;
           transition: transform 120ms ease, box-shadow 120ms ease;
+        }
+        @media (min-width: 768px) {
+          .aisw-marker {
+            width: 14px;
+            height: 14px;
+            border-width: 2px;
+          }
         }
         .aisw-marker--fresh {
           box-shadow: 0 0 0 1px rgba(255,255,255,0.2),
@@ -172,6 +179,12 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
         }
         .aisw-cluster:hover {
           transform: scale(1.08);
+        }
+        @media (max-width: 767px) {
+          .maplibregl-ctrl-top-right,
+          .maplibregl-ctrl-bottom-left {
+            display: none;
+          }
         }
       `}</style>
     </div>
@@ -247,7 +260,7 @@ function buildMarkerEl(feature: ClusterFeature, onClick: () => void): HTMLElemen
   const isCluster = "cluster" in feature.properties && feature.properties.cluster;
   if (isCluster) {
     const count = (feature.properties as Supercluster.ClusterProperties).point_count;
-    const size = count < 10 ? 30 : count < 50 ? 38 : count < 200 ? 46 : 54;
+    const size = count < 10 ? 40 : count < 50 ? 44 : count < 200 ? 50 : 56;
     el.className = "aisw-cluster";
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;

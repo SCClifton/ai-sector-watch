@@ -46,7 +46,7 @@ export function NewsContent() {
   );
 
   return (
-    <section className="mx-auto w-full max-w-[900px] px-5 py-10">
+    <section className="mx-auto w-full max-w-[900px] px-4 py-8 sm:px-5 sm:py-10">
       <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-text-subtle">
         Pipeline
       </div>
@@ -92,10 +92,10 @@ export function NewsContent() {
 
 function SpendCard({ spend }: { spend: SpendSummary }) {
   return (
-    <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-border bg-surface/60 px-4 py-3">
-      <div className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.14em] text-text-subtle">
+    <div className="mt-5 flex flex-col gap-2 rounded-xl border border-border bg-surface/60 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6">
+      <div className="flex min-w-0 items-center gap-2 text-[12px] font-medium uppercase tracking-[0.14em] text-text-subtle">
         <Sparkles className="h-3.5 w-3.5 text-accent" />
-        Pipeline cost - last 4 weeks
+        <span className="min-w-0">Pipeline cost - last 4 weeks</span>
       </div>
       <div className="flex items-baseline gap-1.5 font-mono text-[13px] text-text-muted">
         <span className="text-[18px] font-semibold tabular-nums text-text">
@@ -135,7 +135,7 @@ function NewsCard({
 
   return (
     <li className="rounded-xl border border-border bg-surface/60 transition-colors hover:border-border-strong">
-      <div className="px-5 py-4">
+      <div className="px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-baseline gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-text-subtle">
           <span className="text-accent">{item.kind}</span>
           {date && <span className="text-text-muted normal-case tracking-normal">{date}</span>}
@@ -148,7 +148,7 @@ function NewsCard({
             href={item.source_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-start gap-1.5 text-text transition-colors hover:text-accent"
+            className="inline-flex min-w-0 items-start gap-1.5 break-words text-text transition-colors hover:text-accent"
           >
             {item.title}
             <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted" />

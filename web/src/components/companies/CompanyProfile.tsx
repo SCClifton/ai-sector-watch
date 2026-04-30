@@ -24,10 +24,10 @@ export function CompanyProfile({ company }: Props) {
   const valuation = formatUsd(company.valuation_usd);
 
   return (
-    <article className="mx-auto w-full max-w-[900px] px-5 py-10">
+    <article className="mx-auto w-full max-w-[900px] px-4 py-8 sm:px-5 sm:py-10">
       <Link
         href="/companies"
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-text-muted transition-colors hover:text-accent"
+        className="inline-flex min-h-10 items-center gap-1.5 text-[12px] font-medium text-text-muted transition-colors hover:text-accent"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         All companies
@@ -36,11 +36,11 @@ export function CompanyProfile({ company }: Props) {
       <div className="mt-6 overflow-hidden rounded-xl border border-border bg-surface">
         <div className="h-1.5 w-full" style={{ background: accent }} aria-hidden />
 
-        <header className="border-b border-border px-6 py-6">
+        <header className="border-b border-border px-4 py-5 sm:px-6 sm:py-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-3xl font-semibold tracking-tight text-text sm:text-4xl">
+                <h1 className="break-words text-3xl font-semibold tracking-tight text-text sm:text-4xl">
                   {company.name}
                 </h1>
                 <FreshnessBadges company={company} variant="chip" />
@@ -54,7 +54,7 @@ export function CompanyProfile({ company }: Props) {
                 href={company.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-border-strong bg-surface-2 px-3 py-1.5 text-[13px] font-medium text-text transition-colors hover:border-accent hover:text-accent"
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-border-strong bg-surface-2 px-3 py-1.5 text-[13px] font-medium text-text transition-colors hover:border-accent hover:text-accent"
               >
                 Website
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -76,7 +76,7 @@ export function CompanyProfile({ company }: Props) {
           </dl>
         </header>
 
-        <div className="grid grid-cols-1 gap-6 px-6 py-6 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 px-4 py-5 sm:grid-cols-3 sm:px-6 sm:py-6">
           <section className="sm:col-span-2">
             {company.summary && (
               <>
