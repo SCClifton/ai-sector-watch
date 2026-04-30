@@ -45,3 +45,7 @@ npm run lint
 - Admin mutations must stay server-side and authenticated.
 - Do not expose raw review artifacts, source extracts, or private operational
   details in UI copy.
+- Plausible Cloud tracks basic public pageviews for `aimap.cliftonfamily.co`.
+  The analytics component does not load during `next dev` or under `/admin`.
+  In Plausible Site Settings, add a Pages shield for `/admin*` as the
+  provider-side backstop.
