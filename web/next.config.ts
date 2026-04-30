@@ -17,8 +17,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: "/_stcore/health", destination: "/api/health" },
-      { source: "/_asset/map.js", destination: "https://plausible.io/js/script.js" },
-      { source: "/_asset/event", destination: "https://plausible.io/api/event" },
+      {
+        source: "/map-data/script.js",
+        destination: "https://plausible.io/js/pa-y14so16JDPotlwE9pZNzK.js",
+      },
     ];
   },
 };
