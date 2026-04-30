@@ -4,7 +4,7 @@
 
 import type { Company } from "./types";
 
-export const RECENTLY_VERIFIED_DAYS = 30;
+export const RECENTLY_VERIFIED_DAYS = 14;
 export const RECENTLY_FUNDED_DAYS = 90;
 
 export const FRESHNESS_VERIFIED = "verified";

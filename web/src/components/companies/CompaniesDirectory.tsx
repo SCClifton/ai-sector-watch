@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 import { CompaniesFilterBar } from "./CompaniesFilterBar";
 import { FreshnessBadges } from "./FreshnessBadges";
@@ -17,7 +17,6 @@ import { fundedAtMs, verifiedAtMs } from "@/lib/freshness";
 import { primarySectorHex, sectorLabel } from "@/lib/taxonomy";
 import { formatStage } from "@/lib/format";
 import { slugFor } from "@/lib/slug";
-import { cn } from "@/lib/cn";
 import type { Company } from "@/lib/types";
 
 type SortKey = "name" | "founded" | "verified" | "funded";
@@ -85,16 +84,6 @@ export function CompaniesDirectory() {
     [filterState, sortKey, sortDir, router],
   );
 
-  const onSort = useCallback(
-    (key: SortKey) => {
-      const defaultDir: SortDir = key === "verified" || key === "funded" ? "desc" : "asc";
-      const nextDir: SortDir =
-        sortKey === key ? (sortDir === "asc" ? "desc" : "asc") : defaultDir;
-      updateUrl({ sort: key, dir: nextDir });
-    },
-    [sortKey, sortDir, updateUrl],
-  );
-
   return (
     <section className="mx-auto w-full max-w-[1200px] px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -156,9 +145,9 @@ export function CompaniesDirectory() {
             <table className="w-full text-[13px]">
               <thead className="border-b border-border text-text-muted">
                 <tr className="text-left">
-                  <SortableTh label="Name" active={sortKey} dir={sortDir} field="name" onSort={onSort} />
+                  <th className="px-4 py-2 font-medium">Name</th>
                   <th className="px-4 py-2 font-medium">Stage</th>
-                  <SortableTh label="Founded" active={sortKey} dir={sortDir} field="founded" onSort={onSort} />
+                  <th className="px-4 py-2 font-medium">Founded</th>
                   <th className="px-4 py-2 font-medium">Sectors</th>
                   <th className="px-4 py-2 font-medium">Location</th>
                 </tr>
@@ -276,38 +265,6 @@ export function CompaniesDirectory() {
         </>
       )}
     </section>
-  );
-}
-
-function SortableTh({
-  label,
-  active,
-  dir,
-  field,
-  onSort,
-}: {
-  label: string;
-  active: SortKey;
-  dir: SortDir;
-  field: SortKey;
-  onSort: (k: SortKey) => void;
-}) {
-  const isActive = active === field;
-  const Icon = !isActive ? ArrowUpDown : dir === "asc" ? ArrowUp : ArrowDown;
-  return (
-    <th className="px-4 py-2 font-medium">
-      <button
-        type="button"
-        onClick={() => onSort(field)}
-        className={cn(
-          "inline-flex items-center gap-1 transition-colors",
-          isActive ? "text-text" : "text-text-muted hover:text-text",
-        )}
-      >
-        {label}
-        <Icon className="h-3 w-3" />
-      </button>
-    </th>
   );
 }
 

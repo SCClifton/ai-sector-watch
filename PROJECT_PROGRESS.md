@@ -24,7 +24,7 @@ contact details out of this file. Routine fixes belong in PR bodies.
   "Recently funded") to the companies directory. A unified sort dropdown
   replaces the previous header-only column sort.
 - Uses existing fields only (`profile_verified_at`, `total_raised_as_of`); no
-  schema or API change. Thresholds: 30 days for verified, 90 days for funded.
+  schema or API change. Thresholds: 14 days for verified, 90 days for funded.
 
 ### 2026-04-30: Verification Tooling Committed
 

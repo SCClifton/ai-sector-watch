@@ -141,7 +141,7 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
         }
         .aisw-marker--fresh {
           box-shadow: 0 0 0 1px rgba(255,255,255,0.2),
-                      0 0 0 4px rgba(244,183,64,0.55),
+                      0 0 0 4px rgba(61,220,132,0.55),
                       0 4px 10px rgba(0,0,0,0.4);
         }
         .aisw-marker:hover {
@@ -150,7 +150,7 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
         }
         .aisw-marker--fresh:hover {
           box-shadow: 0 0 0 2px rgba(244,183,64,0.6),
-                      0 0 0 5px rgba(244,183,64,0.35),
+                      0 0 0 5px rgba(61,220,132,0.5),
                       0 6px 14px rgba(0,0,0,0.5);
         }
         .aisw-marker--selected {
