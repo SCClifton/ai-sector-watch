@@ -15,6 +15,18 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-04-30: Re-Run Verification For Four Missed Companies
+
+- Filled coverage gap from the original deep-research pass (the first-listed
+  company in four cohorts was dropped from Gemini's JSON output despite being
+  discussed in the prose).
+- Wrote substantive updates for AutoGrab (Melbourne, Series B+, 91 staff),
+  Advanced Navigation (headcount 188), and Cortical Labs (Melbourne, Series A,
+  35 staff).
+- Atlassian's re-verification flagged it for rejection on a strict AI-first
+  reading; held that decision for a human policy call (mirrors the precedent
+  set for Canva, kept in the review pile rather than rejected).
+
 ### 2026-04-30: Dropped Founders From Public Profile
 
 - Removed the founders field from the public companies API and from the
