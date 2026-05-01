@@ -15,6 +15,14 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-05-01: Expanded ANZ News Ingestion
+
+- Added reviewed ANZ startup feeds for InnovationAus Startups, Startup News AU,
+  and NZ Entrepreneur to improve live news coverage.
+- Kept the ingestion path unchanged: RSS fetches feed the existing relevance,
+  company-linking, and pending-review gates.
+- No schema, dashboard UI, or LLM budget change.
+
 ### 2026-04-30: Mobile Public Dashboard Optimisation
 
 - Added mobile-first navigation and responsive filter sheets for the public
