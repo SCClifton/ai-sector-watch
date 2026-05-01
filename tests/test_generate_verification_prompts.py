@@ -51,6 +51,14 @@ def test_bucket_by_group_dedupes_within_a_group() -> None:
     assert [c["name"] for c in buckets["infra"]] == ["CrossGroup"]
 
 
+def test_bucket_by_group_preserves_unknown_sector_tags() -> None:
+    companies = [_company("1", "UnknownTagCo", sector_tags=["future_unknown"])]
+
+    buckets = g.bucket_by_group(companies)
+
+    assert [c["name"] for c in buckets["unknown_sector"]] == ["UnknownTagCo"]
+
+
 def test_render_prompt_contains_company_record_and_enums() -> None:
     template = (REPO_ROOT / "prompts" / "verify_sector.md").read_text(encoding="utf-8")
     companies = [

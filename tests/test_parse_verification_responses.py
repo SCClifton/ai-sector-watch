@@ -167,6 +167,31 @@ def test_run_parse_writes_apply_and_flags_artifacts(tmp_path: Path) -> None:
     assert flags_payload["companies"][0]["id"] == "co-2"
 
 
+def test_run_parse_reports_failed_response_files_as_errors(tmp_path: Path) -> None:
+    responses = tmp_path / "responses"
+    responses.mkdir()
+    (responses / "valid.md").write_text(
+        json.dumps(
+            [
+                {
+                    "id": "co-1",
+                    "name": "GoodCo",
+                    "verdict": "confirm",
+                    "updates": {},
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    (responses / "broken.md").write_text("not json", encoding="utf-8")
+
+    summary = p.run_parse(input_dir=tmp_path, write=False)
+
+    assert summary.entries_seen == 1
+    assert summary.files_failed
+    assert summary.errors
+
+
 def test_run_parse_merges_multi_sector_entries(tmp_path: Path) -> None:
     """Same company id appearing in two responses gets merged."""
     responses = tmp_path / "responses"

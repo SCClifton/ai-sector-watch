@@ -573,6 +573,12 @@ def run_parse(
     counts: Counter[str] = Counter(entry.verdict for entry in merged)
     summary.by_verdict = dict(counts)
 
+    if summary.files_failed:
+        summary.errors.append(
+            f"{len(summary.files_failed)} response file or entry parse failure(s); "
+            "see files_failed"
+        )
+
     timestamp = timestamp or datetime.now(UTC)
     stem = timestamp.strftime("%Y%m%dT%H%M%SZ")
 

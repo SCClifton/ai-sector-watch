@@ -49,6 +49,7 @@ from ai_sector_watch.storage import supabase_db  # noqa: E402
 LOGGER = logging.getLogger("audit_company_locations")
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "docs" / "data-audits"
 HIGH_CONFIDENCE_THRESHOLD = 0.75
+SUPPORTED_COUNTRIES = frozenset({"AU", "NZ"})
 COORD_TOLERANCE = 0.000001
 
 LOCATION_SYSTEM_PROMPT = (
@@ -216,6 +217,10 @@ def _normalise_country(value: str | None) -> str | None:
     return aliases.get(key, key)
 
 
+def _is_supported_country(value: str | None) -> bool:
+    return value in SUPPORTED_COUNTRIES
+
+
 def _coords_match(
     *,
     current_lat: Any,
@@ -346,8 +351,13 @@ def build_location_audit(
         or _is_empty(company.get("lon"))
     )
     has_recommendation = not _is_empty(recommended_city) and not _is_empty(recommended_country)
+    supported_recommendation = _is_supported_country(recommended_country)
     high_confidence = facts.confidence >= HIGH_CONFIDENCE_THRESHOLD
-    proposed_geo = geocode_city(recommended_city, jitter_seed=name) if recommended_city else None
+    proposed_geo = (
+        geocode_city(recommended_city, jitter_seed=name)
+        if recommended_city and supported_recommendation
+        else None
+    )
     proposed_lat = proposed_geo.lat if proposed_geo else None
     proposed_lon = proposed_geo.lon if proposed_geo else None
 
@@ -356,7 +366,7 @@ def build_location_audit(
 
     if not enriched or not has_recommendation:
         action = ACTION_MISSING_LOCATION if not has_current_location else ACTION_MANUAL_REVIEW
-    elif proposed_geo is None:
+    elif not supported_recommendation or proposed_geo is None:
         action = ACTION_UNSUPPORTED_CITY
     elif not has_current_location:
         action = ACTION_MISSING_LOCATION
