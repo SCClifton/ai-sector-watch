@@ -24,8 +24,8 @@ export default function MapPage() {
 
 function MapShell() {
   return (
-    <div className="relative flex flex-1 overflow-hidden">
-      <div className="relative flex-1 bg-bg" />
+    <div className="relative h-[calc(100dvh-3.5rem)] flex-none overflow-hidden">
+      <div className="relative h-full bg-bg" />
     </div>
   );
 }
@@ -83,8 +83,8 @@ function MapView() {
   );
 
   return (
-    <div className="relative flex flex-1 overflow-hidden">
-      <div className="relative flex-1">
+    <div className="relative h-[calc(100dvh-3.5rem)] flex-none overflow-hidden">
+      <div className="relative h-full">
         <Map
           companies={filtered}
           selectedId={selectedId}

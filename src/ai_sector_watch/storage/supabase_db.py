@@ -272,12 +272,17 @@ def upsert_company(
         return str(row["id"])
 
 
-def set_company_status(conn: psycopg.Connection, company_id: str, status: str) -> None:
+def set_company_status(conn: psycopg.Connection, company_id: str, status: str) -> int:
+    """Set a company's discovery_status. Returns the number of rows updated.
+
+    Callers should treat 0 as a stale or mistyped id and surface an error.
+    """
     with conn.cursor() as cur:
         cur.execute(
             "UPDATE companies SET discovery_status = %s WHERE id = %s",
             (status, company_id),
         )
+        return cur.rowcount
 
 
 def get_company_by_name(

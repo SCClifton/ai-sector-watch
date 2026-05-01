@@ -52,19 +52,19 @@ export function HomeContent() {
     <div className="relative flex flex-1 flex-col">
       <AmbientGlow />
 
-      <section className="mx-auto w-full max-w-[1100px] px-5 pt-16 pb-10 sm:pt-24">
+      <section className="mx-auto w-full max-w-[1100px] px-4 pt-12 pb-10 sm:px-5 sm:pt-24">
         <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-text-subtle">
           <Sparkles className="h-3.5 w-3.5 text-accent" />
           ANZ AI startup ecosystem
         </div>
 
-        <h1 className="mt-4 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-text sm:text-[64px] sm:leading-[1.02]">
-          A live map of AI companies
-          <br className="hidden sm:block" /> building from{" "}
+        <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight text-text sm:text-balance sm:text-[64px] sm:leading-[1.02]">
+          A live map of AI
+          <br className="sm:hidden" /> companies
+          <br /> building from{" "}
           <span className="text-accent">
-            <RotatingWord words={CITY_ROTATION} />
+            <RotatingWord words={CITY_ROTATION} suffix="." suffixClassName="text-text" />
           </span>
-          .
         </h1>
 
         <p className="mt-6 max-w-2xl text-balance text-lg leading-relaxed text-text-muted">
@@ -78,10 +78,10 @@ export function HomeContent() {
           cities={cityCount}
         />
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+        <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <Link
             href="/map"
-            className="group inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-[14px] font-semibold text-bg transition-colors hover:bg-accent-hover"
+            className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-accent px-5 py-2.5 text-[14px] font-semibold text-bg transition-colors hover:bg-accent-hover sm:justify-start"
           >
             <MapPin className="h-4 w-4" />
             Open the map
@@ -89,13 +89,13 @@ export function HomeContent() {
           </Link>
           <Link
             href="/companies"
-            className="inline-flex items-center gap-2 rounded-md border border-border-strong bg-surface px-5 py-2.5 text-[14px] font-medium text-text transition-colors hover:border-accent hover:text-accent"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-border-strong bg-surface px-5 py-2.5 text-[14px] font-medium text-text transition-colors hover:border-accent hover:text-accent sm:justify-start"
           >
             Browse companies
           </Link>
           <Link
             href="/news"
-            className="inline-flex items-center gap-2 rounded-md px-3 py-2.5 text-[14px] font-medium text-text-muted transition-colors hover:text-text"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-3 py-2.5 text-[14px] font-medium text-text-muted transition-colors hover:text-text sm:justify-start"
           >
             <Newspaper className="h-4 w-4" />
             News digest
@@ -103,11 +103,11 @@ export function HomeContent() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[1100px] px-5 pb-14">
+      <section className="mx-auto w-full max-w-[1100px] px-4 pb-14 sm:px-5">
         <Constellation companies={companies} />
       </section>
 
-      <section className="mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 px-5 pb-20 sm:grid-cols-3">
+      <section className="mx-auto grid w-full max-w-[1100px] grid-cols-1 gap-3 px-4 pb-20 sm:grid-cols-3 sm:px-5">
         {[
           {
             label: "Coverage",
@@ -170,7 +170,7 @@ function LiveStats({
   ];
 
   return (
-    <div className="mt-8 flex items-center gap-5 font-mono text-[13px] text-text-muted">
+    <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[13px] text-text-muted">
       {items.map((item, i) => (
         <div key={item.label} className="flex items-center gap-5">
           <div className="flex items-baseline gap-1.5">
@@ -178,7 +178,7 @@ function LiveStats({
             <span>{item.label}</span>
           </div>
           {i < items.length - 1 && (
-            <span aria-hidden className="text-border-strong">
+            <span aria-hidden className="hidden text-border-strong sm:inline">
               ·
             </span>
           )}

@@ -21,7 +21,12 @@ from ai_sector_watch.sources.huggingface_papers import (
     HuggingFacePapers,
     parse_huggingface_payload,
 )
-from ai_sector_watch.sources.rss import RssSource, parse_feed_bytes
+from ai_sector_watch.sources.rss import (
+    RssSource,
+    nzentrepreneur,
+    parse_feed_bytes,
+    startupnews_au,
+)
 from ai_sector_watch.sources.sitemap import (
     airtree_open_source_vc,
     blackbird_blog,
@@ -75,6 +80,14 @@ def test_rss_source_raises_on_http_error(monkeypatch) -> None:
     source = RssSource("bad", "https://example.com/bad")
     with pytest.raises(httpx.HTTPStatusError):
         source.fetch()
+
+
+def test_anz_startup_feed_factories_use_reviewed_urls() -> None:
+    sources = [startupnews_au(), nzentrepreneur()]
+    assert [(s.slug, s.kind, s.url) for s in sources] == [
+        ("startupnews_au", "news", "https://startupnews.com.au/feed/"),
+        ("nzentrepreneur", "news", "https://nzentrepreneur.co.nz/feed/"),
+    ]
 
 
 def test_parse_google_news_sitemap_bytes_extracts_items() -> None:

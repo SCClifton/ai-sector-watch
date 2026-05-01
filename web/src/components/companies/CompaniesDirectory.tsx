@@ -3,24 +3,25 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 import { CompaniesFilterBar } from "./CompaniesFilterBar";
+import { FreshnessBadges } from "./FreshnessBadges";
 import {
   applyFilters,
   deriveMeta,
   filtersToParams,
   paramsToFilters,
 } from "@/lib/filters";
+import { fundedAtMs, verifiedAtMs } from "@/lib/freshness";
 import { primarySectorHex, sectorLabel } from "@/lib/taxonomy";
 import { formatStage } from "@/lib/format";
 import { slugFor } from "@/lib/slug";
-import { cn } from "@/lib/cn";
 import type { Company } from "@/lib/types";
 
-type SortKey = "name" | "founded";
+type SortKey = "name" | "founded" | "verified" | "funded";
 type SortDir = "asc" | "desc";
-const SORT_KEYS: SortKey[] = ["name", "founded"];
+const SORT_KEYS: SortKey[] = ["name", "founded", "verified", "funded"];
 
 export function CompaniesDirectory() {
   const router = useRouter();
@@ -53,7 +54,13 @@ export function CompaniesDirectory() {
   const sortKey = SORT_KEYS.includes(requestedSort as SortKey)
     ? (requestedSort as SortKey)
     : "name";
-  const sortDir = (searchParams.get("dir") as SortDir) || "asc";
+  const requestedDir = searchParams.get("dir");
+  const sortDir: SortDir =
+    requestedDir === "asc" || requestedDir === "desc"
+      ? requestedDir
+      : sortKey === "verified" || sortKey === "funded"
+        ? "desc"
+        : "asc";
 
   const filtered = useMemo(
     () => applyFilters(companies ?? [], filterState),
@@ -67,24 +74,18 @@ export function CompaniesDirectory() {
       const next = filtersToParams(overrides.state ?? filterState);
       const finalSort = overrides.sort ?? sortKey;
       const finalDir = overrides.dir ?? sortDir;
+      const defaultDir: SortDir =
+        finalSort === "verified" || finalSort === "funded" ? "desc" : "asc";
       if (finalSort !== "name") next.set("sort", finalSort);
-      if (finalDir !== "asc") next.set("dir", finalDir);
+      if (finalDir !== defaultDir) next.set("dir", finalDir);
       const qs = next.toString();
       router.replace(qs ? `/companies?${qs}` : "/companies", { scroll: false });
     },
     [filterState, sortKey, sortDir, router],
   );
 
-  const onSort = useCallback(
-    (key: SortKey) => {
-      const nextDir: SortDir = sortKey === key ? (sortDir === "asc" ? "desc" : "asc") : "asc";
-      updateUrl({ sort: key, dir: nextDir });
-    },
-    [sortKey, sortDir, updateUrl],
-  );
-
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-5 py-10">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-8 sm:px-5 sm:py-10">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-text-subtle">
@@ -113,6 +114,9 @@ export function CompaniesDirectory() {
           state={filterState}
           meta={meta}
           onChange={(next) => updateUrl({ state: next })}
+          sortKey={sortKey}
+          sortDir={sortDir}
+          onSortChange={(key, dir) => updateUrl({ sort: key, dir })}
         />
       </div>
 
@@ -141,9 +145,9 @@ export function CompaniesDirectory() {
             <table className="w-full text-[13px]">
               <thead className="border-b border-border text-text-muted">
                 <tr className="text-left">
-                  <SortableTh label="Name" active={sortKey} dir={sortDir} field="name" onSort={onSort} />
+                  <th className="px-4 py-2 font-medium">Name</th>
                   <th className="px-4 py-2 font-medium">Stage</th>
-                  <SortableTh label="Founded" active={sortKey} dir={sortDir} field="founded" onSort={onSort} />
+                  <th className="px-4 py-2 font-medium">Founded</th>
                   <th className="px-4 py-2 font-medium">Sectors</th>
                   <th className="px-4 py-2 font-medium">Location</th>
                 </tr>
@@ -170,6 +174,7 @@ export function CompaniesDirectory() {
                           >
                             {c.name}
                           </Link>
+                          <FreshnessBadges company={c} />
                           {c.website && (
                             <a
                               href={c.website}
@@ -224,11 +229,16 @@ export function CompaniesDirectory() {
                 <li key={c.id} className="overflow-hidden rounded-xl border border-border bg-surface">
                   <div className="h-1 w-full" style={{ background: accent }} aria-hidden />
                   <Link href={`/companies/${slug}`} className="block px-4 py-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-[15px] font-semibold text-text">{c.name}</h3>
-                      <span className="text-[11px] text-text-subtle whitespace-nowrap">
-                        {[c.city, c.country].filter(Boolean).join(", ")}
-                      </span>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <h3 className="text-[15px] font-semibold text-text">{c.name}</h3>
+                        <FreshnessBadges company={c} />
+                      </div>
+                      {[c.city, c.country].filter(Boolean).length > 0 && (
+                        <span className="break-words text-[11px] text-text-subtle">
+                          {[c.city, c.country].filter(Boolean).join(", ")}
+                        </span>
+                      )}
                     </div>
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-text-muted tabular-nums">
                       {formatStage(c.stage) && <span>{formatStage(c.stage)}</span>}
@@ -260,51 +270,38 @@ export function CompaniesDirectory() {
   );
 }
 
-function SortableTh({
-  label,
-  active,
-  dir,
-  field,
-  onSort,
-}: {
-  label: string;
-  active: SortKey;
-  dir: SortDir;
-  field: SortKey;
-  onSort: (k: SortKey) => void;
-}) {
-  const isActive = active === field;
-  const Icon = !isActive ? ArrowUpDown : dir === "asc" ? ArrowUp : ArrowDown;
-  return (
-    <th className="px-4 py-2 font-medium">
-      <button
-        type="button"
-        onClick={() => onSort(field)}
-        className={cn(
-          "inline-flex items-center gap-1 transition-colors",
-          isActive ? "text-text" : "text-text-muted hover:text-text",
-        )}
-      >
-        {label}
-        <Icon className="h-3 w-3" />
-      </button>
-    </th>
-  );
-}
-
 function sortCompanies(items: Company[], key: SortKey, dir: SortDir): Company[] {
   const mult = dir === "asc" ? 1 : -1;
-  const cmpNullable = (a: number | null, b: number | null): number => {
-    if (a === null && b === null) return 0;
-    if (a === null) return 1; // nulls last
+
+  // Compare two numbers, always keeping nulls at the end regardless of
+  // direction. Returns null when both sides are null so the caller can fall
+  // back to a stable secondary key.
+  const cmpNullsLast = (a: number | null, b: number | null): number | null => {
+    if (a === null && b === null) return null;
+    if (a === null) return 1;
     if (b === null) return -1;
-    return a - b;
+    return mult * (a - b);
   };
 
   const sorted = [...items];
   switch (key) {
     case "founded":
-      sorted.sort((a, b) => mult * cmpNullable(a.founded_year, b.founded_year));
+      sorted.sort((a, b) => {
+        const cmp = cmpNullsLast(a.founded_year, b.founded_year);
+        return cmp ?? a.name.localeCompare(b.name);
+      });
+      break;
+    case "verified":
+      sorted.sort((a, b) => {
+        const cmp = cmpNullsLast(verifiedAtMs(a), verifiedAtMs(b));
+        return cmp ?? a.name.localeCompare(b.name);
+      });
+      break;
+    case "funded":
+      sorted.sort((a, b) => {
+        const cmp = cmpNullsLast(fundedAtMs(a), fundedAtMs(b));
+        return cmp ?? a.name.localeCompare(b.name);
+      });
       break;
     case "name":
     default:

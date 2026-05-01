@@ -13,6 +13,17 @@ operational map of every endpoint, query, or reviewed extract.
 | Investor and ecosystem publications | Cross-check funding, stage, and company metadata. | Reviewed imports only. Raw extracts stay local. |
 | Company-owned pages | Confirm website, location, summary, and operating context. | Store concise facts, not copied page text. |
 
+## Reviewed News Sources
+
+The weekly pipeline includes these reviewed ANZ startup publication feeds:
+
+| Slug | Feed | Rationale |
+|---|---|---|
+| `startup_daily_au` | Startup Daily RSS | Broad Australian and New Zealand startup coverage. |
+| `smartcompany_startups` | SmartCompany StartupSmart RSS | Australian startup funding, launches, and operator news. |
+| `startupnews_au` | Startup News RSS | Western Australian startup ecosystem coverage. |
+| `nzentrepreneur` | NZ Entrepreneur RSS | New Zealand founder, startup, and ecosystem coverage. |
+
 ## Inclusion Rules
 
 - Only use sources that are publicly accessible and permitted by their access

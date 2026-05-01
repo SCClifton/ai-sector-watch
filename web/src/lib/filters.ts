@@ -1,6 +1,13 @@
 // Mirrors apply_filters and FilterState in dashboard/components/filters.py.
 
 import type { Company } from "./types";
+import {
+  FRESHNESS_FUNDED,
+  FRESHNESS_VERIFIED,
+  isRecentlyFunded,
+  isRecentlyVerified,
+  type FreshnessFlag,
+} from "./freshness";
 
 export interface FilterState {
   sectors: string[];
@@ -9,6 +16,7 @@ export interface FilterState {
   foundedMin: number | null;
   foundedMax: number | null;
   nameQuery: string;
+  freshness: FreshnessFlag[];
 }
 
 export const EMPTY_FILTERS: FilterState = {
@@ -18,6 +26,7 @@ export const EMPTY_FILTERS: FilterState = {
   foundedMin: null,
   foundedMax: null,
   nameQuery: "",
+  freshness: [],
 };
 
 export function isFilterActive(state: FilterState): boolean {
@@ -27,7 +36,8 @@ export function isFilterActive(state: FilterState): boolean {
     state.countries.length > 0 ||
     state.foundedMin !== null ||
     state.foundedMax !== null ||
-    state.nameQuery.trim() !== ""
+    state.nameQuery.trim() !== "" ||
+    state.freshness.length > 0
   );
 }
 
@@ -57,6 +67,16 @@ export function applyFilters(companies: Company[], state: FilterState): Company[
   const q = state.nameQuery.trim().toLowerCase();
   if (q) {
     out = out.filter((c) => c.name.toLowerCase().includes(q));
+  }
+  if (state.freshness.length > 0) {
+    const now = new Date();
+    const wantVerified = state.freshness.includes(FRESHNESS_VERIFIED);
+    const wantFunded = state.freshness.includes(FRESHNESS_FUNDED);
+    out = out.filter((c) => {
+      const v = wantVerified && isRecentlyVerified(c, now);
+      const f = wantFunded && isRecentlyFunded(c, now);
+      return v || f;
+    });
   }
 
   return out;
@@ -96,6 +116,7 @@ export function filtersToParams(state: FilterState): URLSearchParams {
   if (state.foundedMin !== null) params.set("yearMin", String(state.foundedMin));
   if (state.foundedMax !== null) params.set("yearMax", String(state.foundedMax));
   if (state.nameQuery.trim() !== "") params.set("q", state.nameQuery.trim());
+  if (state.freshness.length > 0) params.set("fresh", state.freshness.join(","));
   return params;
 }
 
@@ -114,6 +135,9 @@ export function paramsToFilters(params: URLSearchParams): FilterState {
     const n = Number(raw);
     return Number.isFinite(n) ? n : null;
   };
+  const freshness = split("fresh").filter(
+    (v): v is FreshnessFlag => v === FRESHNESS_VERIFIED || v === FRESHNESS_FUNDED,
+  );
   return {
     sectors: split("sectors"),
     stages: split("stages"),
@@ -121,5 +145,6 @@ export function paramsToFilters(params: URLSearchParams): FilterState {
     foundedMin: numOrNull("yearMin"),
     foundedMax: numOrNull("yearMax"),
     nameQuery: params.get("q") ?? "",
+    freshness,
   };
 }

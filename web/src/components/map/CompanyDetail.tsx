@@ -12,6 +12,7 @@ import {
   formatStage,
   formatUsd,
 } from "@/lib/format";
+import { FreshnessBadges } from "@/components/companies/FreshnessBadges";
 
 interface Props {
   company: Company | null;
@@ -42,7 +43,7 @@ export function CompanyDetail({ company, onClose }: Props) {
     <aside
       role="dialog"
       aria-label={`${company.name} details`}
-      className="aisw-scroll absolute right-3 top-3 bottom-3 z-10 w-[360px] max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-xl border border-border bg-surface/95 shadow-2xl backdrop-blur-md"
+      className="aisw-scroll absolute inset-x-3 bottom-20 z-20 max-h-[62dvh] overflow-y-auto rounded-xl border border-border bg-surface/95 shadow-2xl backdrop-blur-md md:inset-x-auto md:bottom-3 md:right-3 md:top-3 md:max-h-none md:w-[360px] md:max-w-[calc(100vw-1.5rem)]"
     >
       <div
         className="h-1 w-full rounded-t-xl"
@@ -66,15 +67,16 @@ export function CompanyDetail({ company, onClose }: Props) {
               company.name
             )}
           </h2>
+          <FreshnessBadges company={company} variant="chip" className="mt-1.5 flex flex-wrap gap-1" />
           {location && (
-            <p className="mt-0.5 text-[12px] text-text-muted">{location}</p>
+            <p className="mt-1 text-[12px] text-text-muted">{location}</p>
           )}
         </div>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close details"
-          className="rounded-md p-1 text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-md text-text-muted transition-colors hover:bg-surface-2 hover:text-text md:h-auto md:w-auto md:p-1"
         >
           <X className="h-4 w-4" />
         </button>
@@ -91,13 +93,6 @@ export function CompanyDetail({ company, onClose }: Props) {
           {headcount && <Cell label="Headcount" value={headcount} />}
           {latestFunding && <Cell label="Latest funding" value={latestFunding} span={2} />}
         </dl>
-
-        {company.founders.length > 0 && (
-          <div className="mt-5">
-            <Label>Founders</Label>
-            <p className="mt-1 text-[13px] text-text">{company.founders.join(", ")}</p>
-          </div>
-        )}
 
         {company.sector_tags.length > 0 && (
           <div className="mt-5">

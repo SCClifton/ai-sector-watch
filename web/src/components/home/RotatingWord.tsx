@@ -1,13 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 
 interface Props {
   words: string[];
   intervalMs?: number;
+  suffix?: string;
+  suffixClassName?: string;
 }
 
-export function RotatingWord({ words, intervalMs = 2400 }: Props) {
+export function RotatingWord({
+  words,
+  intervalMs = 2400,
+  suffix = "",
+  suffixClassName,
+}: Props) {
   const [index, setIndex] = useState(0);
   const longest = useMemo(
     () => Math.max(0, ...words.map((w) => w.length)),
@@ -30,8 +37,8 @@ export function RotatingWord({ words, intervalMs = 2400 }: Props) {
 
   return (
     <span
-      className="relative inline-block align-baseline"
-      style={{ minWidth: `${longest}ch` }}
+      className="relative inline-block align-baseline sm:min-w-[var(--rotating-word-width)]"
+      style={{ "--rotating-word-width": `${longest}ch` } as CSSProperties}
       aria-live="polite"
     >
       {words.map((word, i) => (
@@ -45,9 +52,13 @@ export function RotatingWord({ words, intervalMs = 2400 }: Props) {
           }}
         >
           {word}
+          {suffix && <span className={suffixClassName}>{suffix}</span>}
         </span>
       ))}
-      <span className="invisible">{words[index]}</span>
+      <span className="invisible">
+        {words[index]}
+        {suffix}
+      </span>
     </span>
   );
 }

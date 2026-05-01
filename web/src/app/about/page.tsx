@@ -14,11 +14,11 @@ const ISSUES_URL = `${GITHUB_URL}/issues`;
 
 export default function AboutPage() {
   return (
-    <article className="mx-auto w-full max-w-[900px] px-5 py-12">
+    <article className="mx-auto w-full max-w-[900px] px-4 py-8 sm:px-5 sm:py-12">
       <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-text-subtle">
         Methodology
       </div>
-      <h1 className="mt-2 text-4xl font-semibold tracking-tight text-text sm:text-5xl">
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-text sm:text-5xl">
         About
       </h1>
       <p className="mt-3 text-[14px] text-text-muted">
@@ -34,7 +34,7 @@ export default function AboutPage() {
       </Section>
 
       <Section title="What is tracked">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Stat label="Scope" value="AU + NZ" />
           <Stat label="Sectors" value="21" />
           <Stat label="Cadence" value="Weekly" />
@@ -75,7 +75,7 @@ export default function AboutPage() {
             href={ISSUES_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-border-strong bg-surface px-3.5 py-2 text-[13px] font-medium text-text transition-colors hover:border-accent hover:text-accent"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border-strong bg-surface px-3.5 py-2 text-[13px] font-medium text-text transition-colors hover:border-accent hover:text-accent"
           >
             <MessageCircle className="h-3.5 w-3.5" />
             Report a correction
@@ -95,7 +95,7 @@ export default function AboutPage() {
             href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-semibold text-bg transition-colors hover:bg-accent-hover"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-semibold text-bg transition-colors hover:bg-accent-hover"
           >
             <Github className="h-3.5 w-3.5" />
             GitHub repository

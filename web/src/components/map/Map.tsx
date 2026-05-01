@@ -7,6 +7,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import type { Company } from "@/lib/types";
 import { primarySectorHex } from "@/lib/taxonomy";
+import { isRecentlyFunded, isRecentlyVerified } from "@/lib/freshness";
 
 interface MapProps {
   companies: Company[];
@@ -26,6 +27,7 @@ interface PointProps {
   companyId: string;
   name: string;
   hex: string;
+  fresh: boolean;
 }
 
 type ClusterFeature =
@@ -45,6 +47,7 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
 
   // Build the supercluster index from the filtered companies.
   const features = useMemo<Supercluster.PointFeature<PointProps>[]>(() => {
+    const now = new Date();
     return companies
       .filter((c) => c.lat !== null && c.lon !== null)
       .map((c) => ({
@@ -53,6 +56,7 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
           companyId: c.id,
           name: c.name,
           hex: primarySectorHex(c.sector_tags),
+          fresh: isRecentlyVerified(c, now) || isRecentlyFunded(c, now),
         },
         geometry: { type: "Point", coordinates: [c.lon as number, c.lat as number] },
       }));
@@ -127,17 +131,34 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
       <div ref={containerRef} className="h-full w-full" />
       <style>{`
         .aisw-marker {
-          width: 14px;
-          height: 14px;
+          width: 40px;
+          height: 40px;
           border-radius: 999px;
-          border: 2px solid #0B0F14;
+          border: 13px solid #0B0F14;
           box-shadow: 0 0 0 1px rgba(255,255,255,0.2), 0 4px 10px rgba(0,0,0,0.4);
           cursor: pointer;
           transition: transform 120ms ease, box-shadow 120ms ease;
         }
+        @media (min-width: 768px) {
+          .aisw-marker {
+            width: 14px;
+            height: 14px;
+            border-width: 2px;
+          }
+        }
+        .aisw-marker--fresh {
+          box-shadow: 0 0 0 1px rgba(255,255,255,0.2),
+                      0 0 0 4px rgba(61,220,132,0.55),
+                      0 4px 10px rgba(0,0,0,0.4);
+        }
         .aisw-marker:hover {
           transform: scale(1.35);
           box-shadow: 0 0 0 2px rgba(244,183,64,0.6), 0 6px 14px rgba(0,0,0,0.5);
+        }
+        .aisw-marker--fresh:hover {
+          box-shadow: 0 0 0 2px rgba(244,183,64,0.6),
+                      0 0 0 5px rgba(61,220,132,0.5),
+                      0 6px 14px rgba(0,0,0,0.5);
         }
         .aisw-marker--selected {
           transform: scale(1.55);
@@ -158,6 +179,12 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
         }
         .aisw-cluster:hover {
           transform: scale(1.08);
+        }
+        @media (max-width: 767px) {
+          .maplibregl-ctrl-top-right,
+          .maplibregl-ctrl-bottom-left {
+            display: none;
+          }
         }
       `}</style>
     </div>
@@ -233,7 +260,7 @@ function buildMarkerEl(feature: ClusterFeature, onClick: () => void): HTMLElemen
   const isCluster = "cluster" in feature.properties && feature.properties.cluster;
   if (isCluster) {
     const count = (feature.properties as Supercluster.ClusterProperties).point_count;
-    const size = count < 10 ? 30 : count < 50 ? 38 : count < 200 ? 46 : 54;
+    const size = count < 10 ? 40 : count < 50 ? 44 : count < 200 ? 50 : 56;
     el.className = "aisw-cluster";
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
@@ -241,7 +268,7 @@ function buildMarkerEl(feature: ClusterFeature, onClick: () => void): HTMLElemen
     el.setAttribute("aria-label", `Cluster of ${count} companies. Click to zoom in.`);
   } else {
     const props = feature.properties as PointProps;
-    el.className = "aisw-marker";
+    el.className = props.fresh ? "aisw-marker aisw-marker--fresh" : "aisw-marker";
     el.style.background = props.hex;
     el.setAttribute("aria-label", `${props.name}. Click for details.`);
     el.title = props.name;

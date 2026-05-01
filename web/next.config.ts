@@ -17,15 +17,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: "/_stcore/health", destination: "/api/health" },
-    ];
-  },
-  // Streamlit served the admin page at /Admin (derived from 90_Admin.py).
-  // Next.js routes are case-sensitive. Redirect anyone with the old URL
-  // bookmarked or in muscle memory to the canonical lowercase route.
-  async redirects() {
-    return [
-      { source: "/Admin", destination: "/admin", permanent: false },
-      { source: "/Admin/:path*", destination: "/admin/:path*", permanent: false },
+      {
+        source: "/map-data/script.js",
+        destination: "https://plausible.io/js/pa-y14so16JDPotlwE9pZNzK.js",
+      },
     ];
   },
 };
