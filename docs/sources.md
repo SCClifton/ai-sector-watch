@@ -21,7 +21,6 @@ The weekly pipeline includes these reviewed ANZ startup publication feeds:
 |---|---|---|
 | `startup_daily_au` | Startup Daily RSS | Broad Australian and New Zealand startup coverage. |
 | `smartcompany_startups` | SmartCompany StartupSmart RSS | Australian startup funding, launches, and operator news. |
-| `innovationaus_startups` | InnovationAus Startups RSS | Australian technology, deep tech, policy, and startup coverage. |
 | `startupnews_au` | Startup News RSS | Western Australian startup ecosystem coverage. |
 | `nzentrepreneur` | NZ Entrepreneur RSS | New Zealand founder, startup, and ecosystem coverage. |
 

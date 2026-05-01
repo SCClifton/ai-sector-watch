@@ -23,7 +23,6 @@ from ai_sector_watch.sources.huggingface_papers import (
 )
 from ai_sector_watch.sources.rss import (
     RssSource,
-    innovationaus_startups,
     nzentrepreneur,
     parse_feed_bytes,
     startupnews_au,
@@ -84,13 +83,8 @@ def test_rss_source_raises_on_http_error(monkeypatch) -> None:
 
 
 def test_anz_startup_feed_factories_use_reviewed_urls() -> None:
-    sources = [innovationaus_startups(), startupnews_au(), nzentrepreneur()]
+    sources = [startupnews_au(), nzentrepreneur()]
     assert [(s.slug, s.kind, s.url) for s in sources] == [
-        (
-            "innovationaus_startups",
-            "news",
-            "https://www.innovationaus.com/category/startups/feed/",
-        ),
         ("startupnews_au", "news", "https://startupnews.com.au/feed/"),
         ("nzentrepreneur", "news", "https://nzentrepreneur.co.nz/feed/"),
     ]

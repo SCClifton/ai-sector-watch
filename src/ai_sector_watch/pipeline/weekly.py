@@ -63,7 +63,6 @@ def default_sources() -> list[SourceBase]:
     return [
         rss.startup_daily_au(),
         rss.smartcompany_startups(),
-        rss.innovationaus_startups(),
         rss.startupnews_au(),
         rss.nzentrepreneur(),
         sitemap.capital_brief(),
