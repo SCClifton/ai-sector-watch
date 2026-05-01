@@ -17,8 +17,8 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ### 2026-05-01: Expanded ANZ News Ingestion
 
-- Added reviewed ANZ startup feeds for InnovationAus Startups, Startup News AU,
-  and NZ Entrepreneur to improve live news coverage.
+- Added reviewed ANZ startup feeds for Startup News AU and NZ Entrepreneur to
+  improve live news coverage.
 - Kept the ingestion path unchanged: RSS fetches feed the existing relevance,
   company-linking, and pending-review gates.
 - No schema, dashboard UI, or LLM budget change.
