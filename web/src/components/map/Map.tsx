@@ -118,7 +118,7 @@ export function Map({ companies, selectedId, onSelect }: MapProps) {
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([id, marker]) => {
       const el = marker.getElement();
-      if (id === selectedId) {
+      if (selectedId !== null && id === `point-${selectedId}`) {
         el.classList.add("aisw-marker--selected");
       } else {
         el.classList.remove("aisw-marker--selected");

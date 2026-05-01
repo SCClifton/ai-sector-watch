@@ -130,6 +130,19 @@ def test_unsupported_extracted_city_requires_review_without_update() -> None:
     assert finding.recommended_city == "Byron Bay"
 
 
+def test_non_anz_country_with_known_city_requires_review_without_update() -> None:
+    finding, update = audit_locations.build_location_audit(
+        _company(city="Sydney", country="AU"),
+        _facts(hq_city="Hamilton", hq_country="CA"),
+        enriched=True,
+    )
+
+    assert finding.action == audit_locations.ACTION_UNSUPPORTED_CITY
+    assert update is None
+    assert finding.recommended_city == "Hamilton"
+    assert finding.recommended_country == "CA"
+
+
 def test_low_confidence_mismatch_requires_manual_review() -> None:
     finding, update = audit_locations.build_location_audit(
         _company(city="Melbourne"),

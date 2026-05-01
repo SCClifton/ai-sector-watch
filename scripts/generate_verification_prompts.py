@@ -235,6 +235,9 @@ def bucket_by_group(companies: list[dict[str, Any]]) -> dict[str, list[dict[str,
             if sector is None:
                 continue
             groups_touched.add(sector.group)
+        if not groups_touched:
+            buckets.setdefault("unknown_sector", []).append(company)
+            continue
         for group in groups_touched:
             existing = buckets.setdefault(group, [])
             if not any(str(c.get("id")) == str(company.get("id")) for c in existing):

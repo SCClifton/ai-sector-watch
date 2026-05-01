@@ -247,6 +247,35 @@ def test_apply_validation_rejects_bare_dollar_amount_usd(tmp_path: Path) -> None
     assert "amount_usd is allowed only when currency_raw is explicit USD" in summary.errors[0]
 
 
+def test_aus_dollar_marker_is_not_treated_as_explicit_usd(tmp_path: Path) -> None:
+    assert not extract_report._currency_is_explicit_usd("AUS$5M")
+    assert not apply_import._currency_is_explicit_usd("AUS$5M")
+
+    row = extract_report.ExtractedFundingRow(
+        company_name="AUS Dollar Co",
+        country="AU",
+        is_ai_related=True,
+        stage="seed",
+        amount_usd="5000000",
+        currency_raw="AUS$5M",
+        confidence=0.8,
+    )
+    report = discover_reports.CutThroughReport(
+        title="Cut Through Quarterly 1Q 2026",
+        publication_date="2026-04-28",
+        report_url="https://www.cutthrough.com/insights/cut-through-quarterly-1q-2026",
+        pdf_url=None,
+        pdf_download_url=None,
+        quarter=1,
+        year=2026,
+        summary=None,
+    )
+
+    rendered = extract_report._normalise_funding_event(row, report=report)
+    assert rendered["amount_usd"] is None
+    assert "amount_usd cleared" in rendered["notes"]
+
+
 def test_apply_dry_run_counts_reviewed_actions(tmp_path: Path) -> None:
     path = tmp_path / "payload.json"
     payload = _review_payload()

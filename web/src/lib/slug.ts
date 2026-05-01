@@ -15,9 +15,14 @@ export function buildSlugMap<T extends { id: string; name: string }>(
   items: T[],
 ): Map<string, T> {
   const map = new Map<string, T>();
+  const baseCounts = new Map<string, number>();
   for (const item of items) {
     const base = slugify(item.name);
-    if (!map.has(base)) {
+    baseCounts.set(base, (baseCounts.get(base) ?? 0) + 1);
+  }
+  for (const item of items) {
+    const base = slugify(item.name);
+    if ((baseCounts.get(base) ?? 0) === 1) {
       map.set(base, item);
       continue;
     }

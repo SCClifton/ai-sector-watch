@@ -13,6 +13,14 @@ interface SpendSummary {
   run_count: number;
 }
 
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`${url} returned ${response.status}`);
+  }
+  return (await response.json()) as T;
+}
+
 export function NewsContent() {
   const [items, setItems] = useState<NewsItem[] | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -22,9 +30,9 @@ export function NewsContent() {
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      fetch("/api/news?limit=100").then((r) => r.json()),
-      fetch("/api/companies").then((r) => r.json()),
-      fetch("/api/spend-summary").then((r) => r.json()),
+      fetchJson<{ items?: NewsItem[] }>("/api/news?limit=100"),
+      fetchJson<{ companies?: Company[] }>("/api/companies"),
+      fetchJson<{ summary?: SpendSummary | null }>("/api/spend-summary"),
     ])
       .then(([news, companiesRes, spendRes]) => {
         if (cancelled) return;

@@ -129,7 +129,7 @@ def _currency_is_explicit_usd(currency_raw: str | None) -> bool:
     if not currency_raw:
         return False
     raw = currency_raw.upper().replace(" ", "")
-    return "USD" in raw or "US$" in raw or raw.startswith("US$")
+    return raw == "USD" or raw.startswith("USD") or raw.startswith("US$")
 
 
 def _parse_date(value: Any) -> date | None:
