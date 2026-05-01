@@ -93,5 +93,20 @@ def smartcompany_startups() -> RssSource:
     )
 
 
+def innovationaus_startups() -> RssSource:
+    return RssSource(
+        "innovationaus_startups",
+        "https://www.innovationaus.com/category/startups/feed/",
+    )
+
+
+def startupnews_au() -> RssSource:
+    return RssSource("startupnews_au", "https://startupnews.com.au/feed/")
+
+
+def nzentrepreneur() -> RssSource:
+    return RssSource("nzentrepreneur", "https://nzentrepreneur.co.nz/feed/")
+
+
 def crunchbase_ai() -> RssSource:
     return RssSource("crunchbase_ai", "https://news.crunchbase.com/sections/ai/feed/")
