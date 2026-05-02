@@ -24,6 +24,20 @@ The weekly pipeline includes these reviewed ANZ startup publication feeds:
 | `startupnews_au` | Startup News RSS | Western Australian startup ecosystem coverage. |
 | `nzentrepreneur` | NZ Entrepreneur RSS | New Zealand founder, startup, and ecosystem coverage. |
 
+## Reviewed Research Sources
+
+The daily research brief uses primary research sources and stores only concise
+metadata, links, and generated notes:
+
+| Slug | Feed | Rationale |
+|---|---|---|
+| `arxiv_cs_ai` | arXiv cs.AI RSS | Artificial intelligence papers. |
+| `arxiv_cs_lg` | arXiv cs.LG RSS | Machine learning papers. |
+| `arxiv_cs_cl` | arXiv cs.CL RSS | Language and NLP papers. |
+| `arxiv_cs_cv` | arXiv cs.CV RSS | Computer vision papers. |
+| `arxiv_cs_ro` | arXiv cs.RO RSS | Robotics papers. |
+| `huggingface_papers` | Hugging Face Daily Papers API | Paper discovery with primary arXiv links where available. |
+
 ## Inclusion Rules
 
 - Only use sources that are publicly accessible and permitted by their access

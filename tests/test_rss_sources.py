@@ -14,6 +14,8 @@ import pytest
 
 from ai_sector_watch.sources.arxiv_source import (
     arxiv_cs_ai,
+    arxiv_cs_cl,
+    arxiv_cs_cv,
     arxiv_cs_lg,
     arxiv_cs_ro,
 )
@@ -184,9 +186,15 @@ def test_stale_feed_factories_use_current_sitemaps() -> None:
 
 
 def test_arxiv_factories_have_distinct_slugs() -> None:
-    sources = [arxiv_cs_ai(), arxiv_cs_lg(), arxiv_cs_ro()]
+    sources = [arxiv_cs_ai(), arxiv_cs_lg(), arxiv_cs_cl(), arxiv_cs_cv(), arxiv_cs_ro()]
     slugs = {s.slug for s in sources}
-    assert slugs == {"arxiv_cs_ai", "arxiv_cs_lg", "arxiv_cs_ro"}
+    assert slugs == {
+        "arxiv_cs_ai",
+        "arxiv_cs_lg",
+        "arxiv_cs_cl",
+        "arxiv_cs_cv",
+        "arxiv_cs_ro",
+    }
     for s in sources:
         assert s.kind == "papers"
         assert s.url.startswith("https://export.arxiv.org/rss/")

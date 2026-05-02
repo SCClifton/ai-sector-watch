@@ -15,6 +15,15 @@ contact details out of this file. Routine fixes belong in PR bodies.
 
 ## Recent Milestones
 
+### 2026-05-02: Public Research Archive
+
+- Added a public Research page for stored daily frontier-AI research brief runs,
+  with latest-run and chronological archive views.
+- Added the `research_brief_runs` table and JSON fallback files under
+  `data/research_briefs/` so page loads read durable records cheaply.
+- Added `scripts/run_research_brief.py` to fetch primary research sources,
+  build structured brief sections, and upsert by `run_date` when enabled.
+
 ### 2026-05-01: Expanded ANZ News Ingestion
 
 - Added reviewed ANZ startup feeds for Startup News AU and NZ Entrepreneur to

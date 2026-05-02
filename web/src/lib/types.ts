@@ -50,3 +50,58 @@ export interface NewsItem {
   kind: string;
   company_ids: string[];
 }
+
+export type ResearchItemType =
+  | "paper"
+  | "artifact"
+  | "lab_update"
+  | "benchmark"
+  | "model_card"
+  | "system_card"
+  | "dataset"
+  | "code"
+  | "watchlist";
+
+export interface ResearchBriefItem {
+  title: string;
+  source_lab: string;
+  item_type: ResearchItemType;
+  published_at: string | null;
+  primary_url: string;
+  secondary_urls: string[];
+  takeaway: string;
+  why_it_matters: string;
+  evidence_quality: string;
+  limitations: string;
+}
+
+export interface ResearchBriefSections {
+  top_items: ResearchBriefItem[];
+  papers_worth_reading: ResearchBriefItem[];
+  research_artifacts: ResearchBriefItem[];
+  lab_company_updates: ResearchBriefItem[];
+  watchlist: ResearchBriefItem[];
+  skipped_noise_note: string;
+}
+
+export interface ResearchBriefSource {
+  slug: string;
+  label: string;
+  url?: string;
+}
+
+export interface ResearchBriefRun {
+  id: string;
+  run_date: string;
+  window_start: string | null;
+  window_end: string | null;
+  title: string | null;
+  summary: string | null;
+  sections: ResearchBriefSections;
+  sources: ResearchBriefSource[];
+  cost_usd: number | null;
+  model: string | null;
+  status: string;
+  created_at: string | null;
+  updated_at: string | null;
+}

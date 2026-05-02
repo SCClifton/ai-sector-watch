@@ -193,7 +193,46 @@ ALTER TABLE ingest_events
     ADD COLUMN IF NOT EXISTS metadata JSONB;
 
 -- =========================================================================
--- updated_at trigger for companies
+-- Research brief runs (daily public frontier-AI research archive)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS research_brief_runs (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    run_date      DATE UNIQUE NOT NULL,
+    window_start  TIMESTAMPTZ,
+    window_end    TIMESTAMPTZ,
+    title         TEXT,
+    summary       TEXT,
+    sections      JSONB NOT NULL,
+    sources       JSONB NOT NULL DEFAULT '[]'::JSONB,
+    cost_usd      NUMERIC(8, 4),
+    model         TEXT,
+    status        TEXT NOT NULL DEFAULT 'published',
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE research_brief_runs
+    ADD COLUMN IF NOT EXISTS window_start TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS window_end TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS title TEXT,
+    ADD COLUMN IF NOT EXISTS summary TEXT,
+    ADD COLUMN IF NOT EXISTS sections JSONB NOT NULL DEFAULT '{}'::JSONB,
+    ADD COLUMN IF NOT EXISTS sources JSONB NOT NULL DEFAULT '[]'::JSONB,
+    ADD COLUMN IF NOT EXISTS cost_usd NUMERIC(8, 4),
+    ADD COLUMN IF NOT EXISTS model TEXT,
+    ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'published',
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+CREATE UNIQUE INDEX IF NOT EXISTS research_brief_runs_run_date_unique
+    ON research_brief_runs (run_date);
+
+CREATE INDEX IF NOT EXISTS research_brief_runs_public_idx
+    ON research_brief_runs (status, run_date DESC);
+
+-- =========================================================================
+-- updated_at triggers
 -- =========================================================================
 
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS TRIGGER AS $$
@@ -206,4 +245,9 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS companies_set_updated_at ON companies;
 CREATE TRIGGER companies_set_updated_at
     BEFORE UPDATE ON companies
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+DROP TRIGGER IF EXISTS research_brief_runs_set_updated_at ON research_brief_runs;
+CREATE TRIGGER research_brief_runs_set_updated_at
+    BEFORE UPDATE ON research_brief_runs
     FOR EACH ROW EXECUTE FUNCTION set_updated_at();
