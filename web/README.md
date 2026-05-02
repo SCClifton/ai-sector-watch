@@ -36,6 +36,7 @@ npm run lint
 - `/map` - interactive company map
 - `/companies` - searchable company directory
 - `/news` - recent public activity
+- `/infrastructure` - AI token cost and data-center scenario dashboard
 - `/about` - scope and methodology
 - `/admin` - password-gated review queue
 
