@@ -26,7 +26,7 @@ The weekly pipeline includes these reviewed ANZ startup publication feeds:
 
 ## Reviewed Research Sources
 
-The daily research brief uses primary research sources and stores only concise
+The twice-weekly research brief uses primary research sources and stores only concise
 metadata, links, and generated notes:
 
 | Slug | Feed | Rationale |
