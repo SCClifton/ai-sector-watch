@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -335,8 +336,8 @@ def _summary(*, run_date: date, window_count: int, ranked_count: int) -> str:
             "after the daily filter pass."
         )
     return (
-        f"Reviewed {window_count} primary-source research items and selected "
-        f"{ranked_count} candidates for the {run_date.isoformat()} daily brief."
+        f"Reviewed {window_count} primary-source research items for "
+        f"{run_date.isoformat()} and selected the strongest papers and artifacts."
     )
 
 
@@ -361,7 +362,13 @@ def _skipped_note(
 def _clean_text(value: str | None) -> str:
     if not value:
         return ""
-    return " ".join(value.replace("\n", " ").replace("\r", " ").split())
+    cleaned = " ".join(value.replace("\n", " ").replace("\r", " ").split())
+    return re.sub(
+        r"^arXiv:\S+\s+Announce Type:\s+\S+\s+Abstract:\s*",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
 
 
 def _clip(value: str, limit: int) -> str:

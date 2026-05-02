@@ -15,7 +15,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27251v1 Announce Type: new Abstract: Large Language Models (LLMs) are known to acquire reasoning capabilities through shared inference patterns in pre-training data, which are fur...",
+        "takeaway": "Large Language Models (LLMs) are known to acquire reasoning capabilities through shared inference patterns in pre-training data, which are further elicited via Chain-of-Thought (CoT) practic...",
         "title": "Compliance versus Sensibility: On the Reasoning Controllability in Large Language Models",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -27,7 +27,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.LG",
-        "takeaway": "arXiv:2604.27045v1 Announce Type: new Abstract: As Large Language Model (LLM) agents transition from single-session tools to persistent systems managing longitudinal healthcare journeys, the...",
+        "takeaway": "As Large Language Model (LLM) agents transition from single-session tools to persistent systems managing longitudinal healthcare journeys, their memory architectures face a critical challeng...",
         "title": "Detecting Clinical Discrepancies in Health Coaching Agents: A Dual-Stream Memory and Reconciliation Architecture",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -39,7 +39,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.26986v1 Announce Type: new Abstract: We introduce a novel task of digital battery passport (DBP) conformance classification and introduce the first public benchmark for the task:...",
+        "takeaway": "We introduce a novel task of digital battery passport (DBP) conformance classification and introduce the first public benchmark for the task: BatteryPass-12K, created synthetically from real...",
         "title": "BatteryPass-12K: The First Dataset for the Novel Digital Battery Passport Conformance Task",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -51,7 +51,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27283v1 Announce Type: new Abstract: Large language model (LLM)-based coding agents increasingly rely on external memory to reuse prior debugging experience, repair traces, and re...",
+        "takeaway": "Large language model (LLM)-based coding agents increasingly rely on external memory to reuse prior debugging experience, repair traces, and repository-local operational knowledge. However, r...",
         "title": "Learning When to Remember: Risk-Sensitive Contextual Bandits for Abstention-Aware Memory Retrieval in LLM-Based Coding Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -63,7 +63,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CV",
-        "takeaway": "arXiv:2604.27375v1 Announce Type: new Abstract: Reasoning photo retouching has gained significant traction, requiring models to analyze image defects, give reasoning processes, and execute p...",
+        "takeaway": "Reasoning photo retouching has gained significant traction, requiring models to analyze image defects, give reasoning processes, and execute precise retouching enhancements. However, existin...",
         "title": "VeraRetouch: A Lightweight Fully Differentiable Framework for Multi-Task Reasoning Photo Retouching",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -75,7 +75,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CV",
-        "takeaway": "arXiv:2604.27389v1 Announce Type: new Abstract: In recent years, Multimodal Large Language Models (MLLMs) have achieved remarkable progress on a wide range of multimodal benchmarks. Despite...",
+        "takeaway": "In recent years, Multimodal Large Language Models (MLLMs) have achieved remarkable progress on a wide range of multimodal benchmarks. Despite these advances, most existing benchmarks mainly...",
         "title": "COHERENCE: Benchmarking Fine-Grained Image-Text Alignment in Interleaved Multimodal Contexts",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -87,7 +87,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27151v1 Announce Type: new Abstract: Computer-use agents provide a promising path toward general software automation because they can interact directly with arbitrary graphical us...",
+        "takeaway": "Computer-use agents provide a promising path toward general software automation because they can interact directly with arbitrary graphical user interfaces instead of relying on brittle, app...",
         "title": "Step-level Optimization for Efficient Computer-use Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -99,7 +99,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27233v1 Announce Type: new Abstract: Tool-calling agents are evaluated on tool selection, parameter accuracy, and scope recognition, yet LLM trajectory assessments remain inherent...",
+        "takeaway": "Tool-calling agents are evaluated on tool selection, parameter accuracy, and scope recognition, yet LLM trajectory assessments remain inherently post-hoc. Disconnected from the active execut...",
         "title": "Reinforced Agent: Inference-Time Feedback for Tool-Calling Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -111,7 +111,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27253v1 Announce Type: new Abstract: Recent advances in multimodal large language models (LLMs) have revolutionized web agents that can automate complex tasks on websites. However...",
+        "takeaway": "Recent advances in multimodal large language models (LLMs) have revolutionized web agents that can automate complex tasks on websites. However, their accuracy remains limited by the scarcity...",
         "title": "AutoSurfer -- Teaching Web Agents through Comprehensive Surfing, Learning, and Modeling",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -123,7 +123,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27137v1 Announce Type: new Abstract: This paper introduces a systematic evaluation framework grounded in the Interagency Language Roundtable (ILR) Skill Level Descriptions and app...",
+        "takeaway": "This paper introduces a systematic evaluation framework grounded in the Interagency Language Roundtable (ILR) Skill Level Descriptions and applies it to Claude (Sonnet 4.6) across six langua...",
         "title": "Cross-Lingual Response Consistency in Large Language Models: An ILR-Informed Evaluation of Claude Across Six Languages",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -135,7 +135,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27345v1 Announce Type: new Abstract: Human annotators frequently disagree on emotion labels, yet most evaluations of Large Language Model (LLM) emotion annotation collapse these j...",
+        "takeaway": "Human annotators frequently disagree on emotion labels, yet most evaluations of Large Language Model (LLM) emotion annotation collapse these judgments into a single gold standard, discarding...",
         "title": "LLMs Capture Emotion Labels, Not Emotion Uncertainty: Distributional Analysis and Calibration of Human--LLM Judgment Gaps",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -147,7 +147,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27092v1 Announce Type: new Abstract: Scientific research has long been human-led, driving new knowledge and transformative technologies through the continual revision of questions...",
+        "takeaway": "Scientific research has long been human-led, driving new knowledge and transformative technologies through the continual revision of questions, methods and claims as evidence accumulates. Al...",
         "title": "End-to-end autonomous scientific discovery on a real optical platform",
         "why_it_matters": "Relevant to agentic systems, tool use, and applied AI workflows."
       }
@@ -161,7 +161,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27251v1 Announce Type: new Abstract: Large Language Models (LLMs) are known to acquire reasoning capabilities through shared inference patterns in pre-training data, which are fur...",
+        "takeaway": "Large Language Models (LLMs) are known to acquire reasoning capabilities through shared inference patterns in pre-training data, which are further elicited via Chain-of-Thought (CoT) practic...",
         "title": "Compliance versus Sensibility: On the Reasoning Controllability in Large Language Models",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -173,7 +173,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.LG",
-        "takeaway": "arXiv:2604.27045v1 Announce Type: new Abstract: As Large Language Model (LLM) agents transition from single-session tools to persistent systems managing longitudinal healthcare journeys, the...",
+        "takeaway": "As Large Language Model (LLM) agents transition from single-session tools to persistent systems managing longitudinal healthcare journeys, their memory architectures face a critical challeng...",
         "title": "Detecting Clinical Discrepancies in Health Coaching Agents: A Dual-Stream Memory and Reconciliation Architecture",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -185,7 +185,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.26986v1 Announce Type: new Abstract: We introduce a novel task of digital battery passport (DBP) conformance classification and introduce the first public benchmark for the task:...",
+        "takeaway": "We introduce a novel task of digital battery passport (DBP) conformance classification and introduce the first public benchmark for the task: BatteryPass-12K, created synthetically from real...",
         "title": "BatteryPass-12K: The First Dataset for the Novel Digital Battery Passport Conformance Task",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -197,7 +197,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27283v1 Announce Type: new Abstract: Large language model (LLM)-based coding agents increasingly rely on external memory to reuse prior debugging experience, repair traces, and re...",
+        "takeaway": "Large language model (LLM)-based coding agents increasingly rely on external memory to reuse prior debugging experience, repair traces, and repository-local operational knowledge. However, r...",
         "title": "Learning When to Remember: Risk-Sensitive Contextual Bandits for Abstention-Aware Memory Retrieval in LLM-Based Coding Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -209,7 +209,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CV",
-        "takeaway": "arXiv:2604.27375v1 Announce Type: new Abstract: Reasoning photo retouching has gained significant traction, requiring models to analyze image defects, give reasoning processes, and execute p...",
+        "takeaway": "Reasoning photo retouching has gained significant traction, requiring models to analyze image defects, give reasoning processes, and execute precise retouching enhancements. However, existin...",
         "title": "VeraRetouch: A Lightweight Fully Differentiable Framework for Multi-Task Reasoning Photo Retouching",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -221,7 +221,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CV",
-        "takeaway": "arXiv:2604.27389v1 Announce Type: new Abstract: In recent years, Multimodal Large Language Models (MLLMs) have achieved remarkable progress on a wide range of multimodal benchmarks. Despite...",
+        "takeaway": "In recent years, Multimodal Large Language Models (MLLMs) have achieved remarkable progress on a wide range of multimodal benchmarks. Despite these advances, most existing benchmarks mainly...",
         "title": "COHERENCE: Benchmarking Fine-Grained Image-Text Alignment in Interleaved Multimodal Contexts",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -233,7 +233,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27151v1 Announce Type: new Abstract: Computer-use agents provide a promising path toward general software automation because they can interact directly with arbitrary graphical us...",
+        "takeaway": "Computer-use agents provide a promising path toward general software automation because they can interact directly with arbitrary graphical user interfaces instead of relying on brittle, app...",
         "title": "Step-level Optimization for Efficient Computer-use Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -245,7 +245,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27233v1 Announce Type: new Abstract: Tool-calling agents are evaluated on tool selection, parameter accuracy, and scope recognition, yet LLM trajectory assessments remain inherent...",
+        "takeaway": "Tool-calling agents are evaluated on tool selection, parameter accuracy, and scope recognition, yet LLM trajectory assessments remain inherently post-hoc. Disconnected from the active execut...",
         "title": "Reinforced Agent: Inference-Time Feedback for Tool-Calling Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       }
@@ -260,7 +260,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27251v1 Announce Type: new Abstract: Large Language Models (LLMs) are known to acquire reasoning capabilities through shared inference patterns in pre-training data, which are fur...",
+        "takeaway": "Large Language Models (LLMs) are known to acquire reasoning capabilities through shared inference patterns in pre-training data, which are further elicited via Chain-of-Thought (CoT) practic...",
         "title": "Compliance versus Sensibility: On the Reasoning Controllability in Large Language Models",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -272,7 +272,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.LG",
-        "takeaway": "arXiv:2604.27045v1 Announce Type: new Abstract: As Large Language Model (LLM) agents transition from single-session tools to persistent systems managing longitudinal healthcare journeys, the...",
+        "takeaway": "As Large Language Model (LLM) agents transition from single-session tools to persistent systems managing longitudinal healthcare journeys, their memory architectures face a critical challeng...",
         "title": "Detecting Clinical Discrepancies in Health Coaching Agents: A Dual-Stream Memory and Reconciliation Architecture",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -284,7 +284,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.26986v1 Announce Type: new Abstract: We introduce a novel task of digital battery passport (DBP) conformance classification and introduce the first public benchmark for the task:...",
+        "takeaway": "We introduce a novel task of digital battery passport (DBP) conformance classification and introduce the first public benchmark for the task: BatteryPass-12K, created synthetically from real...",
         "title": "BatteryPass-12K: The First Dataset for the Novel Digital Battery Passport Conformance Task",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -296,7 +296,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27283v1 Announce Type: new Abstract: Large language model (LLM)-based coding agents increasingly rely on external memory to reuse prior debugging experience, repair traces, and re...",
+        "takeaway": "Large language model (LLM)-based coding agents increasingly rely on external memory to reuse prior debugging experience, repair traces, and repository-local operational knowledge. However, r...",
         "title": "Learning When to Remember: Risk-Sensitive Contextual Bandits for Abstention-Aware Memory Retrieval in LLM-Based Coding Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -308,7 +308,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CV",
-        "takeaway": "arXiv:2604.27375v1 Announce Type: new Abstract: Reasoning photo retouching has gained significant traction, requiring models to analyze image defects, give reasoning processes, and execute p...",
+        "takeaway": "Reasoning photo retouching has gained significant traction, requiring models to analyze image defects, give reasoning processes, and execute precise retouching enhancements. However, existin...",
         "title": "VeraRetouch: A Lightweight Fully Differentiable Framework for Multi-Task Reasoning Photo Retouching",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       }
@@ -322,7 +322,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27096v1 Announce Type: new Abstract: The purpose of our paper is to develop a unified multi-agent architecture that automates end-to-end machine learning (ML) pipeline generation...",
+        "takeaway": "The purpose of our paper is to develop a unified multi-agent architecture that automates end-to-end machine learning (ML) pipeline generation from datasets and natural-language (NL) goals, i...",
         "title": "Think it, Run it: Autonomous ML pipeline generation via self-healing multi-agent AI",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -334,7 +334,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27132v1 Announce Type: new Abstract: Large Reasoning Models (LRMs) and Multi-Agent Systems (MAS) in high-stakes domains demand reliable verification, yet centralized approaches su...",
+        "takeaway": "Large Reasoning Models (LRMs) and Multi-Agent Systems (MAS) in high-stakes domains demand reliable verification, yet centralized approaches suffer four limitations: (1) Robustness, with sing...",
         "title": "TRUST: A Framework for Decentralized AI Service v.0.1",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -346,7 +346,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.AI",
-        "takeaway": "arXiv:2604.27221v1 Announce Type: new Abstract: Agentic web search increasingly faces two distinct demands: deep reasoning over a single target, and structured aggregation across many entiti...",
+        "takeaway": "Agentic web search increasingly faces two distinct demands: deep reasoning over a single target, and structured aggregation across many entities and heterogeneous sources. Current systems st...",
         "title": "Web2BigTable: A Bi-Level Multi-Agent LLM System for Internet-Scale Information Search and Extraction",
         "why_it_matters": "Relevant to agentic systems, tool use, and applied AI workflows."
       },
@@ -358,7 +358,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.LG",
-        "takeaway": "arXiv:2604.27003v1 Announce Type: new Abstract: Memory-augmented LLM agents offer an appealing shortcut to continual learning: rather than updating model parameters, they accumulate experien...",
+        "takeaway": "Memory-augmented LLM agents offer an appealing shortcut to continual learning: rather than updating model parameters, they accumulate experience in external memory, seemingly sidestepping th...",
         "title": "When Continual Learning Moves to Memory: A Study of Experience Reuse in LLM Agents",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -370,7 +370,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.LG",
-        "takeaway": "arXiv:2604.27014v1 Announce Type: new Abstract: The scarcity of high-quality annotated medical data, particularly in mental health, poses a significant bottleneck for training robust machine...",
+        "takeaway": "The scarcity of high-quality annotated medical data, particularly in mental health, poses a significant bottleneck for training robust machine learning models. Privacy regulations restrict d...",
         "title": "Fidelity, Diversity, and Privacy: A Multi-Dimensional LLM Evaluation for Clinical Data Augmentation",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -382,7 +382,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27039v1 Announce Type: new Abstract: Token serves as the fundamental unit of computation in modern autoregressive models, and generation length directly influences both inference...",
+        "takeaway": "Token serves as the fundamental unit of computation in modern autoregressive models, and generation length directly influences both inference cost and reasoning performance. Despite its impo...",
         "title": "Length Value Model: Scalable Value Pretraining for Token-Level Length Modeling",
         "why_it_matters": "Relevant to multimodal model capability and product surfaces."
       },
@@ -394,7 +394,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27093v1 Announce Type: new Abstract: Current LLM safety alignment techniques improve model robustness against adversarial attacks, but overlook whether and how LLMs can recover he...",
+        "takeaway": "Current LLM safety alignment techniques improve model robustness against adversarial attacks, but overlook whether and how LLMs can recover helpfulness when benign users clarify their intent...",
         "title": "Useless but Safe? Benchmarking Utility Recovery with User Intent Clarification in Multi-Turn Conversations",
         "why_it_matters": "Adds evidence for comparing frontier model capability or reliability."
       },
@@ -406,7 +406,7 @@
         "published_at": "2026-04-30T18:00:00+00:00",
         "secondary_urls": [],
         "source_lab": "arXiv cs.CL",
-        "takeaway": "arXiv:2604.27115v1 Announce Type: new Abstract: Neuron pruning is widely used to reduce the computational cost and parameter footprint of large language models, yet it remains unclear whethe...",
+        "takeaway": "Neuron pruning is widely used to reduce the computational cost and parameter footprint of large language models, yet it remains unclear whether neurons in task-specific models contribute uni...",
         "title": "Exploring the Limits of Pruning: Task-Specific Neurons, Model Collapse, and Recovery in Task-Specific Large Language Models",
         "why_it_matters": "Relevant to frontier AI capability, infrastructure, or evaluation."
       }
@@ -439,7 +439,7 @@
     }
   ],
   "status": "published",
-  "summary": "Reviewed 100 primary-source research items and selected 100 candidates for the 2026-05-01 daily brief.",
+  "summary": "Reviewed 100 primary-source research items for 2026-05-01 and selected the strongest papers and artifacts.",
   "title": "Research: 2026-05-01",
   "updated_at": null,
   "window_end": "2026-05-02T00:00:00+00:00",

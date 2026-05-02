@@ -114,6 +114,24 @@ function EmptyState() {
 }
 
 function RunBlock({ run, prominent = false }: { run: ResearchBriefRun; prominent?: boolean }) {
+  const topItems = run.sections.top_items.slice(0, 5);
+  const topUrls = new Set(topItems.map((item) => item.primary_url));
+  const paperItems = uniqueItems(
+    run.sections.papers_worth_reading.filter((item) => !topUrls.has(item.primary_url)),
+  );
+  const paperUrls = new Set([...topUrls, ...paperItems.map((item) => item.primary_url)]);
+  const artifactItems = uniqueItems(
+    run.sections.research_artifacts.filter((item) => !paperUrls.has(item.primary_url)),
+  );
+  const artifactUrls = new Set([...paperUrls, ...artifactItems.map((item) => item.primary_url)]);
+  const updateItems = uniqueItems(
+    run.sections.lab_company_updates.filter((item) => !artifactUrls.has(item.primary_url)),
+  );
+  const updateUrls = new Set([...artifactUrls, ...updateItems.map((item) => item.primary_url)]);
+  const watchlistItems = uniqueItems(
+    run.sections.watchlist.filter((item) => !updateUrls.has(item.primary_url)),
+  );
+
   return (
     <article className="border-t border-border pt-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -156,23 +174,11 @@ function RunBlock({ run, prominent = false }: { run: ResearchBriefRun; prominent
       </div>
 
       <div className="mt-5 space-y-6">
-        <SectionList title="Top 5 items" icon="top" items={run.sections.top_items.slice(0, 5)} />
-        <SectionList
-          title="Papers worth reading"
-          icon="papers"
-          items={run.sections.papers_worth_reading}
-        />
-        <SectionList
-          title="Research artifacts"
-          icon="artifacts"
-          items={run.sections.research_artifacts}
-        />
-        <SectionList
-          title="Lab/company updates"
-          icon="updates"
-          items={run.sections.lab_company_updates}
-        />
-        <SectionList title="Watchlist" icon="watchlist" items={run.sections.watchlist} />
+        <SectionList title="Top 5 items" icon="top" items={topItems} />
+        <SectionList title="Papers worth reading" icon="papers" items={paperItems} />
+        <SectionList title="Research artifacts" icon="artifacts" items={artifactItems} />
+        <SectionList title="Lab/company updates" icon="updates" items={updateItems} />
+        <SectionList title="Watchlist" icon="watchlist" items={watchlistItems} />
         {run.sections.skipped_noise_note && (
           <div className="rounded-md border border-border bg-surface/50 px-3 py-2 text-[12px] leading-relaxed text-text-subtle">
             <span className="font-semibold uppercase tracking-[0.12em] text-text-muted">
@@ -200,7 +206,10 @@ function SectionList({
     <section>
       <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
         <Icon className="h-3.5 w-3.5 text-accent" />
-        {title}
+        <span>{title}</span>
+        <span className="rounded-sm bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] tracking-normal text-text-muted">
+          {items.length}
+        </span>
       </div>
       {items.length > 0 ? (
         <ul className="space-y-2">
@@ -292,6 +301,15 @@ const iconMap = {
 
 function itemTypeLabel(type: ResearchItemType): string {
   return type.replace(/_/g, " ");
+}
+
+function uniqueItems(items: ResearchBriefItem[]): ResearchBriefItem[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.primary_url)) return false;
+    seen.add(item.primary_url);
+    return true;
+  });
 }
 
 function formatDate(value: string): string {
