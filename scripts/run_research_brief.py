@@ -8,6 +8,7 @@ import logging
 import sys
 from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
@@ -24,6 +25,7 @@ from ai_sector_watch.sources.base import RawItem  # noqa: E402
 from ai_sector_watch.storage import supabase_db  # noqa: E402
 
 LOGGER = logging.getLogger(__name__)
+SCHEDULED_RUN_WEEKDAYS = (1, 4)  # Tuesday, Friday.
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -39,7 +41,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--hours",
         type=int,
         default=36,
-        help="Lookback window in hours ending at the end of the run date.",
+        help="Lookback window in hours ending at the end of the run date. Ignored with --scheduled-window.",
+    )
+    parser.add_argument(
+        "--scheduled-window",
+        action="store_true",
+        help="Use the Tuesday/Friday Australia/Sydney window covering days since the prior scheduled run.",
+    )
+    parser.add_argument(
+        "--timezone",
+        default="Australia/Sydney",
+        help="IANA timezone used for --scheduled-window. Defaults to Australia/Sydney.",
     )
     parser.add_argument(
         "--limit",
@@ -79,8 +91,12 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(levelname)s %(message)s",
     )
-    window_end = datetime.combine(args.date + timedelta(days=1), time.min, tzinfo=UTC)
-    window_start = window_end - timedelta(hours=args.hours)
+    window_start, window_end = research_window(
+        run_date=args.date,
+        hours=args.hours,
+        scheduled_window=args.scheduled_window,
+        timezone_name=args.timezone,
+    )
     raw_items, source_errors = fetch_research_items(limit=args.limit)
     run = build_research_brief_run(
         raw_items=raw_items,
@@ -135,6 +151,38 @@ def fetch_research_items(*, limit: int) -> tuple[list[RawItem], list[str]]:
             LOGGER.warning(message)
             errors.append(message)
     return items, errors
+
+
+def research_window(
+    *,
+    run_date: date,
+    hours: int,
+    scheduled_window: bool,
+    timezone_name: str,
+) -> tuple[datetime, datetime]:
+    """Return the UTC source window for a research brief run."""
+    if not scheduled_window:
+        window_end = datetime.combine(run_date + timedelta(days=1), time.min, tzinfo=UTC)
+        return window_end - timedelta(hours=hours), window_end
+
+    try:
+        timezone = ZoneInfo(timezone_name)
+    except ZoneInfoNotFoundError as exc:
+        raise ValueError(f"unknown timezone: {timezone_name}") from exc
+
+    previous_run_date = previous_scheduled_run_date(run_date)
+    local_start = datetime.combine(previous_run_date, time.min, tzinfo=timezone)
+    local_end = datetime.combine(run_date + timedelta(days=1), time.min, tzinfo=timezone)
+    return local_start.astimezone(UTC), local_end.astimezone(UTC)
+
+
+def previous_scheduled_run_date(run_date: date) -> date:
+    """Return the previous Tuesday or Friday before run_date."""
+    for days_back in range(1, 8):
+        candidate = run_date - timedelta(days=days_back)
+        if candidate.weekday() in SCHEDULED_RUN_WEEKDAYS:
+            return candidate
+    raise RuntimeError("no scheduled weekday found in previous seven days")
 
 
 def _parse_date(value: str) -> date:

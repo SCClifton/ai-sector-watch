@@ -93,7 +93,7 @@ class ResearchBriefSections:
 
 @dataclass(frozen=True)
 class ResearchBriefRun:
-    """Database and JSON shape for one daily research brief run."""
+    """Database and JSON shape for one research brief run."""
 
     id: str
     run_date: str
@@ -333,7 +333,7 @@ def _summary(*, run_date: date, window_count: int, ranked_count: int) -> str:
     if ranked_count == 0:
         return (
             f"No primary-source frontier AI items were selected for {run_date.isoformat()} "
-            "after the daily filter pass."
+            "after the filter pass."
         )
     return (
         f"Reviewed {window_count} primary-source research items for "

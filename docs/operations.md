@@ -43,43 +43,46 @@ gh run watch
 Use small limits first. Do not run unbounded source, enrichment, or LLM jobs
 from a development environment.
 
-## Daily Research Briefs
+## Research Briefs
 
 The public `/research` page reads stored research brief runs from
 `research_brief_runs`. It does not fetch sources or call a model during page
 rendering. If Supabase is unavailable in local development, the web app falls
 back to JSON files under `data/research_briefs/`.
 
+`.github/workflows/research.yml` runs the research brief on Australian Tuesdays
+and Fridays. The scheduled run date is calculated in `Australia/Sydney`; each
+run uses `--scheduled-window` so Tuesday covers the prior Friday-to-Tuesday
+gap and Friday covers the prior Tuesday-to-Friday gap. The workflow writes
+directly to Supabase and does not commit generated JSON.
+
 Manual local JSON run:
 
 ```bash
-python scripts/run_research_brief.py --date YYYY-MM-DD
+python scripts/run_research_brief.py --date YYYY-MM-DD --scheduled-window
 ```
 
 Manual database write run:
 
 ```bash
-op run --env-file=.env.local -- python scripts/run_research_brief.py --date YYYY-MM-DD --write-db
+op run --env-file=.env.local -- python scripts/run_research_brief.py --date YYYY-MM-DD --scheduled-window --write-db
 ```
 
 Bound test run:
 
 ```bash
-python scripts/run_research_brief.py --date YYYY-MM-DD --limit 5 --dry-run
+python scripts/run_research_brief.py --date YYYY-MM-DD --limit 5 --scheduled-window --dry-run
 ```
 
-The existing daily Codex automation should run the script after it finishes any
-brief generation step:
+Production dispatch:
 
 ```bash
-op run --env-file=.env.local -- python scripts/run_research_brief.py --date "$(date -u +%F)" --write-db
+gh workflow run research.yml -f date=YYYY-MM-DD -f limit=25
+gh run watch
 ```
 
-If moving this into GitHub Actions instead, schedule a daily cron that installs
-the Python package, applies the idempotent schema through
-`scripts/verify_setup.py --apply-schema`, then runs the same `--write-db`
-command with `SUPABASE_DB_URL` from repository secrets. Keep source limits
-bounded until the run history looks stable.
+Use small limits first when manually dispatching. Do not add social media,
+newsletters, or general tech media to this workflow without source review.
 
 ## GitHub Actions Secret Check
 
