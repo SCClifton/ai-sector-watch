@@ -43,6 +43,44 @@ gh run watch
 Use small limits first. Do not run unbounded source, enrichment, or LLM jobs
 from a development environment.
 
+## Daily Research Briefs
+
+The public `/research` page reads stored research brief runs from
+`research_brief_runs`. It does not fetch sources or call a model during page
+rendering. If Supabase is unavailable in local development, the web app falls
+back to JSON files under `data/research_briefs/`.
+
+Manual local JSON run:
+
+```bash
+python scripts/run_research_brief.py --date YYYY-MM-DD
+```
+
+Manual database write run:
+
+```bash
+op run --env-file=.env.local -- python scripts/run_research_brief.py --date YYYY-MM-DD --write-db
+```
+
+Bound test run:
+
+```bash
+python scripts/run_research_brief.py --date YYYY-MM-DD --limit 5 --dry-run
+```
+
+The existing daily Codex automation should run the script after it finishes any
+brief generation step:
+
+```bash
+op run --env-file=.env.local -- python scripts/run_research_brief.py --date "$(date -u +%F)" --write-db
+```
+
+If moving this into GitHub Actions instead, schedule a daily cron that installs
+the Python package, applies the idempotent schema through
+`scripts/verify_setup.py --apply-schema`, then runs the same `--write-db`
+command with `SUPABASE_DB_URL` from repository secrets. Keep source limits
+bounded until the run history looks stable.
+
 ## GitHub Actions Secret Check
 
 If `weekly.yml` fails in `Verify setup` with empty `ANTHROPIC_API_KEY` or

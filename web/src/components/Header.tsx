@@ -11,6 +11,7 @@ const NAV_ITEMS: { href: string; label: string }[] = [
   { href: "/map", label: "Map" },
   { href: "/companies", label: "Companies" },
   { href: "/news", label: "News" },
+  { href: "/research", label: "Research" },
   { href: "/about", label: "About" },
 ];
 

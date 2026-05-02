@@ -610,6 +610,67 @@ def upsert_news_item(
         return str(row["id"])
 
 
+# ----- Research brief runs ---------------------------------------------------
+
+
+def upsert_research_brief_run(
+    conn: psycopg.Connection,
+    *,
+    run_date: date,
+    sections: dict[str, Any],
+    sources: list[dict[str, Any]] | None = None,
+    run_id: str | None = None,
+    window_start: datetime | None = None,
+    window_end: datetime | None = None,
+    title: str | None = None,
+    summary: str | None = None,
+    cost_usd: float | Decimal | None = None,
+    model: str | None = None,
+    status: str = "published",
+) -> str:
+    """Insert or update a research brief run keyed by run_date."""
+    sources = sources or []
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO research_brief_runs (
+                id, run_date, window_start, window_end, title, summary,
+                sections, sources, cost_usd, model, status
+            ) VALUES (
+                COALESCE(%s::uuid, gen_random_uuid()), %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s
+            )
+            ON CONFLICT (run_date) DO UPDATE SET
+                window_start = EXCLUDED.window_start,
+                window_end   = EXCLUDED.window_end,
+                title        = EXCLUDED.title,
+                summary      = EXCLUDED.summary,
+                sections     = EXCLUDED.sections,
+                sources      = EXCLUDED.sources,
+                cost_usd     = EXCLUDED.cost_usd,
+                model        = EXCLUDED.model,
+                status       = EXCLUDED.status
+            RETURNING id
+            """,
+            (
+                run_id,
+                run_date,
+                window_start,
+                window_end,
+                title,
+                summary,
+                Json(sections),
+                Json(sources),
+                cost_usd,
+                model,
+                status,
+            ),
+        )
+        row = cur.fetchone()
+        assert row is not None
+        return str(row["id"])
+
+
 # ----- Ingest events ---------------------------------------------------------
 
 
