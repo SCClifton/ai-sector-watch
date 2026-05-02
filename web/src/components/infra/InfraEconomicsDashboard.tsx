@@ -825,14 +825,14 @@ function Selector({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="grid gap-1">
+    <label className="grid min-w-0 gap-1">
       <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
         {label}
       </span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-10 rounded-md border border-border bg-surface px-2.5 text-[12px] font-medium text-text outline-none focus:border-accent"
+        className="h-10 w-full min-w-0 rounded-md border border-border bg-surface px-2.5 text-[12px] font-medium text-text outline-none focus:border-accent"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
