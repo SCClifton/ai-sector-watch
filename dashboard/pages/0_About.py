@@ -16,6 +16,7 @@ from dashboard.components.theme import render_page_chrome  # noqa: E402
 
 ARCHITECTURE_PATH = REPO_ROOT / "dashboard" / "static" / "architecture.svg"
 GITHUB_REPO_URL = "https://github.com/SCClifton/ai-sector-watch"
+LINKEDIN_URL = "https://www.linkedin.com/in/sam-c-clifton/"
 ISSUES_URL = f"{GITHUB_REPO_URL}/issues"
 
 
@@ -95,8 +96,9 @@ def main() -> None:
         "repository contains the public source code, schema, taxonomy, and public-safe "
         "operating notes."
     )
-    link_cols = st.columns([1, 3])
+    link_cols = st.columns([1, 1, 2])
     link_cols[0].link_button("GitHub repository", GITHUB_REPO_URL, type="primary")
+    link_cols[1].link_button("LinkedIn profile", LINKEDIN_URL)
 
     render_footer()
 
