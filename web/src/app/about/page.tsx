@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Github, MessageCircle } from "lucide-react";
+import { ArrowUpRight, Github, Linkedin, MessageCircle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About",
@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 const GITHUB_URL = "https://github.com/SCClifton/ai-sector-watch";
+const LINKEDIN_URL = "https://www.linkedin.com/in/sam-c-clifton/";
 const ISSUES_URL = `${GITHUB_URL}/issues`;
 
 export default function AboutPage() {
@@ -99,6 +100,15 @@ export default function AboutPage() {
           >
             <Github className="h-3.5 w-3.5" />
             GitHub repository
+          </Link>
+          <Link
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border-strong bg-surface px-4 py-2 text-[13px] font-semibold text-text transition-colors hover:border-accent hover:text-accent"
+          >
+            <Linkedin className="h-3.5 w-3.5" />
+            LinkedIn profile
           </Link>
         </div>
       </Section>
