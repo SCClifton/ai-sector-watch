@@ -52,7 +52,21 @@ async function listResearchRunsFromDb(limit: number): Promise<ResearchBriefRun[]
 }
 
 async function listResearchRunsFromJson(limit: number): Promise<ResearchBriefRun[]> {
-  const directory = path.resolve(process.cwd(), "..", "data", "research_briefs");
+  const directories = [
+    path.resolve(process.cwd(), "data", "research_briefs"),
+    path.resolve(process.cwd(), "..", "data", "research_briefs"),
+  ];
+  for (const directory of directories) {
+    const runs = await listResearchRunsFromDirectory(directory, limit);
+    if (runs.length > 0) return runs;
+  }
+  return [];
+}
+
+async function listResearchRunsFromDirectory(
+  directory: string,
+  limit: number,
+): Promise<ResearchBriefRun[]> {
   try {
     const entries = await fs.readdir(directory, { withFileTypes: true });
     const files = entries

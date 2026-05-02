@@ -54,6 +54,7 @@ RUN addgroup --system --gid 1001 node-app \
 COPY --from=build --chown=node-app:node-app /app/.next/standalone ./
 COPY --from=build --chown=node-app:node-app /app/.next/static ./.next/static
 COPY --from=build --chown=node-app:node-app /app/public ./public
+COPY --chown=node-app:node-app data/research_briefs ./data/research_briefs
 
 USER node-app
 
