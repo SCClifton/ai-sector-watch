@@ -62,6 +62,7 @@ export interface ScenarioPreset {
   capexMultiplier: number;
   powerPriceMultiplier: number;
   facilityCapexMultiplier: number;
+  operatingCostMultiplier: number;
   utilizationMultiplier: number;
   goodputMultiplier: number;
   throughputMultiplier: number;
@@ -219,7 +220,13 @@ export function calculateCostBreakdown(
     8760 *
     assumptions.electricityPricePerKwh.mode *
     modifier.powerPriceMultiplier;
-  const annualOperatingCost = totalCapex * assumptions.operatingSupportPct.mode;
+  // Operating cost covers staff, software, and IT-equipment maintenance. Facility
+  // chiller and shell maintenance is already embedded in the facility capex
+  // amortization and the PUE-inflated power line, so applying ops % to facility
+  // capex would double-count.
+  const itOnlyCapex = systemCapex + networkStorageCapex;
+  const annualOperatingCost =
+    itOnlyCapex * assumptions.operatingSupportPct.mode * modifier.operatingCostMultiplier;
   const annualTotalCost = annualizedCapex + annualPowerCost + annualOperatingCost;
   const utilization = clamp(assumptions.utilizationPct.mode * modifier.utilizationMultiplier, 0, 0.98);
   const goodput = clamp(
@@ -429,6 +436,7 @@ function neutralScenario(): ScenarioPreset {
     capexMultiplier: 1,
     powerPriceMultiplier: 1,
     facilityCapexMultiplier: 1,
+    operatingCostMultiplier: 1,
     utilizationMultiplier: 1,
     goodputMultiplier: 1,
     throughputMultiplier: 1,
@@ -462,7 +470,7 @@ function rampFraction(year: number, onlineYear: number, fullRampYear: number): n
   if (year < onlineYear) return 0;
   if (year >= fullRampYear) return 1;
   const span = Math.max(1, fullRampYear - onlineYear);
-  return clamp((year - onlineYear + 1) / (span + 1), 0, 1);
+  return clamp((year - onlineYear) / span, 0, 1);
 }
 
 function clamp(value: number, min: number, max: number): number {

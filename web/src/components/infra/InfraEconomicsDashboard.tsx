@@ -242,9 +242,17 @@ export function InfraEconomicsDashboard() {
             <div className="mt-3 space-y-2 font-mono text-[11px] leading-relaxed text-text-muted">
               <p>annualized_capex = total_capex * CRF(rate, life)</p>
               <p>power_cost = kW * PUE * 8760 * $/kWh</p>
+              <p>ops_cost = (system + network capex) * ops%</p>
               <p>tokens = tok/sec * seconds * utilization * goodput</p>
               <p>cost_per_1M = annual_cost / tokens * 1,000,000</p>
             </div>
+            <p className="mt-3 text-[11px] leading-relaxed text-text-subtle">
+              Useful life and electricity price are anchored to hyperscaler 10-K
+              disclosures and public PPAs. Throughput assumes a 70B-class model at
+              FP8, 4K input / 1K output, batch 32. Ops % is applied to system plus
+              network capex only to avoid double-counting facility maintenance
+              already embedded in PUE and facility amortization.
+            </p>
           </section>
         </aside>
       </div>

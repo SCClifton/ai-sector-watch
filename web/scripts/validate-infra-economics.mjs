@@ -28,10 +28,15 @@ const workload = {
 };
 
 const result = infra.calculateCostBreakdown(assumptions, workload);
-const expectedCapex = 10_000_000 + 2_000_000 + 2_000_000;
+const expectedSystemCapex = 10_000_000;
+const expectedNetworkCapex = 2_000_000;
+const expectedFacilityCapex = 2_000_000;
+const expectedCapex = expectedSystemCapex + expectedNetworkCapex + expectedFacilityCapex;
 const expectedCrf = infra.capitalRecoveryFactor(0.1, 4);
 const expectedAnnualPower = 100 * 1.2 * 8760 * 0.1;
-const expectedAnnualOps = expectedCapex * 0.08;
+// Operating cost is applied to system + network (IT) capex only; facility ops is
+// embedded in the facility capex and PUE-inflated power line.
+const expectedAnnualOps = (expectedSystemCapex + expectedNetworkCapex) * 0.08;
 const expectedAnnualCost = expectedCapex * expectedCrf + expectedAnnualPower + expectedAnnualOps;
 const expectedTokens = 1000 * 365 * 24 * 60 * 60 * 0.5 * 0.5;
 const expectedCost = (expectedAnnualCost / expectedTokens) * 1_000_000;
@@ -52,6 +57,7 @@ if (!(monteCarlo.p50.costPer1MTokens <= monteCarlo.p90.costPer1MTokens)) {
 }
 
 validatePresetCoverage();
+validateSanityBands();
 
 console.log("infra economics validation passed");
 
@@ -152,5 +158,27 @@ function assertSourceIds(ids, sourceIds, label) {
 function assertFinitePositive(value, label) {
   if (!Number.isFinite(value) || value <= 0) {
     throw new Error(`${label}: expected positive finite value, got ${value}`);
+  }
+}
+
+// External-realism guardrail. Catches input typos that pass the internal-arithmetic
+// checks but would publish nonsense numbers. The band is intentionally wide:
+// frontier-API list prices currently sit near $3-15 per 1M output tokens; with a
+// 70-80% gross margin on inference revenue, raw bottom-up cost should land roughly
+// $0.10-$5 per 1M useful tokens. We allow up to $10 to leave room for the
+// frontier-reasoning workload (long output, low throughput) and slow-stack outliers.
+function validateSanityBands() {
+  const productionAssistant = data.WORKLOAD_PRESETS.find((wl) => wl.id === "production-assistant");
+  if (!productionAssistant) throw new Error("sanity check: production-assistant workload missing");
+  const lowerBand = 0.1;
+  const upperBand = 10.0;
+  for (const stack of data.STACK_PRESETS) {
+    const monteCarlo = infra.runMonteCarlo(stack.assumptions, productionAssistant, 400, 19);
+    const p50 = monteCarlo.p50.costPer1MTokens;
+    if (!Number.isFinite(p50) || p50 < lowerBand || p50 > upperBand) {
+      throw new Error(
+        `sanity: stack ${stack.id} on production-assistant P50 cost $${p50.toFixed(3)}/1M outside band [$${lowerBand}, $${upperBand}]`,
+      );
+    }
   }
 }
