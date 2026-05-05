@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /map-data/
+
+Sitemap: https://aimap.cliftonfamily.co/sitemap.xml
