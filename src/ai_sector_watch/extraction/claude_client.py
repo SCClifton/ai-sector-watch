@@ -23,7 +23,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TypeVar
 
+from anthropic import APIConnectionError, RateLimitError
 from pydantic import BaseModel, ValidationError
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from ai_sector_watch.config import REPO_ROOT, get_config
 
@@ -174,6 +181,12 @@ class ClaudeClient:
 
     # -- live dispatch (override-friendly for tests) ---------------------
 
+    @retry(
+        retry=retry_if_exception_type((RateLimitError, APIConnectionError)),
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=2, min=2, max=30),
+        reraise=True,
+    )
     def _dispatch(
         self,
         *,
@@ -182,7 +195,12 @@ class ClaudeClient:
         schema_cls: type[T],
         max_tokens: int,
     ) -> StructuredResponse:
-        """Make the actual API call. Returns a StructuredResponse."""
+        """Make the actual API call. Returns a StructuredResponse.
+
+        Retries on RateLimitError (429) and APIConnectionError with exponential
+        backoff up to 3 attempts. Tests that replace `_dispatch` on the instance
+        or class bypass the retry decorator entirely.
+        """
         tool = {
             "name": "emit_" + schema_cls.__name__.lower(),
             "description": f"Return a {schema_cls.__name__} object.",
