@@ -24,7 +24,7 @@ def test_get_config_uses_defaults_when_env_unset(monkeypatch) -> None:
         monkeypatch.delenv(key, raising=False)
     config = Config.from_env()
     assert config.anthropic_api_key is None
-    assert config.anthropic_model == "claude-sonnet-4-6"
+    assert config.anthropic_model == "claude-haiku-4-5-20251001"
     assert config.anthropic_budget_usd_per_run == 2.0
     assert config.supabase_db_url is None
     assert config.admin_password is None

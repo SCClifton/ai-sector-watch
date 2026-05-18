@@ -21,12 +21,12 @@ env:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-      ANTHROPIC_BUDGET_USD_PER_RUN: "2"
-      ANTHROPIC_MODEL: "claude-sonnet-4-6"
+      ANTHROPIC_BUDGET_USD_PER_RUN: "1"
+      ANTHROPIC_MODEL: "claude-haiku-4-5-20251001"
       PIPELINE_LOG_LEVEL: INFO
     steps:
       - uses: actions/checkout@v4
@@ -47,10 +47,37 @@ jobs:
       - name: Verify setup
         run: python scripts/verify_setup.py --apply-schema
 
+      # Cache key includes github.run_id so each run writes a fresh snapshot;
+      # restore-keys fuzzy-match the most recent prior snapshot. The client's
+      # internal cache key already includes the model, so a future model switch
+      # cannot read stale outputs as if they came from the new model.
+      - name: Restore Claude on-disk cache
+        uses: actions/cache@v4
+        with:
+          path: data/local/claude_cache
+          key: claude-cache-v1-${{ github.run_id }}
+          restore-keys: |
+            claude-cache-v1-
+
       - name: Run weekly pipeline
         run: |
           LIMIT="${{ github.event.inputs.limit || '25' }}"
           python scripts/run_weekly_pipeline.py --limit "$LIMIT" | tee pipeline_summary.json
+
+      # Folded in from the former research.yml. The research brief is rule-based
+      # (no LLM calls) so it costs nothing extra. 168 hours covers the full
+      # weekly window now that Tue/Fri runs are retired.
+      - name: Run research brief
+        run: |
+          DATE="$(TZ=Australia/Sydney date +%F)"
+          LIMIT="${{ github.event.inputs.limit || '25' }}"
+          python scripts/run_research_brief.py \
+            --date "$DATE" \
+            --hours 168 \
+            --limit "$LIMIT" \
+            --timezone Australia/Sydney \
+            --no-json \
+            --write-db
 
       - name: Open digest PR
         env:

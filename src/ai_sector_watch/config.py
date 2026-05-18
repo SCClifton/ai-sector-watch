@@ -67,7 +67,7 @@ class Config:
     def from_env(cls) -> Config:
         return cls(
             anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY"),
-            anthropic_model=os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
+            anthropic_model=os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
             anthropic_budget_usd_per_run=float(os.environ.get("ANTHROPIC_BUDGET_USD_PER_RUN", "2")),
             supabase_db_url=os.environ.get("SUPABASE_DB_URL"),
             admin_password=os.environ.get("ADMIN_PASSWORD"),
