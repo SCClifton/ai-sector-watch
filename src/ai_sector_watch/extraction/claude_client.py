@@ -19,6 +19,8 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import threading
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TypeVar
@@ -26,16 +28,77 @@ from typing import TypeVar
 from anthropic import APIConnectionError, RateLimitError
 from pydantic import BaseModel, ValidationError
 from tenacity import (
+    RetryCallState,
     retry,
     retry_if_exception_type,
     stop_after_attempt,
+    wait_combine,
     wait_exponential,
+    wait_random,
 )
 
 from ai_sector_watch.config import REPO_ROOT, get_config
 
 LOGGER = logging.getLogger(__name__)
 CACHE_DIR = REPO_ROOT / "data" / "local" / "claude_cache"
+
+# --- Process-wide rate limiter ------------------------------------------------
+#
+# Anthropic's tier-1 RPM ceiling for Haiku is ~50; we throttle to a conservative
+# 30 RPM (one call every 2 s) so even when several `_extract_*` helpers fire
+# back-to-back from the weekly pipeline, we never burst above the limit. The
+# bucket is a module-level singleton so all `ClaudeClient` instances share it.
+ANTHROPIC_RPM_CAP = 30
+_RATE_LIMITER_LOCK = threading.Lock()
+_RATE_LIMITER_NEXT_AT = 0.0
+
+
+def _throttle_anthropic_call() -> None:
+    """Block until at least 60/ANTHROPIC_RPM_CAP seconds have passed since the
+    previous call. Safe across threads via a module-level lock."""
+    global _RATE_LIMITER_NEXT_AT
+    interval = 60.0 / ANTHROPIC_RPM_CAP
+    with _RATE_LIMITER_LOCK:
+        now = time.monotonic()
+        wait = _RATE_LIMITER_NEXT_AT - now
+        if wait > 0:
+            time.sleep(wait)
+            now += wait
+        _RATE_LIMITER_NEXT_AT = now + interval
+
+
+# --- Retry-After-aware wait for tenacity --------------------------------------
+_FALLBACK_WAIT = wait_combine(
+    wait_exponential(multiplier=2, min=2, max=120),
+    wait_random(0, 1),
+)
+
+
+def _wait_anthropic_aware(retry_state: RetryCallState) -> float:
+    """Tenacity `wait` callable that honours Anthropic's `Retry-After` header on
+    429 responses. Falls back to exponential backoff (+ jitter) for any other
+    error or when the header is absent. Each retry attempt of a `_dispatch`
+    call counts against the org's rate-limit counter, so waiting at least the
+    server-suggested duration is what stops the "20 rate limit hits in 24h"
+    notification emails from re-firing each week.
+    """
+    exc = retry_state.outcome.exception() if retry_state.outcome else None
+    if isinstance(exc, RateLimitError):
+        retry_after = None
+        response = getattr(exc, "response", None)
+        headers = getattr(response, "headers", None) if response is not None else None
+        if headers is not None:
+            raw = headers.get("retry-after") or headers.get("Retry-After")
+            if raw is not None:
+                try:
+                    retry_after = float(raw)
+                except (TypeError, ValueError):
+                    retry_after = None
+        if retry_after is not None and retry_after > 0:
+            # Cap at 120 s so a misconfigured upstream can't stall the run for
+            # the whole 30-minute workflow timeout.
+            return min(retry_after, 120.0)
+    return _FALLBACK_WAIT(retry_state)
 
 # Per-1M-token rates in USD. Conservative numbers; intentionally on the
 # high side so the budget cap is hit early rather than late.
@@ -183,8 +246,8 @@ class ClaudeClient:
 
     @retry(
         retry=retry_if_exception_type((RateLimitError, APIConnectionError)),
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=2, min=2, max=30),
+        stop=stop_after_attempt(6),
+        wait=_wait_anthropic_aware,
         reraise=True,
     )
     def _dispatch(
@@ -197,10 +260,16 @@ class ClaudeClient:
     ) -> StructuredResponse:
         """Make the actual API call. Returns a StructuredResponse.
 
-        Retries on RateLimitError (429) and APIConnectionError with exponential
-        backoff up to 3 attempts. Tests that replace `_dispatch` on the instance
-        or class bypass the retry decorator entirely.
+        Retries on RateLimitError (429) and APIConnectionError up to 6 attempts.
+        The wait between retries honours the server's `Retry-After` header on
+        429s (so we don't immediately re-hit the same rate window), falling
+        back to exponential backoff + jitter otherwise. Each call also passes
+        through `_throttle_anthropic_call()`, a module-wide token bucket
+        capping us at `ANTHROPIC_RPM_CAP` requests/minute. Tests that replace
+        `_dispatch` on the instance or class bypass the retry decorator and
+        the throttle entirely.
         """
+        _throttle_anthropic_call()
         tool = {
             "name": "emit_" + schema_cls.__name__.lower(),
             "description": f"Return a {schema_cls.__name__} object.",
