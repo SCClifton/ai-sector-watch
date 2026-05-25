@@ -6,13 +6,18 @@ All tests stub out `_dispatch()` so the live SDK is never invoked.
 from __future__ import annotations
 
 import pytest
+from anthropic import RateLimitError
 from pydantic import ValidationError
 
+from ai_sector_watch.extraction import claude_client
 from ai_sector_watch.extraction.claude_client import (
+    ANTHROPIC_RPM_CAP,
     BudgetExceeded,
     ClaudeClient,
     StructuredResponse,
     _rough_token_count,
+    _throttle_anthropic_call,
+    _wait_anthropic_aware,
 )
 from ai_sector_watch.extraction.schema import (
     CompanyClassification,
@@ -138,3 +143,92 @@ def test_company_classification_sector_tag_count_bounded() -> None:
             stage="seed",
             summary="More than four tags should fail validation.",
         )
+
+
+def test_throttle_spaces_calls_at_target_rpm(monkeypatch) -> None:
+    """The module-wide throttle blocks until enough wall-clock has elapsed
+    between successive `_dispatch` invocations."""
+    sleeps: list[float] = []
+    fake_clock = {"t": 1000.0}
+
+    def fake_monotonic() -> float:
+        return fake_clock["t"]
+
+    def fake_sleep(seconds: float) -> None:
+        sleeps.append(seconds)
+        fake_clock["t"] += seconds
+
+    monkeypatch.setattr(claude_client.time, "monotonic", fake_monotonic)
+    monkeypatch.setattr(claude_client.time, "sleep", fake_sleep)
+    monkeypatch.setattr(claude_client, "_RATE_LIMITER_NEXT_AT", 0.0)
+
+    # First call has no prior history -> no sleep.
+    _throttle_anthropic_call()
+    # Subsequent calls in a tight loop should each sleep ~ (60 / RPM).
+    _throttle_anthropic_call()
+    _throttle_anthropic_call()
+
+    expected_interval = 60.0 / ANTHROPIC_RPM_CAP
+    assert sleeps == [pytest.approx(expected_interval), pytest.approx(expected_interval)]
+
+
+def test_wait_anthropic_aware_honours_retry_after_header() -> None:
+    """A 429 with a `Retry-After` header should produce that wait verbatim
+    (capped at 120 s), instead of the small exponential default."""
+
+    class _FakeHeaders:
+        def __init__(self, mapping: dict[str, str]) -> None:
+            self._m = mapping
+
+        def get(self, key: str, default=None):
+            return self._m.get(key.lower(), default)
+
+    class _FakeResponse:
+        def __init__(self, headers: dict[str, str]) -> None:
+            self.headers = _FakeHeaders({k.lower(): v for k, v in headers.items()})
+
+    exc = RateLimitError.__new__(RateLimitError)
+    exc.response = _FakeResponse({"retry-after": "45"})
+
+    class _Outcome:
+        def exception(self) -> BaseException:
+            return exc
+
+    class _State:
+        outcome = _Outcome()
+        attempt_number = 1
+        seconds_since_start = 0.0
+        idle_for = 0.0
+        next_action = None
+
+    assert _wait_anthropic_aware(_State()) == 45.0
+
+
+def test_wait_anthropic_aware_falls_back_when_header_missing() -> None:
+    """Without a `Retry-After` header the wait should be > 0 (exponential)."""
+    exc = RateLimitError.__new__(RateLimitError)
+    exc.response = None
+
+    class _Outcome:
+        def exception(self) -> BaseException:
+            return exc
+
+    class _State:
+        outcome = _Outcome()
+        attempt_number = 1
+        seconds_since_start = 0.0
+        idle_for = 0.0
+        next_action = None
+
+    assert _wait_anthropic_aware(_State()) > 0.0
+
+
+# Avoid bleeding throttle state between this module's tests and the rest of
+# the suite (the throttle keeps a `time.monotonic()` watermark in module
+# state, and other tests may run on faster wall-clocks where the watermark
+# would force unintended sleeps).
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter() -> None:
+    claude_client._RATE_LIMITER_NEXT_AT = 0.0
+    yield
+    claude_client._RATE_LIMITER_NEXT_AT = 0.0
